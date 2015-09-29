@@ -13,6 +13,10 @@
                 "Standard_LRS",
                 "Standard_GRS"
             ]
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "west europe"
         }
     },
     "resources": [
@@ -20,7 +24,7 @@
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Storage/storageAccounts",
             "name": "[Parameters('storageblobname')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('location')]",
             "properties": {
                 "accountType": "[Parameters('storageaccounttype')]"
             }

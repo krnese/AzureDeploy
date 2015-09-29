@@ -13,6 +13,10 @@
         "subnetprefix": {
             "type": "string",
             "defaultValue": "192.168.0.0/24"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "west europe"
         }
     },
     "resources": [
@@ -20,7 +24,7 @@
             "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[Parameters('vnetname')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('location')]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
