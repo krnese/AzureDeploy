@@ -6,6 +6,10 @@
             "type": "string",
             "defaultValue": "knvnet01"
         },
+        "subnetname": {
+            "type": "string",
+            "defaultvalue": "knsubnet01"
+        },
         "addressprefix": {
             "type": "string",
             "defaultValue": "192.168.0.0/16"
@@ -33,7 +37,7 @@
                 },
                 "subnets": [
                     {
-                        "name": "[concat(parameters('vnetname'), 'subnet')]",
+                        "name": "[parameters('subnetname')]",
                         "properties": {
                             "addressPrefix": "[parameters('subnetprefix')]"
                         }
