@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vNicName": {
+            "type": "string",
+            "defaultValue": "vnic07"
+        },
+        "privateIPallocationmethod": {
+            "type": "string",
+            "defaultValue": "dynamic"
+        },
+        "publicNicName": {
+            "type": "string",
+            "defaultValue": "pnic01"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "west europe"
+        },        
+        "vnetname": {
+            "type": "string",
+            "defaultValue": "knazurevnet01"
+        }
+    },
+    "variables": {
+        "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', parameters('vnetname'))]",
+        "subnetname": "mysubnet",
+        "subnetID": "[concat(variables('vnetID'),'/subnets/', variables('subnetname'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('vnicname')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[parameters('vnicname')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "[parameters('privateIPallocationmethod')]",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicnicname'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetID')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}         
+   

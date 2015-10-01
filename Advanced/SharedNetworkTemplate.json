@@ -1,0 +1,50 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetname": {
+            "type": "string",
+            "defaultValue": "knvnet01"
+        },
+        "subnetname": {
+            "type": "string",
+            "defaultvalue": "knsubnet01"
+        },
+        "addressprefix": {
+            "type": "string",
+            "defaultValue": "192.168.0.0/16"
+        },
+        "subnetprefix": {
+            "type": "string",
+            "defaultValue": "192.168.0.0/24"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "west europe"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[Parameters('vnetname')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('addressprefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnetname')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetprefix')]"
+                        }
+                    }
+                ]
+            }
+        }
+     ]
+ }
+ 
