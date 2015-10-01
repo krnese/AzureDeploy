@@ -1,0 +1,53 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vNicName": {
+            "type": "string",
+            "defaultValue": "vnic01"
+        },
+        "privateIPallocationmethod": {
+            "type": "string",
+            "defaultValue": "dymaic"
+        },
+        "publicNicName": {
+            "type": "string",
+            "defaultValue": "pnic01"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "west europe"
+        },
+        "subnetID": {
+            "type": "string"
+        },
+        "publicIPID": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('vnicname')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "[parameters('vnicname')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "[parameters('privateIPallocationmethod')]",
+                            "publicIPAddress": {
+                                "id": "[parameters('publicIPID')]"
+                            },
+                            "subnet": {
+                                "id": "[parameters('subnetID')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}         
+   
