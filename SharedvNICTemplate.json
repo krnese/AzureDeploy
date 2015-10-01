@@ -4,11 +4,11 @@
     "parameters": {
         "vNicName": {
             "type": "string",
-            "defaultValue": "vnic01"
+            "defaultValue": "vnic07"
         },
         "privateIPallocationmethod": {
             "type": "string",
-            "defaultValue": "dymaic"
+            "defaultValue": "dynamic"
         },
         "publicNicName": {
             "type": "string",
@@ -17,13 +17,16 @@
         "location": {
             "type": "string",
             "defaultValue": "west europe"
-        },
-        "subnetID": {
-            "type": "string"
-        },
-        "publicIPID": {
-            "type": "string"
+        },        
+        "vnetname": {
+            "type": "string",
+            "defaultValue": "azurevnet1201"
         }
+    },
+    "variables": {
+        "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', parameters('vnetname'))]",
+        "subnetname": "mysubnet",
+        "subnetID": "[concat(variables('vnetID'),'/subnets/', variables('subnetname'))]"
     },
     "resources": [
         {
@@ -41,7 +44,7 @@
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicnicname'))]"
                             },
                             "subnet": {
-                                "id": "[parameters('subnetID')]"
+                                "id": "[variables('subnetID')]"
                             }
                         }
                     }

@@ -109,7 +109,7 @@
                 },
                 "parameters": {
                     "location": { "value": "[resourceGroup().location]" },
-                    "subnetID": { "value": "[variables('subnetID')]" },
+                    "subnetID": { "value": "[variables('subnetID')]" }, 
                     "publicIPID": { "value": "[variables('pnicname')]" }
                 }
             }
