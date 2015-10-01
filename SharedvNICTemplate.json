@@ -38,7 +38,7 @@
                         "properties": {
                             "privateIPAllocationMethod": "[parameters('privateIPallocationmethod')]",
                             "publicIPAddress": {
-                                "id": "[parameters('publicIPID')]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicnicname'))]"
                             },
                             "subnet": {
                                 "id": "[parameters('subnetID')]"
