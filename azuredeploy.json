@@ -25,10 +25,6 @@
             "type": "string",
             "defaultValue": "azureblob01"
         },
-        "storageaccounttype": {
-            "type": "string",
-            "defaultvalue": "Standard_LRS"
-        },
         "myvnet": {
             "type": "string",
             "defaultValue": "knvnet07"
@@ -70,7 +66,6 @@
                 },
                 "parameters": {
                     "storageblobname": { "value": "[parameters('storageblobname')]" },
-                    "storageaccounttype": { "value": "[parameters('storageaccounttype')]" },
                     "location": { "value": "[resourceGroup().location]" }
                 }
             }
