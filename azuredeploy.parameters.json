@@ -13,7 +13,6 @@
         },
         "storageblobname": {
             "value": "azureblob01"
-        },
-        ""
+        }        
     }
 }
