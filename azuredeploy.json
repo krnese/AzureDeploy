@@ -23,7 +23,7 @@
         },
         "storageblobname": {
             "type": "string",
-            "defaultValue": "knstor01"
+            "defaultValue": "azureblob01"
         },
         "storageaccounttype": {
             "type": "string",
