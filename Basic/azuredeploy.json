@@ -39,8 +39,8 @@
         }
     },
     "variables": {
-        "storagetemplate": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/SharedStorageTemplate.json",
-        "networktemplate": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/SharedNetworkTemplate.json",
+        "storagetemplate": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/Basic/SharedStorageTemplate.json",
+        "networktemplate": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/Basic/SharedNetworkTemplate.json",
         "nicname": "knnic202",
         "publicnicname": "knpub202test",
         "imagepublisher": "MicrosoftWindowsServer",
