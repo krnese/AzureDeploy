@@ -55,7 +55,7 @@
 
         "assetLocation": {
             "type": "string",
-            "defaultValue": "https://github.com/Azure/azure-quickstart-templates/raw/master/rds-deployment",
+            "defaultValue": "https://github.com/krnese/AzureDeploy/tree/master/RDSDemo",
             "metadata": {
                 "description": "The location of resources such as templates and DSC modules that the script is dependent"
             }
