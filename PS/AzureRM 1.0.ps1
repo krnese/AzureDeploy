@@ -1,10 +1,10 @@
 ﻿# Connect to your Azure subscription
 
-#Add-AzureRmAccount -Credential (get-credential -Credential automation@kristianneselive.onmicrosoft.com)
+Add-AzureRmAccount -Credential (get-credential)
 
 # Add some variables that you will use as you move forward
 
-#Global
+# Global
 
 $RGname = "KNRGTest01"
 $Location = "west europe"
