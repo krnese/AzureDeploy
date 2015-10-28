@@ -181,7 +181,7 @@
             "properties": {
                 "publisher": "Microsoft.Powershell",
                 "type": "DSC",
-                "typeHandlerversion": "1.9",
+                "typeHandlerversion": "2.7",
                 "autoUpgradeMinorVersion": "true",
                 "settings": {
                     "ModulesUrl": "[parameters('dscurl')]",
