@@ -38,7 +38,7 @@
         },
         "dscurl": {
             "type": "string",
-            "defaultValue": "https://github.com/krnese/CC-with-ARM/raw/master/azureweb.ps1.zip"
+            "defaultValue": "https://github.com/krnese/AzureDeploy/blob/master/DSCExample/azureweb.ps1.zip"
         },
         "configurationfunction": {
             "type": "string",
