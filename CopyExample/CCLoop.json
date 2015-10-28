@@ -1,0 +1,189 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "instancecount": {
+            "type": "int",
+            "defaultValue": "2"
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_A2",
+            "allowedValues": [
+                "Standard_A2",
+                "Standard_A5"
+            ]
+
+        },
+        "username": {
+            "type": "string",
+            "defaultValue": "knadmin"
+        },
+        "pwd": {
+            "type": "securestring"
+        },
+        "vnetname": {
+            "type": "string",
+            "defaultValue": "knvnet200"
+        },
+        "storageaccountname": {
+            "type": "string",
+            "defaultValue": "knstormulti200"
+        },
+        "storageaccountcontainername": {
+            "type": "string",
+            "defaultValue": "vhds"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "west us"
+        }
+    },
+    "variables": {
+        "virtualNetworkName": "[parameters('vnetname')]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', variables('virtualnetworkname'))]",
+        "subnetname": "ccsubnet01",
+        "addressprefix": "192.168.0.0/16",
+        "subnetPrefix": "192.168.0.0/24",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/', variables('subnetname'))]",
+        "imagepublisher": "MicrosoftWindowsServer",
+        "imageoffer": "WindowsServer",
+        "vmextension": "dscExtension",
+        "ipallocation": "Dynamic",
+        "storagetype": "Standard_LRS",
+        "imagesku": "2012-R2-Datacenter"
+
+    },
+    "resources": [
+        {
+            "apiversion":  "2015-05-01-preview",
+            "type": "Microsoft.Storage/StorageAccounts",
+            "name": "[parameters('storageaccountname')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "accounttype": "[variables('storagetype')]"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/PublicIPAddresses",
+            "name": "[concat('knpubIP', copyindex())]",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "knpubPLoop",
+                "count": "[parameters('instancecount')]"
+            },
+            "properties": {
+                "publicIPallocationmethod": "[variables('ipallocation')]"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/virtualnetworks",
+            "name": "[parameters('vnetname')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressprefixes": [
+                        "[variables('addressprefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetname')]",
+                        "properties": {
+                            "addressprefix": "[variables('subnetprefix')]"
+
+                        }
+                    }
+                ]
+            }
+
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat('knic', copyindex())]",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "knicloop",
+                "count": "[parameters('instancecount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', 'knpubIP', copyindex())]",
+                "[concat('Microsoft.Network/virtualNetworks/', variables('virtualnetworkname'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat('knpubIP', copyindex()))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Compute/VirtualMachines",
+            "name": "[concat('knvmloop', copyindex())]",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "knvmloop",
+                "count":  "[parameters('instancecount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/StorageAccounts/', parameters('storageaccountname'))]",
+                "[concat('Microsoft.Network/networkinterfaces/', 'knic', copyindex())]"
+            ],
+            "properties": {
+                "hardwareprofile": {
+                    "vmsize": "[parameters('vmsize')]"
+                },
+                "osprofile": {
+                    "computername": "[concat('knvm', copyindex())]",
+                    "adminusername": "[parameters('username')]",
+                    "adminpassword": "[parameters('pwd')]"
+                },
+                "storageprofile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagepublisher')]",
+                        "offer": "[variables('imageoffer')]",
+                        "version": "latest",
+                        "sku": "[variables('imagesku')]"
+                    },
+                    "osdisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://', parameters('storageaccountname'), '.blob.core.windows.net/', parameters('storageaccountcontainername'), '/', 'osdisk', copyindex(), '.vhd')]"
+                        },
+                        "caching": "readwrite",
+                        "createoption": "FromImage"
+                    }
+
+                },
+                "networkprofile": {
+                    "networkinterfaces": [
+                        {
+
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces', concat('knic', copyindex()))]"
+                        }
+                    ]
+                }
+
+
+            }
+        }
+
+    ],
+    "outputs": {
+    }
+}
+

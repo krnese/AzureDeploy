@@ -1,0 +1,76 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetname": {
+            "type": "string",
+            "defaultValue": "ccvnet01",
+            "metadata": {
+                "description": "name of your virtual network."
+            }
+        },
+        "subnetname": {
+            "type": "string",
+            "defaultValue": "ccvsubnet",
+            "metadata": {
+                "description": "specify name of your virtual subnet."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "west europe",
+            "allowedValues": [
+                "north europe",
+                "west europe",
+                "west us",
+                "east us"
+            ],
+            "metadata": {
+                "description": "Specify location of your vNet"
+            }
+        },
+        "vnetaddressprefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.0/16",
+            "metadata": {
+                "description": "specify address prefix for your vNet, like 10.0.0.0/16"
+            }
+        },
+        "subnetaddressprefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.0/24",
+            "metadata": {
+                "description": "Specify address prefix for your subnet, like 10.0.0.0/24"
+            }
+        }
+    },
+    "variables": {
+        "virtualnetID": "[resourceId('Microsoft.Network/virtualnetworks', parameters('vnetname'))]",
+        "subnetreference": "[concat(variables('virtualnetID'), '/subnets/', parameters('subnetname'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/virtualnetworks",
+            "name": "[parameters('vnetname')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetaddressprefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnetname')]",
+                        "properties": {
+                            "addressprefix":  "[parameters('subnetaddressprefix')]"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
