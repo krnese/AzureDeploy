@@ -4,7 +4,7 @@
 
 <a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/krnese/AzureDeploy/master/DSCExample/azuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
-
+</a>
 
 Example template on how to deploy a web server into Azure IaaS using Azure Resource Manager with DSC VM Extension
 
