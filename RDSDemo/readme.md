@@ -3,6 +3,7 @@
 
 <a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/krnese/AzureDeploy/master/RDSDemo/azuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
+</a>
 
 Example template on how to deploy RDS using ARM
 
