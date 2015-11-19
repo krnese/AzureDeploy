@@ -1,7 +1,7 @@
 # Azure ARM Template using DSC VM Extension with VM Scale Sets for provisioning scalable web servers.
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FLumagate%2FCSP-SI-Onboarding%2Fmaster%2F4%20-%20Hybrid%20Service%20Provider%20Foundation%20for%20IaaS%2FARMTemplates%2Fazuredeploy.json) 
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2FAzureDeploy%2Fmaster%2FVMScaleSets%2Fazuredeploy.json) 
 
-<a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/Lumagate/CSP-SI-Onboarding/master/4%20-%20Hybrid%20Service%20Provider%20Foundation%20for%20IaaS/ARMTemplates/azuredeploy.json" target="_blank">
+<a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/krnese/AzureDeploy/master/VMScaleSets/azuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
