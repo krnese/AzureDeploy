@@ -40,7 +40,7 @@
     },
     "variables": {
         "storagetemplate": "https://github.com/CarlGT/AzureDeploy/blob/master/Basic/SharedStorageTemplate.json",
-      "networktemplate": "https://github.com/CarlGT/AzureDeploy/blob/master/Basic/SharedNetworkTemplate.json",
+        "networktemplate": "https://github.com/CarlGT/AzureDeploy/blob/master/Basic/SharedNetworkTemplate.json",
         "nicname": "cgtnic101",
         "publicnicname": "cgtpubnic101",
         "imagepublisher": "MicrosoftWindowsServer",

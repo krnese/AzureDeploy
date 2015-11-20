@@ -3,16 +3,16 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmname": {
-            "value": "azurevm01"
+            "value": "CGTTest01"
         },
         "username": {
-            "value": "azureadmin"
+            "value": "admin1"
         },
         "vmsize": {
             "value": "Standard_A2"
         },
         "storageblobname": {
-            "value": "azureblob01"
+            "value": "testblob01"
         }        
     }
 }
