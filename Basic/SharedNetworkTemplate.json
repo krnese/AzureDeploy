@@ -12,11 +12,11 @@
         },
         "addressprefix": {
             "type": "string",
-            "defaultValue": "192.168.0.0/16"
+            "defaultValue": "10.1.0.0/16"
         },
         "subnetprefix": {
             "type": "string",
-            "defaultValue": "192.168.0.0/24"
+            "defaultValue": "10.1.0.0/24"
         },
         "location": {
             "type": "string",
