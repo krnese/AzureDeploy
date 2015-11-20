@@ -4,11 +4,11 @@
     "parameters": {
         "vnetname": {
             "type": "string",
-            "defaultValue": "knvnet01"
+            "defaultValue": "cgtvnet01"
         },
         "subnetname": {
             "type": "string",
-            "defaultvalue": "knsubnet01"
+            "defaultvalue": "cgtsubnet01"
         },
         "addressprefix": {
             "type": "string",

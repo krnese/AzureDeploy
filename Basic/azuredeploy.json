@@ -4,7 +4,7 @@
     "parameters": {
         "vmname": {
             "type": "string",
-            "defaultValue": "knvm01"
+            "defaultValue": "CGTTest01"
         },
         "vmsize": {
             "type": "string",
@@ -16,7 +16,7 @@
         },
         "username": {
             "type": "string",
-            "defaultValue": "knadm"
+            "defaultValue": "Admin1"
         },
         "password": {
             "type": "securestring"
@@ -27,7 +27,7 @@
         },
         "myvnet": {
             "type": "string",
-            "defaultValue": "knvnet07"
+            "defaultValue": "cgtvnet01"
         },
         "addressprefix": {
             "type": "string",
@@ -39,10 +39,10 @@
         }
     },
     "variables": {
-        "storagetemplate": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/Basic/SharedStorageTemplate.json",
-        "networktemplate": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/Basic/SharedNetworkTemplate.json",
-        "nicname": "knnic202",
-        "publicnicname": "knpub202test",
+        "storagetemplate": "https://github.com/CarlGT/AzureDeploy/blob/master/Basic/SharedStorageTemplate.json",
+      "networktemplate": "https://github.com/CarlGT/AzureDeploy/blob/master/Basic/SharedNetworkTemplate.json",
+        "nicname": "cgtnic101",
+        "publicnicname": "cgtpubnic101",
         "imagepublisher": "MicrosoftWindowsServer",
         "imageoffer": "WindowsServer",
         "ipallocation": "Dynamic",
