@@ -23,7 +23,7 @@
         },
         "storageblobname": {
             "type": "string",
-            "defaultValue": "azureblob01"
+            "defaultValue": "testblob01"
         },
         "myvnet": {
             "type": "string",
