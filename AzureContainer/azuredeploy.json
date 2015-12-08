@@ -235,7 +235,7 @@
                         "typeHandlerVersion": "1.4",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "fileUris": [ "https://oliviator01.blob.core.windows.net/containerdemo/Container.ps1" ],
+                            "fileUris": [ "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainer/Container.ps1" ],
                             "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','Container.ps1 ', '-count ', parameters('count'))]"
                         }
                     }
