@@ -57,12 +57,6 @@
             "metadata": {
                 "description": "type the name of the vNet for this container host"
             }
-        },
-        "count": {
-            "type": "int",
-            "metadata": {
-                "description": "instance count of containers deployed on the container host"
-            }
         }
     },
     "variables": {
