@@ -22,7 +22,7 @@ Start-Container $container -Verbose
 
 # Install Web-Server within the container
 
-Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools } 
+Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools } -Verbose
 
 # Stop the newly created Container
 
