@@ -22,6 +22,8 @@ Start-Container $container -Verbose
 
 # Install Web-Server within the container
 
+start-sleep -Seconds 60
+
 Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools } 
 
 # Stop the newly created Container
