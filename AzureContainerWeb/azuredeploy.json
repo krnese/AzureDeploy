@@ -266,7 +266,7 @@
     "outputs": {
         "ContainerURL": {
             "type": "string",
-            "value": "[concat('http://', parameters('containerhost'), '.', '(ResourceGroup().location)', '.', 'cloudapp.azure.com')]"
+            "value": "[concat('http://', parameters('containerhost'), '.', ('ResourceGroup().location'), '.', 'cloudapp.azure.com')]"
         }
     }
 }
