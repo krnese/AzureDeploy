@@ -123,8 +123,8 @@
                             "direction": "Inbound",
                             "protocol": "[variables('protocol')]",
                             "priority": "1100"
-                        }  
-                    }                                                                  
+                        }
+                    }
                 ]
             }
         },
@@ -161,7 +161,11 @@
             "apiVersion": "2015-06-15",
             "location": "[resourceGroup().location]",
             "properties": {
-                "publicIPAllocationMethod": "dynamic"
+                "publicIPAllocationMethod": "dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[concat(parameters('containerhost'))]"
+
+                }
             }
         },
         {
@@ -181,14 +185,14 @@
                             "privateIPAllocationMethod": "dynamic",
                             "publicIPAddress": {
                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicnicname'))]"
-                            },                            
+                            },
                             "subnet": {
-                                "id": "[variables('subnetref')]"                                
+                                "id": "[variables('subnetref')]"
                             }
                         }
-                    }                    
+                    }
                 ]
-            }            
+            }
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
@@ -252,11 +256,17 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [ "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainerWeb/container-web-server.ps1" ],
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','Container-web-server.ps1 ', '-containername ', parameters('containername'))]"
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','container-web-server.ps1 ', '-containername ', parameters('containername'))]"
                         }
                     }
                 }
             ]
         }
-    ]
-}                                          
+    ],
+    "outputs": {
+        "ContainerURL": {
+            "type": "string",
+            "value": "[concat('http://', parameters('containerhost'), '.', 'ResourceGroup().location', '.', 'cloudapp.azure.com')]"
+        }
+    }
+}
