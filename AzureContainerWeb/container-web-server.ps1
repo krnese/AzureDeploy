@@ -22,11 +22,11 @@ Start-Container $container -Verbose
 
 # Install Web-Server within the container + adding some sleep so that the newly created container get the chance to wake up
 
-start-sleep -Seconds 60
+start-sleep -Seconds 120
 
 Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools } 
 
-# Touch the container again and repeat the process (BUG)
+start-sleep -seconds 60
 
 Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools }  
 
