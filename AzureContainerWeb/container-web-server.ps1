@@ -20,15 +20,11 @@ $container = New-Container -Name "Temp" -ContainerImageName $image.Name -Contain
 
 Start-Container $container -Verbose
 
-# Install Web-Server within the container
+# Install Web-Server within the container + adding some sleep so that the newly created container get the chance to wake up
 
-<<<<<<< HEAD
 start-sleep -Seconds 60
 
 Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools } 
-=======
-Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools } -Verbose
->>>>>>> 034b4f1a5b6ab2d6ca3a3e20e0312b73a90d5026
 
 # Stop the newly created Container
 
