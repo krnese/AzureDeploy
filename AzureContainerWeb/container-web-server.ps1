@@ -26,6 +26,10 @@ start-sleep -Seconds 60
 
 Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools } 
 
+# Touch the container again and repeat the process (BUG)
+
+Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools }  
+
 # Stop the newly created Container
 
 Stop-Container -Container $container -Verbose
