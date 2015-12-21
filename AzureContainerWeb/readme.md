@@ -1,4 +1,4 @@
-# Azure Windows Server Containers 
+# Azure Windows Server Containers with IIS
 ARM Template using Custom Script Extension to create and install IIS within a Windows Server Container on Windows Server 2016 - Technical Preview 4:
 - Spin up a new Windows Server container based on the existing image
 - Install Web-Server within the newly created container
