@@ -26,6 +26,8 @@ start-sleep -Seconds 120
 
 Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools } 
 
+# Repeating the process and touch the Web-Server role (bug)
+
 start-sleep -seconds 60
 
 Invoke-Command -ContainerName $container.Name -RunAsAdministrator -ScriptBlock { Install-WindowsFeature -Name Web-Server -IncludeManagementTools }  
