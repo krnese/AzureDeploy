@@ -194,74 +194,88 @@
                 ]
             }
         },
-        {
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('containerhost')]",
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[parameters('containerhost')]",
+        "apiVersion": "2015-06-15",
+        "location": "[resourceGroup().location]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkInterfaces/', variables('nicname'))]",
+          "[concat('Microsoft.Storage/StorageAccounts/', parameters('storageaccountname'))]",
+          "[resourceId('Microsoft.Compute/AvailabilitySets', 'availabilityset')]"
+        ],
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[parameters('vmSize')]"
+          },
+          "availabilitySet": {
+            "id": "[resourceId('Microsoft.Compute/AvailabilitySets', 'availabilityset')]"
+          },
+          "osProfile": {
+            "adminPassword": "[parameters('adminpwd')]",
+            "adminUsername": "[parameters('adminaccount')]",
+            "computerName": "[parameters('containerhost')]",
+            "windowsConfiguration": {
+              "enableAutomaticUpdates": true,
+              "provisionVMAgent": true
+            }
+          },
+          "storageProfile": {
+            "osDisk": {
+              "createOption": "fromImage",
+              "name": "conhost",
+              "caching": "readWrite",
+              "vhd": {
+                "uri": "[concat('http://', parameters('storageaccountname'), '.blob.core.windows.net/', 'vhds', '/', 'conhost.vhd')]"
+              }
+            },
+            "imageReference": {
+              "offer": "[variables('imageoffer')]",
+              "publisher": "[variables('imagepublisher')]",
+              "sku": "[variables('imagesku')]",
+              "version": "latest"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicname'))]"
+              }
+            ]
+          }
+        },
+        "resources": [
+          {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('containerhost'),'/CustomScriptExtension')]",
             "apiVersion": "2015-06-15",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', variables('nicname'))]",
-                "[concat('Microsoft.Storage/StorageAccounts/', parameters('storageaccountname'))]"
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'))]"
             ],
             "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[parameters('vmSize')]"
-                },
-                "osProfile": {
-                    "adminPassword": "[parameters('adminpwd')]",
-                    "adminUsername": "[parameters('adminaccount')]",
-                    "computerName": "[parameters('containerhost')]",
-                    "windowsConfiguration": {
-                        "enableAutomaticUpdates": true,
-                        "provisionVMAgent": true
-                    }
-                },
-                "storageProfile": {
-                    "osDisk": {
-                        "createOption": "fromImage",
-                        "name": "conhost",
-                        "caching": "readWrite",
-                        "vhd": {
-                            "uri": "[concat('http://', parameters('storageaccountname'), '.blob.core.windows.net/', 'vhds', '/', 'conhost.vhd')]"
-                        }
-                    },
-                    "imageReference": {
-                        "offer": "[variables('imageoffer')]",
-                        "publisher": "[variables('imagepublisher')]",
-                        "sku": "[variables('imagesku')]",
-                        "version": "latest"
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicname'))]"
-                        }
-                    ]
-                }
-            },
-            "resources": [
-                {
-                    "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "[concat(parameters('containerhost'),'/CustomScriptExtension')]",
-                    "apiVersion": "2015-06-15",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Compute",
-                        "type": "CustomScriptExtension",
-                        "typeHandlerVersion": "1.4",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "fileUris": [ "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainerWeb/container-web-server.ps1" ],
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','container-web-server.ps1 ', '-containername ', parameters('containername'))]"
-                        }
-                    }
-                }
-            ]
+              "publisher": "Microsoft.Compute",
+              "type": "CustomScriptExtension",
+              "typeHandlerVersion": "1.4",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                "fileUris": [ "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainerWeb/container-web-server.ps1" ],
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','container-web-server.ps1 ', '-containername ', parameters('containername'))]"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "Microsoft.Compute/availabilitySets",
+        "apiVersion": "2015-06-15",
+        "location": "[resourceGroup().location]",
+        "name": "availabilityset",
+        "properties": {
+          "platformFaultDomainCount": "2",
+          "platformUpdateDomainCount": "5"          
         }
+      }
     ],
     "outputs": {
         "ContainerURL": {
