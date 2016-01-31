@@ -1,0 +1,101 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageaccountname": {
+      "type": "string",
+      "defaultValue": "knstorage11",
+      "allowedValues": [
+        "knstorage11",
+        "knstorage12"
+      ],
+      "metadata": {
+        "Description": "Specify Storage Account name"
+      }
+    },
+    "storagetype": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS"
+      ],
+      "metadata": {
+        "Description": "Specify Storage Account type"
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "knvnet10",
+      "metadata": {
+        "Description": "Specify the vNet name"
+      }
+    },
+    "addressPrefix": {
+      "type": "string",
+      "defaultvalue": "192.168.0.0/16",
+      "metadata": {
+        "Description": "Specify address prefix for vNet"
+      }
+    },
+    "subnetname": {
+      "type": "string",
+      "defaultValue": "subnet-1",
+      "metadata": {
+        "Description": "Specify the subnet name"
+      }
+    },
+    "subnetPrefix": {
+      "type": "string",
+      "defaultValue": "192.168.0.0/24",
+      "metadata": {
+        "Description": "Specify address prefix for subnet"
+      }
+    }
+  },
+  "variables": {
+    "storagename": "[toLower(concat(parameters('storageaccountname'), uniqueString(resourceGroup().id)))]",
+    "location": "[ResourceGroup().location]",
+    "apiVersions": {
+      "storage": {
+        "storageAccounts": "2015-06-15"
+      },
+      "network": {
+        "virtualnetworks": "2015-06-15"
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersions').storage.storageAccounts]",
+      "location": "[variables('location')]",
+      "name": "[variables('storagename')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "properties": {
+        "accountType": "[parameters('storagetype')]"
+      }
+    },
+    {
+      "apiVersion": "[variables('apiVersions').network.virtualnetworks]",
+      "location": "[variables('location')]",
+      "name": "[parameters('vnetname')]",
+      "type": "Microsoft.Network/virtualnetworks",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('addressprefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('subnetname')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnetprefix')]"              
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": { }
+}

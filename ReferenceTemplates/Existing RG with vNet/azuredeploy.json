@@ -16,6 +16,17 @@
         "Description": "Assing a storage account name. This will generate a unique storage account name"
       }
     },
+    "storagetype": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS"
+      ],
+      "metadata": {
+        "Description": "Specify the storage type for your storage account"
+      }
+    },
     "vNetResourceGroup": {
       "type": "string",
       "metadata": {
@@ -72,11 +83,9 @@
     "osType": {
       "publisher": "MicrosoftWindowsServer",
       "offer": "WindowsServer",
-      "sku": "2012-R2-Datacenter",
-      "version": "latest"
+      "sku": "2012-R2-Datacenter"
     },
     "ipallocation": "Dynamic",
-    "storagetype": "Standard_LRS",
     "extensionname": "CustomScriptExtension"
   },
   "resources": [
@@ -86,7 +95,7 @@
       "location": "[resourceGroup().location]",
       "name": "[variables('storagename')]",
       "properties": {
-        "accountType": "[variables('storagetype')]"
+        "accountType": "[parameters('storagetype')]"
       }
     },
     {
