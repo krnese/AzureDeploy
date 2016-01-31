@@ -10,4 +10,4 @@ Add-AzureAccount -Credential (get-credential)
 
 Switzh-AzureMode -Name AzureResourceManager
 
-New-AzureResourceGroup -Name AzureNested01 -DeploymentName Dep01 -Location "west europe" -TemplateUri "https://raw.githubusercontent.com/krnese/azuredeploy/master/Basic/azuredeploy.json" -vmname AzureDemo01 -storageblobname azurestorage0001 -username azureadmin -Verbose
+New-AzureRmResourceGroupDeployment -Name Dep01 -ResourceGroupName (New-AzureRmResourceGroup -Name nested01 -Location "west europe").ResourceGroupName -TemplateUri "https://raw.githubusercontent.com/krnese/azuredeploy/master/Basic/azuredeploy.json" -vmname AzureDemo01 -storageblobname azurestorage0001 -username azureadmin -Verbose
