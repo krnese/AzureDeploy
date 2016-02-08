@@ -256,7 +256,7 @@
             "properties": {
               "publisher": "Microsoft.Compute",
               "type": "CustomScriptExtension",
-              "typeHandlerVersion": "1.4",
+              "typeHandlerVersion": "1.7",
               "autoUpgradeMinorVersion": true,
               "settings": {
                 "fileUris": [ "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainerWeb/container-web-server.ps1" ],
