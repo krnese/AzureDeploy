@@ -78,6 +78,24 @@
       "metadata": {
         "Description": "Assign a name for the public network interface"
       }
+    },
+    "imagesku": {
+      "type": "string",
+      "defaultValue": "2016-Technical-Preview-with-Containers",
+      "allowedValues": [
+        "2016-Technical-Preview-with-Containers",
+        "2012-R2-Datacenter"
+      ],
+      "metadata": {
+        "Description": "Select the SKU"
+      }
+    },
+    "datadiskname": {
+      "type": "string",
+      "defaultValue": "datadisk",
+      "metadata": {
+        "Description": "Assign name of default data disk"
+      }
     }
   },
   "variables": {
@@ -102,7 +120,7 @@
     "osType": {
       "publisher": "MicrosoftWindowsServer",
       "offer": "WindowsServer",
-      "sku": "2012-R2-Datacenter"
+      "sku": "[parameters('imagesku')]"
     },
     "ipallocation": "Dynamic",
     "extensionname": "CustomScriptExtension"
@@ -199,6 +217,18 @@
               "uri": "[concat('http://', variables('storagename'), '.blob.core.windows.net/', 'vhds', '/', 'myvm.vhd')]"
             }
           },
+          "dataDisks": [
+            {
+              "vhd": {
+                "uri": "[concat('http://', variables('storagename'), '.blob.core.windows.net/vhds', '/', parameters('DataDiskName'),'-F.vhd')]"
+              },
+              "name": "[concat(parameters('DataDiskName'),'-F')]",
+              "caching": "None",
+              "createOption": "empty",
+              "diskSizeGB": "1023",
+              "lun": 0
+            }
+          ],
           "imageReference": {
             "offer": "[variables('osType').offer]",
             "publisher": "[variables('osType').publisher]",
