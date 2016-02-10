@@ -57,6 +57,27 @@
       "metadata": {
         "Description": "assing a secure password for the admin user"
       }
+    },
+    "availabilitySet": {
+      "type": "string",
+      "defaultValue": "VMAVSet01",
+      "metadata": {
+        "Description": "Assign a name for the availability set"
+      }
+    },
+    "nicname": {
+      "type": "string",
+      "defaultValue": "nic1",
+      "metadata": {
+        "Description": "Assign a name for the virtual network interface"
+      }
+    },
+    "pipname": {
+      "type": "string",
+      "defaultValue": "pip1",
+      "metadata": {
+        "Description": "Assign a name for the public network interface"
+      }
     }
   },
   "variables": {
@@ -78,8 +99,6 @@
         "networkinterface": "2015-06-15"
       }
     },
-    "nicname": "nic1",
-    "publicnicname": "PIP1",
     "osType": {
       "publisher": "MicrosoftWindowsServer",
       "offer": "WindowsServer",
@@ -99,12 +118,22 @@
       }
     },
     {
+      "apiVersion": "[variables('ApiVersion').Compute.virtualmachines]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[resourceGroup().location]",
+      "name": "[Parameters('availabilitySet')]",
+      "properties": {
+        "platformFaultDomainCount": "2",
+        "platformUpdateDomainCount": "5"
+      }
+    },
+    {
       "apiVersion": "[variables('apiVersion').network.networkinterface]",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('nicname')]",
+      "name": "[Parameters('nicname')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicnicname'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('pipname'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -113,7 +142,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses/', variables('publicnicname'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses/', parameters('pipname'))]"
               },
               "subnet": {
                 "id": "[variables('subnetref')]"
@@ -126,7 +155,7 @@
     {
       "apiVersion": "[variables('apiversion').network.publicipaddress]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('publicnicname')]",
+      "name": "[Parameters('pipname')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "dynamic",
@@ -141,8 +170,9 @@
       "name": "[parameters('vmname')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('nicname'))]",
-        "[concat('Microsoft.Storage/StorageAccounts/', variables('storagename'))]"
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('nicname'))]",
+        "[concat('Microsoft.Storage/StorageAccounts/', variables('storagename'))]",
+        "[concat('Microsoft.Compute/availabilitySets/', parameters('availabilitySet'))]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -156,6 +186,9 @@
             "enableAutomaticUpdates": true,
             "provisionVMAgent": true
           }
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/AvailabilitySets', parameters('availabilitySet'))]"
         },
         "storageProfile": {
           "osDisk": {
@@ -176,7 +209,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicname'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces/', parameters('nicname'))]"
             }
           ]
         }
