@@ -275,7 +275,8 @@
             "apiVersion": "2015-06-15",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'))]"
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'))]",
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'),'/extensions/Microsoft.EnterpriseCloud.Monitoring.MicrosoftMonitoringAgent')]"
             ],
             "properties": {
               "publisher": "Microsoft.Compute",
