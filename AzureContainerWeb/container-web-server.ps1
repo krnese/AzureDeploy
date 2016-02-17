@@ -7,7 +7,7 @@ Param (
     [string]$AAendpoint,
 
     [Parameter(Mandatory=$true)]
-    [string$token
+    [string]$token
 )
 
 # Waiting for the Custom Extension to complete before proceeding...
