@@ -74,3 +74,4 @@ Import-Module HybridRegistration.psd1
 
 Add-HybridRunbookWorker –Name OMSWorker -EndPoint $AAendpoint -Token $token
 
+# ENd
