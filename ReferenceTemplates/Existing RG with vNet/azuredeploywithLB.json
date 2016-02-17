@@ -96,7 +96,20 @@
       "metadata": {
         "Description": "Assign name of default data disk"
       }
-    }
+    },
+    "lbname": {
+      "type": "string",
+      "defaultValue": "lb01",
+      "metadata": {
+        "Description": "Assign a name for the load balancer"
+      }
+    },
+     "dnsNameforLBIP": {
+      "type": "string",
+      "defaultValue": "evryadfs01",
+      "metadata": {
+       "description": "DNS for Load Balancer IP"
+      }
   },
   "variables": {
     "storagename": "[toLower(concat(parameters('storageaccountname'), uniqueString(resourceGroup().id)))]",
@@ -123,7 +136,13 @@
       "sku": "[parameters('imagesku')]"
     },
     "ipallocation": "Dynamic",
-    "extensionname": "CustomScriptExtension"
+    "extensionname": "CustomScriptExtension",
+    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('pipname'))]",
+    "numberOfInstances": 2,
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
+    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
+    "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
+    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
   },
   "resources": [
     {
@@ -143,6 +162,90 @@
       "properties": {
         "platformFaultDomainCount": "2",
         "platformUpdateDomainCount": "5"
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "name": "[parameters('lbName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('pipname'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "LoadBalancerFrontEnd",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('publicIPAddressID')]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "BackendPool1"
+          }
+        ],
+        "inboundNatRules": [
+          {
+            "name": "RDP-VM0",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 50001,
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          },
+          {
+            "name": "ADFS",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false
+            }
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "LBRule",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbPoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "probe": {
+                "id": "[variables('lbProbeID')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcpProbe",
+            "properties": {
+              "protocol": "tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
       }
     },
     {

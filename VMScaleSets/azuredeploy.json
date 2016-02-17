@@ -4,7 +4,7 @@
     "parameters": {
         "resourceLocation": {
             "type": "string",
-            "defaultValue": "West europe",
+            "defaultValue": "West Europe",
             "allowedValues": [
                 "East US",
                 "East US 2",
@@ -30,12 +30,12 @@
             "type": "string",
             "defaultValue": "Standard_A2",
             "metadata": {
-                "description": "VM size for the VM Scale Set + the mgmt VM"
+                "description": "VM size for the VM Scale Set + the jump host"
             }
         },
         "windowsOSVersion": {
             "type": "string",
-            "defaultValue": "2012-R2-Datacenter",
+            "defaultValue": "Windows-Server-Technical-Preview",
             "metadata": {
                 "description": "The Windows Server version for the VM. This will pick a fully patched image of this given Windows version"
             }
@@ -68,12 +68,38 @@
                 "description": "Admin password on all VMs."
             }
         },
-        "mgmtstorage": {
-            "type": "string",
-            "metadata": {
-                "description": "Storage account name must be unique, so specify a suffix that will be used for mgmt VM storage account."
-            }
+      "jumphostname": {
+        "type": "string",
+        "metadata": {
+          "description": "Name of your mgmt jump host"
         }
+      },
+      "OMSWorkspaceID": {
+        "type": "string",
+        "metadata": {
+          "Description": "The ID of your OMS Workspace to join the instances"
+        }
+      },
+      "OMSWorkspaceKey": {
+        "type": "string",
+        "metadata": {
+          "Description": "The Primary Key of your OMS Workspace"
+        }
+      },
+      "modulesUrl": {
+        "type": "string",
+        "defaultValue": "https://github.com/krnese/AzureDeploy/raw/master/DSCExample/azureweb.ps1.zip",
+        "metadata": {
+          "Description": "repository that contains the DSC configuration"
+        }
+      },
+      "configurationfunction": {
+        "type": "string",
+        "defaultValue": "azureweb.ps1\\mywebserver",
+        "metadata": {
+          "Description": "DSC function to apply"
+        }
+      }
     },
     "variables": {
         "apiVersion": "2015-06-15",
@@ -89,7 +115,7 @@
             "[concat(uniqueString(concat(resourceGroup().id, deployment().name, variables('newStorageAccountSuffix'), '4')))]"
         ],
         "vhdContainerName": "[concat(variables('namingInfix'), 'vhd')]",
-        "mgmtvmstorage": "[concat(parameters('mgmtstorage'), 'mgmt')]",
+        "mgmtvmstorage": "[concat(uniqueString(concat(resourceGroup().id, parameters('jumphostname'))))]",
         "osDiskName": "[concat(variables('namingInfix'), 'osdisk')]",
         "addressPrefix": "192.168.0.0/16",
         "subnetPrefix": "192.168.0.0/24",
@@ -110,10 +136,9 @@
         "ipConfigName": "[concat(variables('namingInfix'), 'ipconfig')]",
         "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
         "nsgname": "vmssnsg",
-        "vmvnicname": "vmssmgmtnic02",
-        "vmmgmtpubIP": "mypubip02",
+        "vmvnicname": "vmssnic01",
+        "vmmgmtpubIP": "mypubip01",
         "mgmtosdisk": "windisk",
-        "mgmtVmName": "mgmtvm",
         "osType": {
             "publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
@@ -282,52 +307,75 @@
                 ]
             }
         },
-        {
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('mgmtVmName')]",
-            "location": "[parameters('resourceLocation')]",
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[Parameters('jumphostname')]",
+        "location": "[parameters('resourceLocation')]",
+        "apiVersion": "[variables('apiVersion')]",
+        "dependsOn": [
+          "[concat('Microsoft.Storage/storageAccounts/', variables('mgmtvmstorage'))]",
+          "[concat('Microsoft.Network/networkInterfaces/', variables('vmvnicname'))]"
+        ],
+        "properties": {
+          "osProfile": {
+            "adminPassword": "[parameters('adminPassword')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "computerName": "[Parameters('jumphostname')]",
+            "windowsConfiguration": {
+              "enableAutomaticUpdates": true
+            }
+          },
+          "storageProfile": {
+            "osDisk": {
+              "name": "[variables('mgmtosdisk')]",
+              "vhd": {
+                "uri": "[concat('http://', variables('mgmtvmstorage'), '.blob.core.windows.net/', 'vhds', '/', 'osdisk.vhd')]"
+              },
+              "createOption": "FromImage",
+              "caching": "readwrite"
+            },
+            "imageReference": {
+              "publisher": "MicrosoftWindowsServer",
+              "offer": "WindowsServer",
+              "sku": "Windows-Server-Technical-Preview",
+              "version": "latest"
+            }
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkinterfaces', variables('vmvnicname'))]"
+              }
+            ]
+          },
+          "hardwareProfile": {
+            "vmSize": "[parameters('vmSku')]"
+          }
+        },
+        "resources": [
+          {
             "apiVersion": "[variables('apiVersion')]",
+            "name": "[concat(parameters('jumphostname'),'/OMS')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[Parameters('resourceLocation')]",
             "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('mgmtvmstorage'))]",
-                "[concat('Microsoft.Network/networkInterfaces/', variables('vmvnicname'))]"
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('jumphostname'))]"
             ],
             "properties": {
-                "osProfile": {
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "computerName": "vmssmgmtvm01",
-                    "windowsConfiguration": {
-                        "enableAutomaticUpdates": true
-                    }
-                },
-                "storageProfile": {
-                    "osDisk": {
-                        "name": "[variables('mgmtosdisk')]",
-                        "vhd": {
-                            "uri": "[concat('http://', variables('mgmtvmstorage'), '.blob.core.windows.net/', 'vhds', '/', 'osdisk.vhd')]"
-                        },
-                        "createOption": "FromImage",
-                        "caching": "readwrite"
-                    },
-                    "imageReference": {
-                        "publisher": "MicrosoftWindowsServer",
-                        "offer": "WindowsServer",
-                        "sku": "2012-R2-Datacenter",
-                        "version": "latest"
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkinterfaces', variables('vmvnicname'))]"
-                        }
-                    ]
-                },
-                "hardwareProfile": {
-                    "vmSize": "[parameters('vmSku')]"
-                }
-            }
-        },
+              "publisher": "Microsoft.EnterpriseCloud.Monitoring",                           
+                 "type": "MicrosoftMonitoringAgent",
+                 "typeHandlerVersion": "1.0",
+                 "autoUpgradeMinorVersion": true,
+                 "settings": {
+                    "workspaceID": "[Parameters('OMSWorkspaceID')]"
+                              },
+                    "protectedSettings": {
+                         "workspacekey": "[Parameters('OMSWorkspaceKey')]"
+                              }
+                          }                          
+          }
+        ]
+      },      
         {
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "name": "[variables('namingInfix')]",
@@ -369,23 +417,36 @@
                     },
                  "extensionProfile": {
                         "extensions": [
-                            {
-                                "name": "dscExtension",
+                          {
+                            "name": "dscExtension",
+                            "properties": {
+                              "publisher": "Microsoft.Powershell",
+                              "type": "DSC",
+                              "typeHandlerversion": "2.7",
+                              "autoUpgradeMinorVersion": "true",
+                              "settings": {
+                                "ModulesUrl": "[Parameters('modulesUrl')]",
+                                "configurationfunction": "[Parameters('configurationfunction')]",
+                                "sastoken": "",
                                 "properties": {
-                                    "publisher": "Microsoft.Powershell",
-                                    "type": "DSC",
-                                    "typeHandlerversion": "2.7",
-                                    "autoUpgradeMinorVersion": "true",
-                                    "settings": {
-                                        "ModulesUrl": "https://github.com/krnese/AzureDeploy/raw/master/DSCExample/azureweb.ps1.zip",
-                                        "configurationfunction": "azureweb.ps1\\mywebserver",
-                                        "sastoken": "",
-                                        "properties": {
-                                            "servername": "localhost"
-                                        }
-                                    }
+                                  "servername": "localhost"
                                 }
+                              }
+                            },
+                            "name": "OMS",
+                            "properties": {
+                              "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                              "type": "MicrosoftMonitoringAgent",
+                              "typeHandlerVersion": "1.0",
+                              "autoUpgradeMinorVersion": true,
+                              "settings": {
+                                "workspaceID": "[Parameters('OMSWorkspaceID')]"
+                              },
+                              "protectedSettings": {
+                                "workspacekey": "[Parameters('OMSWorkspaceKey')]"
+                              }
                             }
+                          }
                         ]
                     },
                     "osProfile": {

@@ -1,7 +1,13 @@
 ﻿
 Param (
     [Parameter(Mandatory=$true)]
-    [string]$containername
+    [string]$containername,
+
+    [Parameter(Mandatory=$true)]
+    [string]$AAendpoint,
+
+    [Parameter(Mandatory=$true)]
+    [string$token
 )
 
 # Waiting for the Custom Extension to complete before proceeding...
@@ -58,4 +64,10 @@ if (!(Get-NetFirewallRule | where {$_.Name -eq "TCP80"})) {
     New-NetFirewallRule -Name "TCP80" -DisplayName "HTTP on TCP/80" -Protocol tcp -LocalPort 80 -Action Allow -Enabled True
 }
 
-Write-Host "You are done :-)"
+Start-Sleep 80
+
+# Import Hybrid Registration
+
+Import-Module HybridRegistration.psd1
+
+Add-HybridRunbookWorker –Name OMSWorker -EndPoint $AAendpoint -Token $token

@@ -38,7 +38,7 @@
         },
         "storageAccountName": {
             "type": "string",
-            "defaultValue": "uniquestorage",
+            "defaultValue": "uniquestoragekn",
             "metadata": {
                 "description": "type the name of the storage account you will use for the containerhost"
             }
@@ -51,13 +51,37 @@
                 "Standard_GRS"
             ]
         },
-        "vNetName": {
-            "type": "string",
-            "defaultValue": "containervNet",
-            "metadata": {
-                "description": "type the name of the vNet for this container host"
-            }
+      "vNetName": {
+        "type": "string",
+        "defaultValue": "containervNet",
+        "metadata": {
+          "description": "type the name of the vNet for this container host"
         }
+      },
+      "OMSWorkspaceID": {
+        "type": "string",
+        "metadata": {
+          "Description": "Type the OMS Workspace ID"
+        }
+      },
+      "OMSWorkspaceKey": {
+        "type": "string",
+        "metadata": {
+          "Description": "Type the key for the OMS Workspace"
+        }
+      },
+      "AAEndpoint": {
+        "type": "string",
+        "metadata": {
+          "Description": "Type the AA endpoint"
+        }
+      },
+      "Token": {
+        "type": "string",
+        "metadata": {
+          "Description": "Type the token for AA"
+        }
+      }
     },
     "variables": {
         "virtualNetworkName": "[parameters('vNetName')]",
@@ -260,7 +284,29 @@
               "autoUpgradeMinorVersion": true,
               "settings": {
                 "fileUris": [ "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainerWeb/container-web-server.ps1" ],
-                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','container-web-server.ps1 ', '-containername ', parameters('containername'))]"
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','container-web-server.ps1 ', '-containername ', parameters('containername'), '-AAendpoint ', parameters('AAendpoint'), '-token ', parameters('token'))]"
+              }
+            }
+          },
+          {
+            "apiVersion": "2015-06-15",
+            "name": "[concat(parameters('containerhost'),'/OMS')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'))]",
+
+            ],
+            "properties": {
+              "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+              "type": "MicrosoftMonitoringAgent",
+              "typeHandlerVersion": "1.0",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                "workspaceID": "[Parameters('OMSWorkSpaceID')]"
+              },
+              "protectedSettings": {
+                "workspacekey": "[Parameters('OMSWorkspaceKey')]"
               }
             }
           }
