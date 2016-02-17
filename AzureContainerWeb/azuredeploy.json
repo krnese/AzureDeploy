@@ -276,7 +276,7 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
               "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'))]",
-              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'),'/extensions/Microsoft.EnterpriseCloud.Monitoring.MicrosoftMonitoringAgent')]"
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'), '/extensions/Microsoft.EnterpriseCloud.Monitoring.MicrosoftMonitoringAgent')]"
             ],
             "properties": {
               "publisher": "Microsoft.Compute",
