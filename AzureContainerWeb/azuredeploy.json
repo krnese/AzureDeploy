@@ -295,8 +295,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'))]",
-
+              "[concat('Microsoft.Compute/virtualMachines/', parameters('containerhost'))]"
             ],
             "properties": {
               "publisher": "Microsoft.EnterpriseCloud.Monitoring",
