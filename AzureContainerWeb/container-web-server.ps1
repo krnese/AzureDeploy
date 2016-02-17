@@ -64,7 +64,7 @@ if (!(Get-NetFirewallRule | where {$_.Name -eq "TCP80"})) {
     New-NetFirewallRule -Name "TCP80" -DisplayName "HTTP on TCP/80" -Protocol tcp -LocalPort 80 -Action Allow -Enabled True
 }
 
-Start-Sleep 80
+Start-Sleep 180
 
 # Import Hybrid Registration
 
@@ -73,3 +73,4 @@ cd "c:\Program Files\Microsoft Monitoring Agent\Agent\AzureAutomation\7.2.7241.0
 Import-Module HybridRegistration.psd1
 
 Add-HybridRunbookWorker –Name OMSWorker -EndPoint $AAendpoint -Token $token
+
