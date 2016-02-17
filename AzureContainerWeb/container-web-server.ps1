@@ -68,9 +68,7 @@ Start-Sleep 20
 
 # Import Hybrid Registration
 
-cd "c:\Program Files\Microsoft Monitoring Agent\Agent\AzureAutomation\7.2.7241.0\HybridRegistration\"
-
-Import-Module HybridRegistration.psd1
+Import-Module -name "c:\Program Files\Microsoft Monitoring Agent\Agent\AzureAutomation\7.2.7241.0\HybridRegistration\HybridRegistration.psd1"
 
 Add-HybridRunbookWorker –Name OMSWorker -EndPoint $AAendpoint -Token $token
 
