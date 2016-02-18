@@ -74,4 +74,8 @@ Start-Sleep 20
 
 Add-HybridRunbookWorker –Name OMSWorker -EndPoint $AAendpoint -Token $token
 
+Write-Output $aaendpoint
+
+Write-Output $token
+
 # ENd
