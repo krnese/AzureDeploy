@@ -285,7 +285,7 @@
               "autoUpgradeMinorVersion": true,
               "settings": {
                 "fileUris": [ "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainerWeb/container-web-server.ps1" ],
-                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','container-web-server.ps1 ', '-containername ', parameters('containername'), '-AAendpoint ', parameters('AAendpoint'), '-token ', parameters('token'))]"
+                "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','container-web-server.ps1 ', ' -containername ', parameters('containername'), ' -AAendpoint ', parameters('AAendpoint'), ' -token ', parameters('token'))]"
               }
             }
           },

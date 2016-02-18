@@ -20,7 +20,11 @@ Import-Module -name "c:\Program Files\Microsoft Monitoring Agent\Agent\AzureAuto
 
 Start-Sleep 20
 
-Add-HybridRunbookWorker –Name OMSWorkerDemo -EndPoint $AAendpoint -Token $token 
+Write-Output $AAendpoint
+
+Write-Output $token
+
+Add-HybridRunbookWorker –Name OMSWorkerDemo -EndPoint $AAendpoint -Token $token -verbose
 
 # Get Container Image
 
