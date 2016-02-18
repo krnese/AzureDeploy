@@ -14,6 +14,14 @@ Param (
 
 Start-Sleep -Seconds 120
 
+# Import Hybrid Registration
+
+Import-Module -name "c:\Program Files\Microsoft Monitoring Agent\Agent\AzureAutomation\7.2.7241.0\HybridRegistration\HybridRegistration.psd1" -Verbose
+
+Start-Sleep 20
+
+Add-HybridRunbookWorker –Name OMSWorker -EndPoint $AAendpoint -Token $token 
+
 # Get Container Image
 
 $image = Get-ContainerImage -Name "WindowsServerCore" -Verbose
@@ -63,19 +71,3 @@ Add-NetNatStaticMapping -NatName "ContainerNat" -Protocol TCP -ExternalIPAddress
 if (!(Get-NetFirewallRule | where {$_.Name -eq "TCP80"})) {
     New-NetFirewallRule -Name "TCP80" -DisplayName "HTTP on TCP/80" -Protocol tcp -LocalPort 80 -Action Allow -Enabled True
 }
-
-Start-Sleep 20
-
-# Import Hybrid Registration
-
-Import-Module -name "c:\Program Files\Microsoft Monitoring Agent\Agent\AzureAutomation\7.2.7241.0\HybridRegistration\HybridRegistration.psd1"
-
-Start-Sleep 20
-
-Add-HybridRunbookWorker –Name OMSWorker -EndPoint $AAendpoint -Token $token
-
-Write-Output $aaendpoint
-
-Write-Output $token
-
-# ENd
