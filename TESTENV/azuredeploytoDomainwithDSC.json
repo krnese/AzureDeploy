@@ -109,6 +109,17 @@
       "metadata": {
         "Description": "Assign name of default data disk"
       }
+    },
+    "dscUrl": {
+      "type": "string",
+      "defaultValue": "https://github.com/krnese/AzureDeploy/raw/master/TESTENV/spvweb.zip",
+      "metadata": {
+        "Description": "Specify the URL to the DSC configuration"
+      }
+    },
+    "configurationfunction": {
+      "type": "string",
+      "defaultValue": "spvweb.ps1\\webtest"
     }
   },
   "variables": {
@@ -255,6 +266,29 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces/', parameters('nicname'))]"
             }
           ]
+        }
+      }
+    },
+    {
+      "apiversion": "[variables('apiversion').Compute.Extensions]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmname'), '/', 'DSC')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmname'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.PowerShell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.9",
+        "autoUpgradeMinorVersion": "true",
+        "settings": {
+          "ModulesUrl": "[parameters('dscurl')]",
+          "configurationfunction": "[parameters('configurationfunction')]",
+          "sastoken": "",
+          "properties": {
+            "servername": "[parameters('vmname')]"
+          }
         }
       }
     }
