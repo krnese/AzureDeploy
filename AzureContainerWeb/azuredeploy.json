@@ -83,33 +83,34 @@
         }
       }
     },
-    "variables": {
-        "virtualNetworkName": "[parameters('vNetName')]",
-        "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', variables('virtualnetworkname'))]",
-        "subnetname": "Subnet-1",
-        "addressprefix": "192.168.0.0/16",
-        "subnetPrefix": "192.168.0.0/24",
-        "subnetRef": "[concat(variables('vnetID'),'/subnets/', variables('subnetname'))]",
-        "nicname": "ConNic",
-        "publicnicname": "ConPub",
-        "imagepublisher": "MicrosoftWindowsServer",
-        "imageoffer": "WindowsServer",
-        "ipallocation": "Dynamic",
-        "storagetype": "Standard_LRS",
-        "imagesku": "2016-Technical-Preview-with-Containers",
-        "extensionname": "CustomScriptExtension",
-        "NSGName": "NSG01",
-        "Rulename1": "RDP",
-        "Rulename2": "HTTP",
-        "Port1": "3389",
-        "Port2": "80",
-        "Protocol": "TCP"
-    },
+  "variables": {
+    "storagename": "[toLower(concat(parameters('storageaccountname'), uniqueString(resourceGroup().id)))]",
+    "virtualNetworkName": "[parameters('vNetName')]",
+    "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', variables('virtualnetworkname'))]",
+    "subnetname": "Subnet-1",
+    "addressprefix": "192.168.0.0/16",
+    "subnetPrefix": "192.168.0.0/24",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', variables('subnetname'))]",
+    "nicname": "ConNic",
+    "publicnicname": "ConPub",
+    "imagepublisher": "MicrosoftWindowsServer",
+    "imageoffer": "WindowsServer",
+    "ipallocation": "Dynamic",
+    "storagetype": "Standard_LRS",
+    "imagesku": "2016-Technical-Preview-with-Containers",
+    "extensionname": "CustomScriptExtension",
+    "NSGName": "NSG01",
+    "Rulename1": "RDP",
+    "Rulename2": "HTTP",
+    "Port1": "3389",
+    "Port2": "80",
+    "Protocol": "TCP"
+  },
     "resources": [
 
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[Parameters('storageaccountname')]",
+            "name": "[Variables('storagename')]",
             "apiVersion": "2015-06-15",
             "location": "[resourceGroup().location]",
             "properties": {
