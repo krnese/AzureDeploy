@@ -1,0 +1,46 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "computerName": {
+      "type": "string",
+      "metadata": {
+        "Description": "Computer name for the machine you would like to manage"
+      }
+    },
+    "gatewayName": {
+      "type": "string",
+      "defaultValue": "dsc01",
+      "metadata": {
+        "Description": "Specify the name of the Gateway server"
+      }
+    },
+    "gatewayresourcegroupName": {
+      "type": "string",
+      "defaultValue": "mgmt2016",
+      "metadata": {
+        "Description": "Resource Group containing the Gateway"
+      }
+    },
+    "apiVersion": {
+      "type": "string",
+      "defaultValue": "2015-07-01-preview",
+      "metadata": {
+        "Description": "API version for Microsoft.ServerManagement RP"
+      }
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-07-01-preview",
+      "location": "[ResourceGroup().location]",
+      "name": "[parameters('computerName')]",
+      "type": "Microsoft.ServerManagement/nodes",
+      "properties": {
+        "connectionName": "[parameters('computerName')]",
+        "gatewayId": "[resourceId(parameters('gatewayresourcegroupName'), 'Microsoft.ServerManagement/gateways/', parameters('gatewayName'))]"
+      }
+    }
+  ],
+  "outputs": {}
+}

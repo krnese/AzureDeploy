@@ -1,0 +1,49 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmname": {
+      "type": "string",
+      "defaultValue": "winsrvtp4",
+      "metadata": {
+        "description": "type the name of the container/docker host"
+      }
+    },
+    "OMSWorkspaceID": {
+      "type": "string",
+      "metadata": {
+        "Description": "Type the OMS Workspace ID"
+      }
+    },
+    "OMSWorkspaceKey": {
+      "type": "string",
+      "metadata": {
+        "Description": "Type the key for the OMS Workspace"
+      }
+    }
+  },
+    "variables": {
+    },
+    "resources": [
+          {
+            "apiVersion": "2015-06-15",
+            "name": "[concat(parameters('vmname'),'/OMS')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[resourceGroup().location]",
+            "properties": {
+              "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+              "type": "MicrosoftMonitoringAgent",
+              "typeHandlerVersion": "1.0",
+              "autoUpgradeMinorVersion": true,
+              "settings": {
+                "workspaceID": "[Parameters('OMSWorkSpaceID')]"
+              },
+              "protectedSettings": {
+                "workspacekey": "[Parameters('OMSWorkspaceKey')]"
+              }
+            }
+          }
+        ]     
+  }
+
+      

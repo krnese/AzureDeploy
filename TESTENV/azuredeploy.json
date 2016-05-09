@@ -100,13 +100,13 @@
   },
   "variables": {
     "storagename": "[toLower(concat(parameters('storageaccountname'), uniqueString(resourceGroup().id)))]",
-    "vmsize": "Standard_A2",
+    "vmsize": "Standard_D1",
     "vnetID": "[resourceId(parameters('vNetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetname'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetname'))]",
     "apiVersion": {
       "Compute": {
         "VirtualMachines": "2015-06-15",
-        "Extensions": "2015-06-15"
+        "Extensions": "2015-06-15" 
       },
       "Storage": {
         "storageAccounts": "2015-06-15"

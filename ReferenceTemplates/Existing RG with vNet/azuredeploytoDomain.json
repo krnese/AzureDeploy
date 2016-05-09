@@ -58,19 +58,6 @@
         "Description": "assing a secure password for the admin user"
       }
     },
-    "domainUserAccount": {
-      "type": "string",
-      "defaultValue": "knadmin@azurecloud.local",
-      "metadata": {
-        "Description": "account with permission to domain join computer objects in AD"
-      }
-    },
-    "domainPassword": {
-      "type": "securestring",
-      "metadata": {
-        "Description": "Specify password for the DomainUserAccount"
-      }
-    },
     "availabilitySet": {
       "type": "string",
       "defaultValue": "VMAVSet01",
@@ -103,62 +90,17 @@
         "Description": "Select the SKU"
       }
     },
-    "vmsize": {
-      "type": "string",
-      "defaultValue": "Standard_D3",
-      "allowedValues": [
-        "Standard_A2",
-        "Standard_A3",
-        "Standard_A5",
-        "Standard_D3"
-      ],
-      "metadata": {
-        "Description": "Specify VM Size"
-      }
-    },
     "datadiskname": {
       "type": "string",
-      "defaultValue": "data1",
+      "defaultValue": "datadisk",
       "metadata": {
         "Description": "Assign name of default data disk"
-      }
-    },
-    "dscUrl": {
-      "type": "string",
-      "defaultValue": "https://github.com/krnese/AzureDeploy/raw/master/TESTENV/spvweb.zip",
-      "metadata": {
-        "Description": "Specify the URL to the DSC configuration"
-      }
-    },
-    "configurationfunction": {
-      "type": "string",
-      "defaultValue": "spvweb.ps1\\webtest"
-    },
-    "domain": {
-      "type": "string",
-      "defaultValue": "azurecloud.local",
-      "metadata": {
-        "Description": "Specify the FQDN for the domain to join"
-      }
-    },
-    "OUPath": {
-      "type": "string",
-      "defaultValue": "'CN=Computers; DC=azurecloud; DC=local",
-      "metadata": {
-        "Description": "Specify the OU where you want to place this computer object"
-      }
-    },
-    "DomainJoinOptions": {
-      "type": "int",
-      "defaultValue": 3,
-      "metadata": {
-        "Description": "Set of bit flags that define the join options. Default value of 3 is a combination of NETSETUP_JOIN_DOMAIN (0x00000001) & NETSETUP_ACCT_CREATE (0x00000002) i.e. will join the domain and create the account on the domain. For more information see https://msdn.microsoft.com/en-us/library/aa392154(v=vs.85).aspx"
       }
     }
   },
   "variables": {
     "storagename": "[toLower(concat(parameters('storageaccountname'), uniqueString(resourceGroup().id)))]",
-    "vmsize": "[Parameters('vmsize')]",
+    "vmsize": "Standard_A2",
     "vnetID": "[resourceId(parameters('vNetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetname'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetname'))]",
     "apiVersion": {
@@ -300,54 +242,6 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces/', parameters('nicname'))]"
             }
           ]
-        }
-      }
-    },
-    {
-      "apiVersion": "[variables('apiversion').Compute.Extensions]",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),'/joindomain')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Compute",
-        "type": "JsonADDomainExtension",
-        "typeHandlerVersion": "1.0",
-        "settings": {
-          "Name": "[parameters('domain')]",
-          "OUPath": "[parameters('ouPath')]",
-          "User": "[concat(parameters('domain'), '\\', parameters('domainUserAccount'))]",
-          "Restart": "true",
-          "Options": "[parameters('domainJoinOptions')]"
-        },
-        "protectedsettings": {
-          "Password": "[parameters('DomainPassword')]"
-        }
-      }
-    },
-    {
-      "apiversion": "[variables('apiversion').Compute.Extensions]",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmname'), '/', 'DSC')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmname'))]",
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmname'), '/extensions/joindomain')]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.PowerShell",
-        "type": "DSC",
-        "typeHandlerVersion": "2.14",
-        "autoUpgradeMinorVersion": "true",
-        "settings": {
-          "ModulesUrl": "[parameters('dscurl')]",
-          "configurationfunction": "[parameters('configurationfunction')]",
-          "sastoken": "",
-          "properties": {
-            "servername": "[parameters('vmname')]"
-          }
         }
       }
     }

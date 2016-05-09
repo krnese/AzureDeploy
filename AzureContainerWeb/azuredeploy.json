@@ -38,7 +38,7 @@
         },
         "storageAccountName": {
             "type": "string",
-            "defaultValue": "uniquestoragekn",
+            "defaultValue": "con",
             "metadata": {
                 "description": "type the name of the storage account you will use for the containerhost"
             }
@@ -107,16 +107,15 @@
     "Protocol": "TCP"
   },
     "resources": [
-
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[Variables('storagename')]",
-            "apiVersion": "2015-06-15",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "accountType": "[Parameters('StorageType')]"
-            }
-        },
+      {
+        "apiVersion": "2015-06-15",
+        "type": "Microsoft.Storage/storageAccounts",
+        "location": "[ResourceGroup().Location]",
+        "name": "[variables('storagename')]",
+        "properties": {
+          "accountType": "[Parameters('StorageType')]"
+        }
+      },
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "name": "[variables('NSGName')]",
@@ -226,7 +225,7 @@
         "location": "[resourceGroup().location]",
         "dependsOn": [
           "[concat('Microsoft.Network/networkInterfaces/', variables('nicname'))]",
-          "[concat('Microsoft.Storage/StorageAccounts/', parameters('storageaccountname'))]",
+          "[concat('Microsoft.Storage/StorageAccounts/', variables('storagename'))]",
           "[resourceId('Microsoft.Compute/AvailabilitySets', 'availabilityset')]"
         ],
         "properties": {
@@ -251,7 +250,7 @@
               "name": "conhost",
               "caching": "readWrite",
               "vhd": {
-                "uri": "[concat('http://', parameters('storageaccountname'), '.blob.core.windows.net/', 'vhds', '/', 'conhost.vhd')]"
+                "uri": "[concat('http://', variables('storagename'), '.blob.core.windows.net/', 'vhds', '/', 'conhost.vhd')]"
               }
             },
             "imageReference": {

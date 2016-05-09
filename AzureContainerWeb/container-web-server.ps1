@@ -24,7 +24,7 @@ Write-Output $AAendpoint
 
 Write-Output $token
 
-Add-HybridRunbookWorker –Name OMSWorkerDemo -EndPoint $AAendpoint -Token $token -verbose
+Add-HybridRunbookWorker –Name OMSHybridDemo -EndPoint $AAendpoint -Token $token -verbose
 
 # Get Container Image
 
