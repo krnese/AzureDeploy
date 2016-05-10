@@ -112,7 +112,7 @@
     },
     "dscUrl": {
       "type": "string",
-      "defaultValue": "https://github.com/krnese/AzureDeploy/raw/master/TESTENV/spvweb.zip",
+      "defaultValue": "https://github.com/krnese/AzureDeploy/raw/master/ExistingEnvironment/WindowsServerWebDSC-into-existing-vnet/spvweb.zip",
       "metadata": {
         "Description": "Specify the URL to the DSC configuration"
       }
