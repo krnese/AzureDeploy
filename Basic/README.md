@@ -4,6 +4,14 @@
 Example template on how to deploy IaaS using multiple ARM templates.
 Both storage and vnet are isolated into their own ARM templates and can be used idividually, while the "master" template (azuredeploy.json) contains the compute settings.  
 
-To deploy this template using Azure PowerShell, simply run the following cmdlet:
+# Deploy using PowerShell:
 
-New-AzureRmResourceGroupDeployment -Name Dep01 -ResourceGroupName (New-AzureRmResourceGroup -Name nested01 -Location "west europe").ResourceGroupName -TemplateUri "https://raw.githubusercontent.com/krnese/azuredeploy/master/Basic/azuredeploy.json" -vmname AzureDemo01 -storageblobname azurestorage0001 -username azureadmin -Verbose
+````powershell
+
+New-AzureRmResourceGroupDeployment -Name Dep01 `
+                                  -ResourceGroupName (New-AzureRmResourceGroup -Name nested01 -Location "west europe").ResourceGroupName`
+                                  -TemplateUri "https://raw.githubusercontent.com/krnese/azuredeploy/master/Basic/azuredeploy.json" ` -vmname AzureDemo01 `
+                                  -storageblobname azurestorage0001 `
+                                  -username azureadmin `
+                                  -Verbose
+````
