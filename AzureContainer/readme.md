@@ -10,5 +10,15 @@ ARM Template using Custom Script Extension to instantiate some Windows Server Co
 
 # Deploy using PowerShell:
 
-
-New-AzureRmResourceGroupDeployment -Name preview -ResourceGroupName (New-AzureRmResourceGroup -Name KNVMCON -Location "west europe").ResourceGroupName -TemplateUri "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainer/azuredeploy.json" -containerhost knhost01 -vmSize standard_a3 -adminaccount knadmin -storageAccountName constor100 -StorageType Standard_LRS -vNetName convnet -count "5" -Verbose
+````powershell
+New-AzureRmResourceGroupDeployment -Name preview `
+                                  -ResourceGroupName (New-AzureRmResourceGroup -Name KNVMCON -Location "west europe").ResourceGroupName `
+                                  -TemplateUri "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainer/azuredeploy.json" ` -containerhost knhost01 `
+                                  -vmSize standard_a3 `
+                                  -adminaccount knadmin `
+                                  -storageAccountName constor100 `
+                                  -StorageType Standard_LRS `
+                                  -vNetName convnet `
+                                  -count "5" `
+                                  -Verbose
+````                                  
