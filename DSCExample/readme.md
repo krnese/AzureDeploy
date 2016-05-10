@@ -8,8 +8,8 @@
 
 Example template on how to deploy a web server into Azure IaaS using Azure Resource Manager with DSC VM Extension
 
-To deploy this template using AzureRM PowerShell, simply run the following cmdlet:
-
+# Deploy using PowerShell:
+````powershell
 New-AzureRmResourceGroupDeployment -Name demodeployment -ResourceGroupName (New-AzureRmResourceGroup -Name DSCDemoRG -Location "west us").ResourceGroupName -TemplateUri "https://raw.githubusercontent.com/krnese/AzureDeploy/master/DSCExample/azuredeploy.json" -vmname dscvm01 -storageblobname dscstor50 -vnetname dscvnet50 -Verbose
-
+````
 
