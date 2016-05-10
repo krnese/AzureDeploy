@@ -1,5 +1,5 @@
 # Azure Windows Server Containers 
-ARM Template using Custom Script Extension to instantiate some Windows Server Containers on Windows Server 2016 - Technical Preview 4
+ARM Template using Custom Script Extension to instantiate some Windows Server Containers on Windows Server 2016 - Technical Preview 5
 
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FAzureContainer%2Fazuredeploy.json) 
