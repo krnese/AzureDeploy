@@ -13,6 +13,17 @@ ARM Template using Custom Script Extension to create and install IIS within a Wi
 </a>
 
 # Deploy using PowerShell:
-
-
-New-AzureRmResourceGroupDeployment -Name preview -ResourceGroupName (New-AzureRmResourceGroup -Name KNVMCON -Location "west europe").ResourceGroupName -TemplateUri "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainerWeb/azuredeploy.json" -containerhost knhost01 -containername tp4con -vmSize standard_a3 -adminaccount knadmin -storageAccountName constor100 -StorageType Standard_LRS -vNetName convnet -Verbose
+````powershell
+New-AzureRmResourceGroupDeployment `
+    -Name preview `
+    -ResourceGroupName (New-AzureRmResourceGroup -Name KNVMCON -Location "west europe").ResourceGroupName `
+    -TemplateUri "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureContainerWeb/azuredeploy.json" `
+    -containerhost knhost01 `
+    -containername tp5con `
+    -vmSize standard_a3 `
+    -adminaccount knadmin `
+    -storageAccountName con `
+    -StorageType Standard_LRS `
+    -vNetName convnet `
+    -Verbose
+````
