@@ -1,4 +1,4 @@
-# Deploy OMS Recovery Services using ARM template
+# Deploy Microsoft OMS in Azure with Azure Resource Manager
 This template will deploy all the OMS Resources into a new Resource Group in Microsoft Azure
 
 # Deploy using PowerShell:
