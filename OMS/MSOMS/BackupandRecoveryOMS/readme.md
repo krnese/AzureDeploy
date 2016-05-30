@@ -3,7 +3,7 @@
 This template will deploy Backup and Site Recovery (OMS) in your preferred Azure Region with a corresponding Storage Account so that you can easily get started with configuring of backup and recovery for your workloads, regardless of clouds, location and applications. 
 
 ## Deploy using Azure Portal
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2Backupandrecoveryoms%2azuredeploy.json) 
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FBackupandrecoveryoms%2Fazuredeploy.json) 
 
 ## Deploy using PowerShell:
 ````powershell
