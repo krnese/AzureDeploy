@@ -1,0 +1,103 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "OMSRecoveryVaultName": {
+      "type": "string",
+      "defaultValue": "OMSRecovery",
+      "metadata": {
+        "Description": "Assign a name for the OMS Recovery Vault"
+      }
+    },
+    "region": {
+      "type": "string",
+      "defaultValue": "westeurope",
+      "allowedValues": [
+        "westeurope",
+        "easteurope",
+        "westus",
+        "eastus"
+      ],
+      "metadata": {
+        "Description": "Specify region for the OMS Resources"
+      }
+    },
+    "OMSRecoveryApiVersion": {
+      "type": "string",
+      "defaultValue": "2015-08-15",
+      "allowedValues": [
+        "2016-03-30",
+        "2015-11-01",
+        "2015-08-15"
+      ],
+      "metadata": {
+        "Description": "Select API version for the Resource Provider"
+      }
+    },
+    "OMSRecoverySku": {
+      "type": "string",
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Free",
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "Description": "Select the SKU"
+      }
+    },
+    "storageaccountname": {
+      "type": "string",
+      "defaultValue": "asrstorage",
+      "maxLength": 15,
+      "metadata": {
+        "Description": "Assign a name for the storage account for OMS Recovery Services"
+      }
+    },
+    "Storagetype": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS"
+      ],
+      "metadata": {
+        "Description": "Specify the storage type for you OMS Recovery storage blob"
+      }
+    },
+    "StorageApiVersion": {
+      "type": "string",
+      "defaultValue": "2015-06-15",
+      "metadata": {
+        "Description": "Select the API Version for the Resource Provider"
+      }
+    }
+  },
+  "variables": {
+    "storagename": "[toLower(concat(parameters('storageaccountname'), uniqueString(resourceGroup().id)))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.RecoveryServices/vaults",
+      "apiVersion": "[parameters('OMSRecoveryApiVersion')]",
+      "name": "[parameters('OMSRecoveryVaultName')]",
+      "location": "[parameters('region')]",
+      "sku": {
+        "name": "[parameters('OMSRecoveryVaultName')]",
+        "tier": "[parameters('OMSRecoverySku')]"
+      },
+      "properties": { }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "[parameters('StorageApiVersion')]",
+      "name": "[variables('storagename')]",
+      "location": "[parameters('region')]",
+      "properties": {
+        "accountType": "[parameters('storagetype')]"
+      }
+    }
+  ],
+  "outputs": { }
+}  
+    
