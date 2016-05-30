@@ -86,7 +86,8 @@
         "name": "[parameters('OMSRecoveryVaultName')]",
         "tier": "[parameters('OMSRecoverySku')]"
       },
-      "properties": { }
+      "properties": {
+      }
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
