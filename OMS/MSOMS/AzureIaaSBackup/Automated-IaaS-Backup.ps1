@@ -18,7 +18,7 @@ param (
 $credential = Get-AutomationPSCredential -Name 'AzureCredentials'
 $subscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionID'
 
-$ErrorActionPreference = Stop
+$ErrorActionPreference = 'Stop'
 
 Try {
         Login-AzureRmAccount -credential $credential
