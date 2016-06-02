@@ -1,8 +1,8 @@
 ﻿### Setup of A2A Coordinater
 
 param (
-        $AzureSubAdmin="automation@kristianneseoutlook.onmicrosoft.com",
-        $AzureAdminPwd="abab12UNI",
+        $AzureSubAdmin,
+        $AzureAdminPwd,
         $OMSResourceGroupName,
         $OMSRecoveryVaultName      
       )
