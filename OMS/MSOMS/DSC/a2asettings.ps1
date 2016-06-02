@@ -1,8 +1,8 @@
 ﻿### Setup of A2A Coordinater
 
 param (
-        [Parameter(Mandatory)]
-        [System.Management.Automation.PSCredential]$Admincreds,
+        $AzureSubAdmin="automation@kristianneseoutlook.onmicrosoft.com",
+        $AzureAdminPwd="abab12UNI",
         $OMSResourceGroupName,
         $OMSRecoveryVaultName      
       )
@@ -16,6 +16,8 @@ Find-Module -Name AzureRm.RecoveryServices | Install-Module -Force
 find-module -Name AzureRm.RecoveryServices.Backup | Install-Module -Force
 
 # Login to Azure and download the vault credentials
+$AzureAdminPwd = ConvertTo-SecureString $AzureAdminPwd -AsPlainText -Force
+$Admincreds = New-Object System.Management.Automation.PSCredential (“$AzureSubAdmin”, $AzureAdminPwd)
 
 Login-AzureRmAccount -Credential $Admincreds
 
@@ -24,3 +26,5 @@ $vault = Get-AzureRmRecoveryServicesVault -ResourceGroupName $OMSResourceGroupNa
 Get-AzureRmRecoveryServicesVaultSettingsFile -Vault $vault -Path c:\a2a\
 
 # That's it!
+
+
