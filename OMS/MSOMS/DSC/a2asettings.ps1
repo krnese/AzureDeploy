@@ -9,6 +9,11 @@ param (
 
 # Install AzureRM modules for A2A scenario
 
+$sourceNugetExe = "http://nuget.org/nuget.exe"
+$targetNugetExe = "$rootPath\nuget.exe"
+Invoke-WebRequest $sourceNugetExe -OutFile $targetNugetExe
+Set-Alias nuget $targetNugetExe -Scope Global -Verbose
+
 Find-module -Name AzureRm.SiteRecovery | Install-Module -Force
 
 Find-Module -Name AzureRm.RecoveryServices | Install-Module -Force
