@@ -29,6 +29,10 @@ $vault = Get-AzureRmRecoveryServicesVault -ResourceGroupName $OMSResourceGroupNa
 
 Get-AzureRmRecoveryServicesVaultSettingsFile -Vault $vault -Path "c:\a2a\"
 
+Write-Output "Restarting computer in 10 seconds to complete the setup..."
+
+Restart-Computer -Force
+
 # That's it!
 
 
