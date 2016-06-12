@@ -8,9 +8,9 @@
 #>
 
 param (
-        $OMSRecoveryResourceGroupName='knoms',
-        $OMSRecoveryVault='KNRecovery',
-        $OMSFabric='Azure',
+        $OMSRecoveryResourceGroupName,
+        $OMSRecoveryVault,
+        $OMSFabric,
         $OMSRecoveryPolicy='DefaultPolicy',
         $TemplateUri='https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/AzureIaaSBackup/azuredeploy.json'
       )
@@ -27,7 +27,7 @@ Try {
     }
 
 Catch {
-        $ErrorMessage = 'Login to Azure failed beyond recognition.'
+        $ErrorMessage = 'Login to Azure failed.'
         $ErrorMessage += " `n"
         $ErrorMessage += 'Error: '
         $ErrorMessage += $_
@@ -36,7 +36,21 @@ Catch {
       }
 
 Try {
-        $VMs = Get-AzureRmVM
+
+        $Location = Get-AzureRmRecoveryServicesVault -Name $OMSRecoveryVault -ResourceGroupName $OMSRecoveryResourceGroupName | select -ExpandProperty Location
+    }
+
+Catch {
+        $ErrorMessage = 'Failed to retrieve the OMS Recovery Location property'
+        $ErrorMessage += "`n"
+        $ErrorMessage += 'Error: '
+        $ErrorMessage += $_
+        Write-Error -Message $ErrorMessage `
+                    -ErrorAction Stop
+      }
+
+Try {
+        $VMs = Get-AzureRmVM | Where-Object {$_.Location -eq $Location}
     }
 
 Catch {
