@@ -26,12 +26,6 @@
       "metadata": {
         "Description": "Specify the VM name you want to add to OMS workspace"
       }
-    },
-    "vmResoureGroupName": {
-      "type": "string",
-      "metadata": {
-        "Description": "Specify the Resource Group containing the VM"
-      }
     }
   },
     "variables": {
