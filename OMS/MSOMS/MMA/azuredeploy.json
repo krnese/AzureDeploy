@@ -1,0 +1,66 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "OMSLogAnalyticsWorkspaceName": {
+      "type": "string",
+      "metadata": {
+        "Description": "Name of the OMS Log Analytics workspace name"
+      }
+    },
+    "OMSLogAnalyticsWorkspaceApiVersion": {
+      "type": "string",
+      "defaultValue": "2015-11-01-preview",
+      "metadata": {
+        "Description": "API version of Log Analytics RP"
+      }
+    },
+    "OMSLogAnalyticsResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "Description": "Name of OMS Log Analytics Resource Group"
+      }
+    },
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "Description": "Specify the VM name you want to add to OMS workspace"
+      }
+    },
+    "vmResoureGroupName": {
+      "type": "string",
+      "metadata": {
+        "Description": "Specify the Resource Group containing the VM"
+      }
+    }
+  },
+    "variables": {
+      "apiVersion": {
+        "Compute": {
+          "VirtualMachines": "2015-06-15",
+          "Extensions": "2015-06-15"
+        }
+      }
+    },
+  "resources": [
+    {
+      "apiVersion": "[variables('apiVersion').compute.extensions]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(parameters('vmName'),'/OMS')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "properties": {
+        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+        "type": "MicrosoftMonitoringAgent",
+        "typeHandlerVersion": "1.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "workspaceID": "[reference(resourceId(parameters('OMSLogAnalyticsResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('OMSLogAnalyticsWorkspaceName')), parameters('OMSLogAnalyticsWorkspaceApiVersion')).customerId]"
+         },
+        "protectedSettings": {
+          "workspacekey": "[listKeys(resourceId(parameters('OMSLogAnalyticsResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('OMSLogAnalyticsWorkspaceName')), parameters('OMSLogAnalyticsWorkspaceApiVersion')).primarySharedKey]"
+         }
+       }
+     }
+   ],
+  "outputs": {}
+  }
