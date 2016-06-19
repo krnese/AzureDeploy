@@ -66,7 +66,7 @@ Try {
         Foreach ($vm in $vms)
         {
             New-AzureRmResourceGroupDeployment -Name $vm.name `
-                                               -ResourceGroupName $vm.ResourceGroupName `
+                                               -ResourceGroupName $OMSResourceGroupName `
                                                -TemplateUri $TemplateUri `
                                                -omsRecoveryResourceGroupName $OMSResourceGroupName `
                                                -vmResourceGroupName $vm.ResourceGroupName `

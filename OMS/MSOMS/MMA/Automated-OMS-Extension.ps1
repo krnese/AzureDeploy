@@ -62,6 +62,7 @@ Try {
                     		New-AzureRmResourceGroupDeployment -Name MMAdeployment `
                                                                -ResourceGroupName $vm.ResourceGroupName `
                                                                -TemplateUri $templateuri `
+                                                               -vmRegion $vm.Location `
                                                                -vmName $vm.Name `
                                                                -OMSLogAnalyticsWorkspaceName $OMSworkspaceName `
                                                                -OMSLogAnalyticsResourceGroup $OMSResourceGroupName `
