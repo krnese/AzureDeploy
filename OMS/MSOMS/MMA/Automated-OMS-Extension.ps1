@@ -17,7 +17,7 @@ $templateuri = 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/
 $ErrorActionPreference = 'Stop'
 
 Try {
-        Login-AzureRmAccount -credential $credential
+        Add-AzureRmAccount -credential $credential
         Select-AzureRmSubscription -SubscriptionId $subscriptionId
 
     }

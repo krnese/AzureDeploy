@@ -24,12 +24,12 @@ $subscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionID'
 $OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
 $OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
 $OMSWorkspaceName = Get-AutomationVariable -Name 'OMSWorkspaceName'
-$OMSLogAnalyticsResourceGroup = Get-AutomationVariable -Name 'OMSResourceGroupName'
+$OMSResourceGroupName = Get-AutomationVariable -Name 'OMSResourceGroupName'
 $OMSRecoveryVault = Get-AutomationVariable -Name 'OMSRecoveryVault'
 
 try
     {
-        Login-AzureRmAccount -Credential $Admin -ErrorAction Stop
+        Add-AzureRmAccount -Credential $credential 
         Select-AzureRmSubscription -SubscriptionId $subscriptionId      
     }
 
@@ -52,7 +52,7 @@ try
 
     {
         $vault = Get-AzureRmRecoveryServicesVault `
-                     -Name $OMSRecoveryVault -ResourceGroupName $OMSLogAnalyticsResourceGroup
+                     -Name $OMSRecoveryVault -ResourceGroupName $OMSResourceGroupName
     }
 
 catch
@@ -73,8 +73,15 @@ Set-AzureRmSiteRecoveryVaultSettings -ARSVault $vault
 
 $con = Get-AzureRmSiteRecoveryProtectionContainer
 
+if ([string]::IsNullOrEmpty($con) -eq $true)
+
+{
+    Write-Output "ASR Recovery Vault isn't completely configured yet. No data to ingest at this point"
+}
+else {
+
 $protectionEntity = Get-AzureRmSiteRecoveryProtectionEntity `
-                     -ProtectionContainer $con
+                    -ProtectionContainer $con
 
 
 	# Format metrics into a table.
@@ -105,7 +112,7 @@ $logType = "ASRProtectionStatus"
 
 	#Post the data to the endpoint 
 	Send-OMSAPIIngestionData -customerId $OMSWorkspaceId -sharedKey $OMSWorkspaceKey -body $jsonTable -logType $logType
-
+}
 #endregion
 
 #Finish up with a sleep for 10 mins
