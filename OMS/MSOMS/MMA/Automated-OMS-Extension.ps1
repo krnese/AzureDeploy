@@ -12,6 +12,7 @@ $OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
 $OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
 $OMSLogAnalyticsName = Get-AutomationVariable -Name 'OMSLogAnalyticsName'
 $OMSLogAnalyticsResourceGroup = Get-AutomationVariable -Name 'OMSLogAnalyticsResourceGroup'
+$templateuri = 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/MMA/azuredeploy.json'
 
 $ErrorActionPreference = 'Stop'
 
@@ -62,7 +63,6 @@ Try {
                                                                -ResourceGroupName $vm.ResourceGroupName `
                                                                -TemplateUri $templateuri `
                                                                -vmName $vm.Name `
-                                                               -vmResourceGroupName $vm.ResourceGroupName `
                                                                -OMSLogAnalyticsWorkspaceName $OMSLogAnalyticsName `
                                                                -OMSLogAnalyticsResourceGroup $OMSLogAnalyticsResourceGroup `
                                                                -Verbose                                                               
