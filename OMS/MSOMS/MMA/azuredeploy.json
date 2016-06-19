@@ -26,6 +26,12 @@
       "metadata": {
         "Description": "Specify the VM name you want to add to OMS workspace"
       }
+    },
+    "vmRegion": {
+      "type": "string",
+      "metadata": {
+        "Description": "Region/Location for the virtual machine"
+      }
     }
   },
     "variables": {
@@ -39,7 +45,7 @@
   "resources": [
     {
       "apiVersion": "[variables('apiVersion').compute.extensions]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('vmRegion')]",
       "name": "[concat(parameters('vmName'),'/OMS')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "properties": {

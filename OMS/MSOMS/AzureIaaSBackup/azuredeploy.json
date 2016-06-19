@@ -7,11 +7,11 @@
       "defaultValue": "KNOMS"
     },
     "vaultName": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "KNRecovery"
     },
     "fabricName": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "Azure"
     },
     "vmResourceGroupName": {
@@ -23,7 +23,7 @@
       "defaultValue": "dsc01"
     },
     "policyName": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "DefaultPolicy"
     }
   },

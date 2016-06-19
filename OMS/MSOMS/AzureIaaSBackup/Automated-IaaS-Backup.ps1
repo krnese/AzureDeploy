@@ -19,7 +19,7 @@ $OMSRecoveryVault = Get-AutomationVariable -Name 'OMSRecoveryVault'
 $ErrorActionPreference = 'Stop'
 
 Try {
-        Add-AzureRmAccount -credential $credential
+        Login-AzureRmAccount -credential $credential
         Select-AzureRmSubscription -SubscriptionId $subscriptionId
 
     }
@@ -70,6 +70,7 @@ Try {
                                                -TemplateUri $TemplateUri `
                                                -omsRecoveryResourceGroupName $OMSResourceGroupName `
                                                -vmResourceGroupName $vm.ResourceGroupName `
+                                               -vaultName $OMSRecoveryVault `
                                                -vmName $vm.name `
                                                -Verbose
         }
