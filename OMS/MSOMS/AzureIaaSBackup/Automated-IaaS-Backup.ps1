@@ -12,7 +12,7 @@ $subscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionID'
 $OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
 $OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
 $OMSWorkspaceName = Get-AutomationVariable -Name 'OMSWorkspaceName'
-$OMSLogAnalyticsResourceGroup = Get-AutomationVariable -Name 'OMSResourceGroupName'
+$OMSResourceGroupName = Get-AutomationVariable -Name 'OMSResourceGroupName'
 $TemplateUri='https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/AzureIaaSBackup/azuredeploy.json'
 $OMSRecoveryVault = Get-AutomationVariable -Name 'OMSRecoveryVault'
 
@@ -35,7 +35,7 @@ Catch {
 
 Try {
 
-        $Location = Get-AzureRmRecoveryServicesVault -Name $OMSRecoveryVault -ResourceGroupName $OMSLogAnalyticsResourceGroup | select -ExpandProperty Location
+        $Location = Get-AzureRmRecoveryServicesVault -Name $OMSRecoveryVault -ResourceGroupName $OMSResourceGroupName | select -ExpandProperty Location
     }
 
 Catch {
@@ -68,7 +68,7 @@ Try {
             New-AzureRmResourceGroupDeployment -Name $vm.name `
                                                -ResourceGroupName $vm.ResourceGroupName `
                                                -TemplateUri $TemplateUri `
-                                               -omsRecoveryResourceGroupName $OMSRecoveryResourceGroupName `
+                                               -omsRecoveryResourceGroupName $OMSResourceGroupName `
                                                -vmResourceGroupName $vm.ResourceGroupName `
                                                -vmName $vm.name `
                                                -Verbose
