@@ -23,8 +23,8 @@ $credential = Get-AutomationPSCredential -Name 'AzureCredentials'
 $subscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionID'
 $OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
 $OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
-$OMSLogAnalyticsName = Get-AutomationVariable -Name 'OMSLogAnalyticsName'
-$OMSLogAnalyticsResourceGroup = Get-AutomationVariable -Name 'OMSLogAnalyticsResourceGroup'
+$OMSWorkspaceName = Get-AutomationVariable -Name 'OMSWorkspaceName'
+$OMSLogAnalyticsResourceGroup = Get-AutomationVariable -Name 'OMSResourceGroupName'
 $OMSRecoveryVault = Get-AutomationVariable -Name 'OMSRecoveryVault'
 
 try
