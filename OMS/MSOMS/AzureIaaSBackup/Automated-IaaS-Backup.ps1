@@ -4,19 +4,17 @@
 .DESCRIPTION
    This Runbook will enable Backup on existing Azure IaaS VMs.
    You need to provide input to the Resource Group name that contains the Backup and Site Recovery (OMS) Resourcem the name of the recovery vault, 
-   Fabric type, preferred policy and the template URI where the ARM template is located.
+   Fabric type, preferred policy and the template URI where the ARM template is located. Have fun!
 #>
-
-param (
-        $OMSRecoveryResourceGroupName,
-        $OMSRecoveryVault,
-        $OMSFabric,
-        $OMSRecoveryPolicy='DefaultPolicy',
-        $TemplateUri='https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/AzureIaaSBackup/azuredeploy.json'
-      )
 
 $credential = Get-AutomationPSCredential -Name 'AzureCredentials'
 $subscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionID'
+$OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
+$OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
+$OMSLogAnalyticsName = Get-AutomationVariable -Name 'OMSLogAnalyticsName'
+$OMSLogAnalyticsResourceGroup = Get-AutomationVariable -Name 'OMSLogAnalyticsResourceGroup'
+$TemplateUri='https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/AzureIaaSBackup/azuredeploy.json'
+$OMSRecoveryVault = Get-AutomationVariable -Name 'OMSRecoveryVault'
 
 $ErrorActionPreference = 'Stop'
 
@@ -37,7 +35,7 @@ Catch {
 
 Try {
 
-        $Location = Get-AzureRmRecoveryServicesVault -Name $OMSRecoveryVault -ResourceGroupName $OMSRecoveryResourceGroupName | select -ExpandProperty Location
+        $Location = Get-AzureRmRecoveryServicesVault -Name $OMSRecoveryVault -ResourceGroupName $OMSLogAnalyticsResourceGroup | select -ExpandProperty Location
     }
 
 Catch {
@@ -68,13 +66,11 @@ Try {
         Foreach ($vm in $vms)
         {
             New-AzureRmResourceGroupDeployment -Name $vm.name `
-                                               -ResourceGroupName $OMSRecoveryResourceGroupName `
+                                               -ResourceGroupName $vm.ResourceGroupName `
                                                -TemplateUri $TemplateUri `
                                                -omsRecoveryResourceGroupName $OMSRecoveryResourceGroupName `
                                                -vmResourceGroupName $vm.ResourceGroupName `
                                                -vmName $vm.name `
-                                               -fabricName $OMSFabric `
-                                               -policyName $OMSRecoveryPolicy `
                                                -Verbose
         }
     }
