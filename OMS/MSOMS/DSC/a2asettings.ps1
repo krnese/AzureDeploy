@@ -34,6 +34,25 @@ $vault = Get-AzureRmRecoveryServicesVault -ResourceGroupName $OMSResourceGroupNa
 
 Get-AzureRmRecoveryServicesVaultSettingsFile -Vault $vault -Path "c:\a2a\"
 
+# Format the disk and prepare Data dir for setup
+
+$RawDisks = Get-Disk | where partitionstyle -eq 'raw'| Sort-Object Number
+
+$InitializedDisk = Initialize-Disk -PartitionStyle GPT `
+                                   -Number $RawDisks.Number `
+                                   
+
+$FormatedVol = New-Partition -DiskNumber $RawDisks.Number `
+                             -UseMaximumSize `
+                             -AssignDriveLetter `
+                             -ErrorAction Stop | `
+                              Format-Volume -FileSystem NTFS `
+                             -AllocationUnitSize 65536 `
+                             -NewFileSystemLabel Data `
+                             -Force `
+                             -Confirm:$true `
+                             
+
 # Creates a shortcut on the desktop to A2A setup
 
 $WshShell = New-Object -ComObject WScript.Shell
