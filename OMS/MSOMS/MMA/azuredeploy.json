@@ -54,7 +54,7 @@
         "typeHandlerVersion": "1.0",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "workspaceID": "[reference(resourceId(parameters('OMSLogAnalyticsResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('OMSLogAnalyticsWorkspaceName')), parameters('OMSLogAnalyticsWorkspaceApiVersion')).customerId]"
+          "workspaceid": "[reference(resourceId(parameters('OMSLogAnalyticsResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('OMSLogAnalyticsWorkspaceName')), parameters('OMSLogAnalyticsWorkspaceApiVersion')).customerId]"
          },
         "protectedSettings": {
           "workspacekey": "[listKeys(resourceId(parameters('OMSLogAnalyticsResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('OMSLogAnalyticsWorkspaceName')), parameters('OMSLogAnalyticsWorkspaceApiVersion')).primarySharedKey]"
