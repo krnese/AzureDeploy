@@ -61,15 +61,3 @@
             }
         }
     }
-
-Import-AzureRmAutomationDscConfiguration `
-                                        -AutomationAccountName KNOMSAA `
-                                        -ResourceGroupName KNOMS `
-                                        -SourcePath C:\ASR\ASRMobilityService.ps1 `
-                                        -Published `
-                                        -Description "DSC Config for Mobility Service"
-
-Start-AzureRmAutomationDscCompilationJob `
-                                        -AutomationAccountName KNOMSAA `
-                                        -ResourceGroupName KNOMS `
-                                        -ConfigurationName ASRMobilityService
