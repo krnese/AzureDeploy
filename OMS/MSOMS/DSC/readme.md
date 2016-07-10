@@ -1,4 +1,4 @@
-# Deploy OMS Automation DSC Configuration in Azure with Azure Resource Manager
+# Deploy OMS ASR Mobility Service DSC Configuration in Azure with Azure Resource Manager
 This template will deploy all the assets (variables and modules) and the DSC Configuration to your OMS Automation Account, for onboarding machines to ASR protection using the Mobility Service
 
 # Deploy using PowerShell:
