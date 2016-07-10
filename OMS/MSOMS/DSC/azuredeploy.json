@@ -1,0 +1,180 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ASRRemoteFile": {
+      "type": "string",
+      "metadata": {
+        "Description": "Specify the location where you have stored the setup for ASR Mobility Service"
+      }
+    },
+    "ASRRemotePassphrase": {
+      "type": "string",
+      "metadata": {
+        "Description": "Specify the location where you have stored the passphrase for the Mobilty Service registration"
+      }
+    },
+    "ASRCSEndpoint": {
+      "type": "string",
+      "metadata": {
+        "Description": "Specify the IP address of your ASR Management server"
+      }
+    },
+    "OMSAutomationAccountName": {
+      "type": "string",
+      "metadata": {
+        "Description": "Specify the name of your existing OMS Automation account to store the configuration"
+      }
+    },
+    "OMSAutomationApiVersion": {
+      "type": "string",
+      "defaultValue": "2015-10-31",
+      "metadata": {
+        "Description": "Select the API Version for the resource provider"
+      }
+    },
+    "OMSAutomationSku": {
+      "type": "string",
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Basic",
+        "Free"
+      ],
+      "metadata": {
+        "Description": "Select the SKU for your OMS Automation account"
+      }
+    },
+    "DSCJobGuid": {
+      "type": "string",
+      "metadata": {
+        "Description": "Type the guid for the DSC job"
+      }
+    }
+  },
+  "variables": {
+    "RemoteFile": "RemoteFile",
+    "RemotePassphrase": "RemotePassphrase",
+    "CSEndpoint": "CSEndpoint",
+    "configurationURI": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/DSC/ASRMobilityService.ps1",
+    "configurationName": "ASRMobilityService",
+    "configurationDescription": "DSC Configuration for installing and configuring ASR Mobility Service on protected machines",
+    "configurationOverwrite": "true",
+    "PSModuleName": "xPSDesiredStateConfiguration",
+    "PSModuleURI": "https://devopsgallerystorage.blob.core.windows.net/packages/xpsdesiredstateconfiguration.3.9.0.nupkg"
+  },
+  "resources": [
+    {
+      "name": "[parameters('OMSAutomationAccountName')]",
+      "type": "Microsoft.Automation/automationAccounts",
+      "apiVersion": "[parameters('OMSAutomationApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('OMSAutomationSku')]"
+        }      
+      },
+      "resources": [
+        {
+          "name": "[variables('RemoteFile')]",
+          "type": "variables",
+          "apiVersion": "[parameters('OMSAutomationApiVersion')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'))]"
+          ],
+          "tags": { },
+          "properties": {
+            "description": "Remote file for ASR Mobility Service setup",
+            "value": "[concat('\"',parameters('ASRRemoteFile'),'\"')]"
+          }
+        },
+        {
+          "name": "[variables('RemotePassphrase')]",
+          "type": "variables",
+          "apiVersion": "[parameters('OMSAutomationApiVersion')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'))]"
+          ],
+          "tags": { },
+          "properties": {
+            "description": "Remote file for the passphrase",
+            "value": "[concat('\"',parameters('ASRRemotepassphrase'),'\"')]"
+          }
+        },
+        {
+          "name": "[variables('CSEndpoint')]",
+          "type": "variables",
+          "apiVersion": "[parameters('OMSAutomationApiVersion')]",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'))]"
+          ],
+          "tags": { },
+          "properties": {
+            "description": "IP address for the CSEndpoint",
+            "value": "[concat('\"',parameters('ASRCSEndpoint'),'\"')]"
+          }
+        },
+        {
+          "name": "[variables('PSModuleName')]",
+          "type": "Modules",
+          "apiVersion": "[parameters('OMSAutomationApiVersion')]",
+          "tags": { },
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'), '/Variables/', variables('CSEndpoint'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'), '/Variables/', variables('RemoteFile'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'), '/Variables/', variables('RemotePassphrase'))]"
+          ],
+          "properties": {
+            "contentLink": {
+              "uri": "[variables('PSModuleURI')]"
+            }
+          }
+        },
+        {
+          "name": "[variables('configurationName')]",
+          "type": "Configurations",
+          "apiVersion": "[parameters('OMSAutomationApiVersion')]",
+          "location": "[resourceGroup().location]",
+          "tags": { },
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'), '/variables/', variables('RemoteFile'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'), '/variables/', variables('RemotePassphrase'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'), '/variables/', variables('CSEndpoint'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'), '/Modules/', variables('PSModuleName'))]"
+          ],
+          "properties": {
+            "logVerbose": "false",
+            "description": "[variables('configurationDescription')]",
+            "state": "Published",
+            "overwrite": "[variables('configurationOverwrite')]",
+            "Source": {
+              "type": "uri",
+              "Value": "[variables('configurationUri')]"
+            }
+          }
+        },
+        {
+          "name": "[parameters('DSCJobGuid')]",
+          "type": "Compilationjobs",
+          "apiVersion": "[parameters('OMSAutomationApiVersion')]",
+          "location": "[resourceGroup().location]",
+          "tags": { },
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'))]",
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('OMSAutomationAccountName'),'/Configurations/', variables('configurationName'))]"
+          ],
+          "properties": {
+            "configuration": {
+              "name": "[variables('configurationName')]"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": { }
+}
