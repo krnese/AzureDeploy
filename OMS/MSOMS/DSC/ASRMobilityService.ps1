@@ -1,12 +1,12 @@
 ﻿configuration ASRMobilityService {
     
-    $RemoteFile = Get-AutomationVariable -Name "RemoteFile"
-    $RemotePassphrase = Get-AutomationVariable -Name "RemotePassphrase"
+    $RemoteFile = Get-AzureRmAutomationVariable -Name "RemoteFile"
+    $RemotePassphrase = Get-AzureRmAutomationVariable -Name "RemotePassphrase"
     $TempDestination = "C:\Temp\asr.zip"
     $LocalPassphrase = "C:\Temp\Mobility_service\passphrase.txt"
     $Role = 'Agent'
     $Install = 'C:\Program Files (x86)\Microsoft Azure Site Recovery'
-    $CSEndpoint = Get-AutomationVariable -Name "CSEndpoint"
+    $CSEndpoint = Get-AzureRmAutomationVariable -Name "CSEndpoint"
     $Passphrase = 'C:\Temp\Moblity_service\passphrase.txt'
     $Arguments = '/Role ' + '"' + $Role + '"' + ' /InstallLocation ' + '"' + $Install + '"' + ' /CSEndpoint ' + '"' + $CSEndpoint + '"' + ' /PassphraseFilePath ' +  '"' +$Passphrase + '"'  
 
