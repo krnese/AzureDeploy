@@ -1,6 +1,6 @@
 ﻿configuration ASRMobilityService {
     
-    $RemoteFile = Get-AutomationVariable -Name "RemoteFile" -
+    $RemoteFile = Get-AutomationVariable -Name "RemoteFile"
     $RemotePassphrase = Get-AutomationVariable -Name "RemotePassphrase"
     $TempDestination = "C:\Temp\asr.zip"
     $LocalPassphrase = "C:\Temp\Mobility_service\passphrase.txt"
