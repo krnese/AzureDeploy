@@ -76,7 +76,7 @@
             DependsOn = "[Package]Install"
             }
 
-        Service AzureAgent {
+        Service AzureAgentService {
             Name = "WindowsAzureGuestAgent"
             Ensure = "Present"
             State = "Running"
