@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "OMSWorkspacename": {
+      "type": "string",
+      "defaultValue": "knoms"
+    },
+    "storageaccountname": {
+      "type": "string"
+    },
+    "table": {
+      "type": "string",
+      "defaultValue": "WADServiceFabric*EventTable",
+      "allowedValues": [
+        "WADWindowsEventLogsTable",
+        "WADServiceFabric*EventTable",
+        "wad-iis-logfiles"
+      ]
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-11-01-preview",
+      "location": "[resourceGroup().location]",
+      "name": "[parameters('OMSWorkspacename')]",
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "properties": {
+        "sku": {
+          "name": "Free"
+        }
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-11-01-preview",
+          "name": "[concat(parameters('storageaccountname'),parameters('OMSWorkspacename'))]",
+          "type": "storageinsightconfigs",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('OMSWorkspacename'))]"
+          ],
+          "properties": {
+            "containers": [ ],
+            "tables": [
+              "[parameters('table')]"
+            ],
+            "storageAccount": {
+              "id": "[resourceId('Microsoft.Storage/storageaccounts/', parameters('storageaccountname'))]",
+              "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": {}
+}
+
+
