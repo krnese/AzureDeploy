@@ -27,7 +27,13 @@ New-AzureRmResourceGroupDeployment `
 ````                                   
 ## Enable Service Fabric Solution in OMS Log Analytics (post deployment)
 ````
-$OMS = Get-AzureRmOperationalInsightsWorkspace -ResourceGroupName $RG -Name OMSServiceFabric
-Set-AzureRmOperationalInsightsIntelligencePack -ResourceGroupName $OMS.ResourceGroupName -Worksp
-aceName $OMS.Name -IntelligencePackName "ServiceFabric" -Enabled $true
+$OMS = Get-AzureRmOperationalInsightsWorkspace `
+                                              -ResourceGroupName $RG `
+                                              -Name OMSServiceFabric
+                                              
+Set-AzureRmOperationalInsightsIntelligencePack `
+                                              -ResourceGroupName $OMS.ResourceGroupName `
+                                              -WorkspaceName $OMS.Name `
+                                              -IntelligencePackName "ServiceFabric" `
+                                              -Enabled $true
 ````
