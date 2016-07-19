@@ -12,6 +12,22 @@ New-AzureRmResourceGroupDeployment `
                                   -ResourceGroupName OMSWorkspace `
                                   -TemplateFile 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/StorageAccount/azuredeploy.json' `
                                   -OMSWorkspacename myOMSworkspace `
-                                  -storageaccountname `
+                                  -storageaccountname sfstorage `
                                   -Verbose
 ````                                   
+
+## Add multiple Storage Accounts to OMS Log Analytics using PowerShell:
+````powershell
+
+$storageaccounts = Get-AzureRmStorageAccount
+
+foreach ($storage in $storageaccounts) {
+
+  New-AzureRmResourceGroupDeployment `
+                                  -Name Deployment1 `
+                                  -ResourceGroupName OMSWorkspace `
+                                  -TemplateFile 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/StorageAccount/azuredeploy.json' `
+                                  -OMSWorkspacename myOMSworkspace `
+                                  -storageaccountname $storage.Name `
+                                  -Verbose
+````                                  
