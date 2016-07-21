@@ -9,6 +9,12 @@
     "storageaccountname": {
       "type": "string"
     },
+    "storageaccountresourcegroupname": {
+      "type": "string",
+      "metadata": {
+        "Description": "Resource group containing the storage account"
+      }
+    },
     "table": {
       "type": "string",
       "defaultValue": "WADServiceFabric*EventTable",
@@ -44,15 +50,13 @@
               "[parameters('table')]"
             ],
             "storageAccount": {
-              "id": "[resourceId('Microsoft.Storage/storageaccounts/', parameters('storageaccountname'))]",
-              "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+              "id": "[resourceId(parameters('storageaccountResourceGroupName'),'Microsoft.Storage/storageaccounts/', parameters('storageaccountname'))]",
+              "key": "[listKeys(resourceId(parameters('storageaccountResourceGroupName'),'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
             }
           }
         }
       ]
     }
   ],
-  "outputs": {}
+  "outputs": { }
 }
-
-
