@@ -8,7 +8,12 @@
     },
     "OMSRegion": {
       "type": "string",
-      "defaultValue": "West Europe"
+      "defaultValue": "West Europe",
+      "allowedValues": [
+        "West Europe",
+        "East US",
+        "Southeast Asia"
+      ]
     },
     "storageaccountname": {
       "type": "string"
