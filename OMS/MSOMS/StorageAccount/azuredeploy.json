@@ -6,6 +6,10 @@
       "type": "string",
       "defaultValue": "knoms"
     },
+    "OMSRegion": {
+      "type": "string",
+      "defaultValue": "West Europe"
+    },
     "storageaccountname": {
       "type": "string"
     },
@@ -28,8 +32,8 @@
   "resources": [
     {
       "apiVersion": "2015-11-01-preview",
-      "location": "[resourceGroup().location]",
       "name": "[parameters('OMSWorkspacename')]",
+      "location": "[parameters('OMSRegion')]",
       "type": "Microsoft.OperationalInsights/workspaces",
       "properties": {
         "sku": {
