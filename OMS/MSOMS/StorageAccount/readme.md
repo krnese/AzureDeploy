@@ -12,6 +12,7 @@ New-AzureRmResourceGroupDeployment `
                                   -ResourceGroupName OMSWorkspace `
                                   -TemplateFile 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/StorageAccount/azuredeploy.json' `
                                   -OMSWorkspacename myOMSworkspace `
+                                  -storageaccountresourcegroupname storagerg `
                                   -storageaccountname sfstorage `
                                   -Verbose
 ````                                   
