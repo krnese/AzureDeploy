@@ -189,15 +189,16 @@
     },
     "OMSRegion": {
       "type": "string",
+      "defaultValue": "West Europe",
       "allowedValues": [
-        "southeastasia",
-        "westeurope",
-        "eastus"
+        "West Europe",
+        "East US",
+        "Southeast Asia"
       ],
-      "metadata": {
-        "description": "Specify the Azure Region for your OMS workspace"
-      }
+    "metadata": {
+      "description": "Specify the Azure Region for your OMS workspace"
     }
+  }
   },
   "variables": {
     "vmssApiVersion": "2016-03-30",
