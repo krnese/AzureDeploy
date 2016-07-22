@@ -14,7 +14,7 @@ $RG = New-AzureRmResourceGroup -Name OMSServiceFabric -Location westeurope
 
 New-AzureRmResourceGroupDeployment `
                                   -Name Deployment1 `
-                                  -ResourceGroupName $RG `
+                                  -ResourceGroupName $RG.ResourceGroupName `
                                   -TemplateFile 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/ServiceFabric/azuredeploy.json' `
                                   -clusterLocation westeurope `
                                   -computeLocation westeurope `
