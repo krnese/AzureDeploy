@@ -21,7 +21,7 @@ New-AzureRmResourceGroupDeployment `
                                   -dnsName omsservicefabric `
                                   -vmStorageAccountName sf `
                                   -OMSWorkspacename OMSServiceFabric `
-                                  -OMSRegion westeurope `
+                                  -OMSRegion "West Europe" `
                                   -adminUserName azureadmin `
                                   -Verbose
 ````                                   
