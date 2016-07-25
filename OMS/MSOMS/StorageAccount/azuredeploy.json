@@ -30,7 +30,8 @@
       "allowedValues": [
         "WADWindowsEventLogsTable",
         "WADServiceFabric*EventTable",
-        "wad-iis-logfiles"
+        "wad-iis-logfiles",
+        "WADETWEventTable"
       ]
     }
   },
