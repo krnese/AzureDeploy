@@ -4,8 +4,10 @@ Simply specify the name of the machine to add, and reference the Resource Group 
 
 # Deploy with PowerShell:
 ````powershell
-New-AzureRmResourceGroupDeployment -name srvmgmt -ResourceGroupName <name of RG where the machine will be located> `
-                                   -gatewayName <name of gateway machine> `
-                                   -gatewayresourcegroupName <name of gateway RG> `
-                                   -verbose
+New-AzureRmResourceGroupDeployment -name srvmgmt -ResourceGroupName knsmt `
+                                                 -TemplateFile https://raw.githubusercontent.com/krnese/AzureDeploy/master/ServerManagement/azuredeploy.json `
+                                                 -computerName nanodmz `
+                                                 -gatewayName CATMGMT `
+                                                 -gatewayresourcegroupName CATMGMT `
+                                                 -Verbose
 ````                                   

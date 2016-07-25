@@ -14,21 +14,21 @@ $RG = New-AzureRmResourceGroup -Name OMSServiceFabric -Location westeurope
 
 New-AzureRmResourceGroupDeployment `
                                   -Name Deployment1 `
-                                  -ResourceGroupName $RG `
+                                  -ResourceGroupName $RG.ResourceGroupName `
                                   -TemplateFile 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/ServiceFabric/azuredeploy.json' `
                                   -clusterLocation westeurope `
                                   -computeLocation westeurope `
                                   -dnsName omsservicefabric `
                                   -vmStorageAccountName sf `
                                   -OMSWorkspacename OMSServiceFabric `
-                                  -OMSRegion westeurope `
+                                  -OMSRegion "West Europe" `
                                   -adminUserName azureadmin `
                                   -Verbose
 ````                                   
 ## Enable Service Fabric Solution in OMS Log Analytics (post deployment)
 ````
 $OMS = Get-AzureRmOperationalInsightsWorkspace `
-                                              -ResourceGroupName $RG `
+                                              -ResourceGroupName $RG.ResourceGroupName `
                                               -Name OMSServiceFabric
                                               
 Set-AzureRmOperationalInsightsIntelligencePack `
