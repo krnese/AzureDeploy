@@ -16,7 +16,8 @@ Start-Sleep -Seconds 120
 
 # Import Hybrid Registration
 
-Import-Module -name "c:\Program Files\Microsoft Monitoring Agent\Agent\AzureAutomation\7.2.7241.0\HybridRegistration\HybridRegistration.psd1" -Verbose
+Import-Module -name "C:\Program Files\Microsoft Monitoring Agent\Agent\AzureAutomation\7.2.10681.0\HybridRegistration\HybridRegistration.psd1" -Verbose
+
 
 Start-Sleep 20
 
