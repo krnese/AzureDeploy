@@ -303,7 +303,7 @@
               "typeHandlerVersion": "1.0",
               "autoUpgradeMinorVersion": true,
               "settings": {
-                "workspaceID": "[Parameters('OMSWorkSpaceID')]"
+                "workspaceId": "[Parameters('OMSWorkSpaceID')]"
               },
               "protectedSettings": {
                 "workspacekey": "[Parameters('OMSWorkspaceKey')]"
