@@ -1,7 +1,7 @@
 # Deploy Azure Service Fabric Cluster and enable monitoring using OMS Log Analytics
-This template will deploy an Azure Service Fabric Cluster together with an OMS Log Analytics workspace, and also add the diagnostic storage account into OMS for monitoring and insights. 
+This template will deploy an Azure Service Fabric Cluster together with an OMS Log Analytics workspace, adds the diagnostic storage account into OMS for monitoring and insights and enables the OMS Gallery Solution for Service Fabric.
 
-The Service Fabric solution uses Azure Diagnostics data from your Service Fabric VMs, by collecting this data from your Azure WAD tables. 
+The OMS Gallery Service Fabric solution uses Azure Diagnostics data from your Service Fabric VMs, by collecting this data from your Azure WAD tables. 
 Log Analytics then reads Service Fabric framework events, including Reliable Service Events, Actor Events, Operational Events, and Custom ETW events. 
 The Service Fabric solution dashboard shows you notable issues and relevant events in your Service Fabric environment.
 
@@ -10,30 +10,21 @@ The Service Fabric solution dashboard shows you notable issues and relevant even
 
 ## Deploy using PowerShell:
 ````powershell
-$RG = New-AzureRmResourceGroup -Name OMSServiceFabric -Location westeurope
+
+$RG = New-AzureRmResourceGroup -Name ServiceFabric -Location westeurope
 
 New-AzureRmResourceGroupDeployment `
-                                  -Name Deployment1 `
+                                  -Name Deployment `
                                   -ResourceGroupName $RG.ResourceGroupName `
-                                  -TemplateFile 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/ServiceFabric/azuredeploy.json' `
-                                  -clusterLocation westeurope `
-                                  -computeLocation westeurope `
-                                  -dnsName omsservicefabric `
+                                  -TemplateFile C:\azuredeploy\oms\msoms\servicefabric\azuredeploy.json `
+                                  -vmNodeType0Name knsfss `
+                                  -computeLocation "West Europe" `
+                                  -dnsName knsff `
                                   -vmStorageAccountName sf `
-                                  -OMSWorkspacename OMSServiceFabric `
-                                  -OMSRegion "West Europe" `
+                                  -omsWorkspacename knsfws `
+                                  -omsRegion "West Europe" `
+                                  -omssolutionName ServiceFabric `
+                                  -clusterName knomssf `
                                   -adminUserName azureadmin `
                                   -Verbose
 ````                                   
-## Enable Service Fabric Solution in OMS Log Analytics (post deployment)
-````
-$OMS = Get-AzureRmOperationalInsightsWorkspace `
-                                              -ResourceGroupName $RG.ResourceGroupName `
-                                              -Name OMSServiceFabric
-                                              
-Set-AzureRmOperationalInsightsIntelligencePack `
-                                              -ResourceGroupName $OMS.ResourceGroupName `
-                                              -WorkspaceName $OMS.Name `
-                                              -IntelligencePackName "ServiceFabric" `
-                                              -Enabled $true
-````
