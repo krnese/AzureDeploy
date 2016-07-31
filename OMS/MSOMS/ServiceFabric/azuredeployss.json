@@ -221,19 +221,21 @@
         "description": "Specify the Azure Region for your OMS workspace"
       }
     },
-    "omssolutionName": {
+    "servicefabricSolution": {
       "type": "string",
-      "defaultValue": "ServiceFabric",
-      "metadata": {
-        "description": "Name of the OMS solution to enable for the workspace. Service Fabric is default"
-      }
+      "defaultValue": "ServiceFabric"
+    },
+    "securitySolution": {
+      "type": "string",
+      "defaultValue": "Security"
     }
   },
   "variables": {
     "supportLogStorageAccountName": "[toLower( concat('oms', uniqueString(resourceGroup().id),'2'))]",
     "applicationDiagnosticsStorageAccountType": "Standard_LRS",
     "applicationDiagnosticsStorageAccountName": "[toLower(concat(uniqueString(resourceGroup().id), '3' ))]",
-    "solution": "[Concat(parameters('omssolutionName'), '(', parameters('omsWorkspacename'), ')')]",
+    "solution": "[Concat(parameters('servicefabricSolution'), '(', parameters('omsWorkspacename'), ')')]",
+    "solutionsecurity": "[concat(parameters('securitySolution'), '(', parameters('omsWorkspacename'), ')')]",
     "vmssApiVersion": "2016-03-30",
     "omsApiVersion": "2015-11-01-preview",
     "lbApiVersion": "2015-06-15",
@@ -704,6 +706,81 @@
               "key": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('applicationDiagnosticsStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
             }
           }
+        },
+        {
+          "apiVersion": "[variables('omsApiVersion')]",
+          "name": "Security",
+          "type": "datasources",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]",
+            "[concat('Microsoft.OperationsManagement/solutions/', variables('solutionsecurity'))]"
+          ],
+          "kind": "WindowsEvent",
+          "properties": {
+            "eventLogName": "Security",
+            "eventTypes": [
+              {
+                "eventType": "Error"
+              },
+              {
+                "eventType": "Warning"
+              },
+              {
+                "eventType": "Information"
+              }
+            ]
+          }
+        },
+        {
+          "apiVersion": "[variables('omsApiVersion')]",
+          "name": "System",
+          "type": "datasources",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]"
+          ],
+          "kind": "WindowsEvent",
+          "properties": {
+            "eventLogName": "System",
+            "eventTypes": [
+              {
+                "eventType": "Error"
+              },
+              {
+                "eventType": "Warning"
+              },
+              {
+                "eventType": "Information"
+              }
+            ]
+          }
+        },
+        {
+          "apiVersion": "[variables('omsApiVersion')]",
+          "name": "VMSS Queries2",
+          "type": "savedSearches",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]"
+          ],
+          "properties": {
+            "Category": "VMSS",
+            "DisplayName": "VMSS Instance Count",
+            "Query": "Type:Event Source=ServiceFabricNodeBootstrapAgent | dedup Computer | measure count () by Computer",
+            "Version": 1
+          }
+        },
+        {
+          "apiVersion": "[variables('omsApiVersion')]",
+          "name": "VMSS Queries",
+          "type": "savedSearches",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]"
+          ],
+          "properties": {
+            "Category": "VMSS",
+            "DisplayName": "VMSS Instance Shut Down",
+            "Query": "Type:SecurityEvent EventID=4634 | select Computer",
+            "Version": 1
+          }
         }
       ]
     },
@@ -722,7 +799,26 @@
       "plan": {
         "name": "[variables('solution')]",
         "publisher": "Microsoft",
-        "product": "[Concat('OMSGallery/', parameters('omssolutionName'))]",
+        "product": "[Concat('OMSGallery/', parameters('servicefabricsolution'))]",
+        "promotionCode": ""
+      }
+    },
+    {
+      "apiVersion": "[variables('omsApiVersion')]",
+      "location": "[parameters('omsRegion')]",
+      "name": "[variables('solutionsecurity')]",
+      "type": "Microsoft.OperationsManagement/solutions",
+      "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('solutionsecurity'))]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('OMSWorkspacename'))]"
+      ],
+      "properties": {
+        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]"
+      },
+      "plan": {
+        "name": "[variables('solutionsecurity')]",
+        "publisher": "Microsoft",
+        "product": "[Concat('OMSGallery/', parameters('securitysolution'))]",
         "promotionCode": ""
       }
     }
