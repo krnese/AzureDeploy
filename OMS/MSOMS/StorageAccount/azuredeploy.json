@@ -2,11 +2,11 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "OMSWorkspacename": {
+    "omsWorkspacename": {
       "type": "string",
       "defaultValue": "knoms"
     },
-    "OMSRegion": {
+    "omsRegion": {
       "type": "string",
       "defaultValue": "West Europe",
       "allowedValues": [
@@ -15,10 +15,10 @@
         "Southeast Asia"
       ]
     },
-    "storageaccountname": {
+    "storageaccountName": {
       "type": "string"
     },
-    "storageaccountresourcegroupname": {
+    "storageaccountresourcegroupName": {
       "type": "string",
       "metadata": {
         "Description": "Resource group containing the storage account"
@@ -33,13 +33,42 @@
         "wad-iis-logfiles",
         "WADETWEventTable"
       ]
+    },
+    "omssolutionName": {
+      "type": "string",
+      "defaultValue": "ServiceFabric",
+      "metadata": {
+        "description": "Name of the OMS solution to enable for the workspace. Service Fabric is default"
+      }
     }
+  },
+  "variables": {
+    "solution": "[Concat(parameters('omssolutionName'), '(', parameters('omsWorkspacename'), ')')]"
   },
   "resources": [
     {
       "apiVersion": "2015-11-01-preview",
-      "name": "[parameters('OMSWorkspacename')]",
-      "location": "[parameters('OMSRegion')]",
+      "location": "[parameters('omsRegion')]",
+      "name": "[variables('solution')]",
+      "type": "Microsoft.OperationsManagement/solutions",
+      "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('solution'))]",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]"
+      ],
+      "properties": {
+        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename'))]"
+      },
+      "plan": {
+        "name": "[variables('solution')]",
+        "publisher": "Microsoft",
+        "product": "[Concat('OMSGallery/', parameters('omssolutionName'))]",
+        "promotionCode": ""
+      }
+    },
+    {
+      "apiVersion": "2015-11-01-preview",
+      "name": "[parameters('omsWorkspacename')]",
+      "location": "[parameters('omsRegion')]",
       "type": "Microsoft.OperationalInsights/workspaces",
       "properties": {
         "sku": {
