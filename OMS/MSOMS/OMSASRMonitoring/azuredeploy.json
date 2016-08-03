@@ -11,7 +11,15 @@
     },
     "omslogAnalyticsRegion": {
       "type": "string",
-      "defaultValue": "westeurope"
+      "defaultValue": "West Europe",
+      "allowedValues": [
+        "West Europe",
+        "East US",
+        "Southeast Asia"
+      ],
+      "metadata": {
+        "description": "Specify the Azure Region for your OMS workspace"
+      }
     },
     "omslogAnalyticsApiVersion": {
       "type": "string",
@@ -29,14 +37,17 @@
     },
     "omsautomationRegion": {
       "type": "string",
-      "defaultValue": "westeurope",
+      "defaultValue": "West Europe",
       "allowedValues": [
-        "westeurope",
-        "southeastasia",
-        "eastus2",
-        "southcentralus",
-        "japaneast"
-      ]
+        "West Europe",
+        "Southeast Asia",
+        "East US 2",
+        "South Central US",
+        "Japan East"
+      ],
+      "metadata": {
+        "description": "Specify the Azure Region for your OMS Automation Account"
+      }
     },
     "omsautomationApiVersion": {
       "type": "string",
@@ -121,10 +132,10 @@
   },
   "resources": [
     {
-      "apiVersion": "[parameters('OMSLogAnalyticsApiVersion')]",
+      "apiVersion": "[parameters('omslogAnalyticsApiVersion')]",
       "name": "[parameters('OMSLogAnalyticsWorkspaceName')]",
       "type": "Microsoft.OperationalInsights/workspaces",
-      "location": "[parameters('OMSLogAnalyticsRegion')]",
+      "location": "[parameters('omslogAnalyticsRegion')]",
       "id": "[Concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('OMSLogAnalyticsWorkspaceName'))]",
       "resources": [
         {
