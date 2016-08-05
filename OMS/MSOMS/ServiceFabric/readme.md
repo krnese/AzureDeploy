@@ -26,7 +26,6 @@ New-AzureRmResourceGroupDeployment `
                                   -vmStorageAccountName sf `
                                   -omsWorkspacename knsfws `
                                   -omsRegion "West Europe" `
-                                  -omssolutionName ServiceFabric `
                                   -clusterName knomssf `
                                   -adminUserName azureadmin `
                                   -Verbose
@@ -57,7 +56,6 @@ New-AzureRmResourceGroupDeployment `
                                   -vmStorageAccountName sf `
                                   -omsWorkspacename knsfws `
                                   -omsRegion "West Europe" `
-                                  -omssolutionName ServiceFabric `
                                   -clusterName knomssf `
                                   -adminUserName azureadmin `
                                   -Verbose
