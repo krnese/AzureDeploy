@@ -19,14 +19,13 @@ $RG = New-AzureRmResourceGroup -Name ServiceFabric -Location westeurope
 New-AzureRmResourceGroupDeployment `
                                   -Name Deployment `
                                   -ResourceGroupName $RG.ResourceGroupName `
-                                  -TemplateFile C:\azuredeploy\oms\msoms\servicefabric\azuredeploy.json `
+                                  -TemplateUri https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/ServiceFabric/azuredeploy.json `
                                   -vmNodeType0Name knsfss `
                                   -computeLocation "West Europe" `
                                   -dnsName knsff `
                                   -vmStorageAccountName sf `
                                   -omsWorkspacename knsfws `
                                   -omsRegion "West Europe" `
-                                  -omssolutionName ServiceFabric `
                                   -clusterName knomssf `
                                   -adminUserName azureadmin `
                                   -Verbose
@@ -50,14 +49,13 @@ $RG = New-AzureRmResourceGroup -Name ServiceFabric -Location westeurope
 New-AzureRmResourceGroupDeployment `
                                   -Name Deployment `
                                   -ResourceGroupName $RG.ResourceGroupName `
-                                  -TemplateFile C:\azuredeploy\oms\msoms\servicefabric\azuredeploy.json `
+                                  -TemplateUri https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/ServiceFabric/azuredeployss.json `
                                   -vmNodeType0Name knsfss `
                                   -computeLocation "West Europe" `
                                   -dnsName knsff `
                                   -vmStorageAccountName sf `
                                   -omsWorkspacename knsfws `
                                   -omsRegion "West Europe" `
-                                  -omssolutionName ServiceFabric `
                                   -clusterName knomssf `
                                   -adminUserName azureadmin `
                                   -Verbose
