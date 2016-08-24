@@ -173,6 +173,20 @@
           }
         },
         {
+          "name": "[variables('omsworkspaceName')]",
+          "type": "variables",
+          "apiVersion": "2015-10-31",
+          "location": "[parameters('omsautomationRegion')]",
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('omsautomationAccountName'))]"
+          ],
+          "tags": { },
+          "properties": {
+            "description": "OMS Resource Group Name",
+            "value": "[concat('\"',resourceGroup().id,'\"')]"
+          }
+        },
+        {
           "name": "[variables('azureSubscriptionId')]",
           "type": "variables",
           "apiVersion": "2015-10-31",
