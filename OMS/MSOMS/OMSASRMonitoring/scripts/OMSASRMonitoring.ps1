@@ -91,7 +91,7 @@ foreach ($Vault in $Vaults)
     $ASRLogsJson = ConvertTo-Json -InputObject $ASRLogs
     $LogType = "RecoveryServices"
 
-    Send-OMSAPIIngestionFile -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $ASRLogsJson -logType $LogType
+    Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $ASRLogsJson -logType $LogType
 
     }
 
@@ -244,7 +244,7 @@ foreach ($Vault in $Vaults)
 
          $LogType = "RecoveryServices"
 
-         Send-OMSAPIIngestionFile -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $ASRVMsJson -logType $LogType
+         Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $ASRVMsJson -logType $LogType
 
             }
          }              
