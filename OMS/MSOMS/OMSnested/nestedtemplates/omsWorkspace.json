@@ -63,6 +63,51 @@
           }
         },
         {
+          "apiVersion": "2015-11-01-preview",
+          "name": "[concat(parameters('omsWorkspaceName'), '/', 'HyperV1')]",
+          "type": "savedSearches",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+          ],
+          "properties": {
+            "ETag": "*",
+            "Category": "HyperV",
+            "DisplayName": "VMs created last 24 hours",
+            "Query": "EventLog=\"Microsoft-Windows-Hyper-V-VMMS-Admin\" EventLevelName=information EventID=13002 TimeGenerated>NOW-1DAY ",
+            "Version": 1
+          }
+        },
+        {
+          "apiVersion": "2015-11-01-preview",
+          "name": "[concat(parameters('omsWorkspaceName'), '/', 'HyperV2')]",
+          "type": "savedSearches",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+          ],
+          "properties": {
+            "ETag": "*",
+            "Category": "HyperV",
+            "DisplayName": "VMs deleted last 24 hours",
+            "Query": "EventLog=\"Microsoft-Windows-Hyper-V-VMMS-Admin\" EventLevelName=information EventID=13003 TimeGenerated>NOW-1DAY",
+            "Version": 1
+          }
+        },
+        {
+          "apiVersion": "2015-11-01-preview",
+          "name": "[concat(parameters('omsWorkspaceName'), '/', 'HyperV3')]",
+          "type": "savedSearches",
+          "dependsOn": [
+            "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+          ],
+          "properties": {
+            "ETag": "*",
+            "Category": "HyperV",
+            "DisplayName": "Replication throughput per VM",
+            "Query": "Type:Perf ObjectName=\"Hyper-V Azure Replication Agent\" CounterName=\"Replication Throughput\" TimeGenerated>NOW-8HOURS | measure  avg(CounterValue) by InstanceName  interval 15minutes",
+            "Version": 1
+          }
+        },
+        {
           "name": "[concat(parameters('omsWorkspaceName'), '/', 'SoftwareUpdateFailed2')]",
           "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
           "apiVersion": "2015-11-01-preview",
