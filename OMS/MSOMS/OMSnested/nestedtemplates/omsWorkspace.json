@@ -71,10 +71,9 @@
           ],
           "properties": {
             "ETag": "*",
-            "Category": "HyperV",
-            "DisplayName": "VMs created last 24 hours",
-            "Query": "EventLog=\"Microsoft-Windows-Hyper-V-VMMS-Admin\" EventLevelName=information EventID=13002 TimeGenerated>NOW-1DAY ",
-            "Version": 1
+            "category": "HyperV",
+            "displayName": "VMs created last 24 hours",
+            "query": "EventLog=\"Microsoft-Windows-Hyper-V-VMMS-Admin\" EventLevelName=information EventID=13002 TimeGenerated>NOW-1DAY "
           }
         },
         {
@@ -86,10 +85,9 @@
           ],
           "properties": {
             "ETag": "*",
-            "Category": "HyperV",
-            "DisplayName": "VMs deleted last 24 hours",
-            "Query": "EventLog=\"Microsoft-Windows-Hyper-V-VMMS-Admin\" EventLevelName=information EventID=13003 TimeGenerated>NOW-1DAY",
-            "Version": 1
+            "category": "HyperV",
+            "displayName": "VMs deleted last 24 hours",
+            "Query": "EventLog=\"Microsoft-Windows-Hyper-V-VMMS-Admin\" EventLevelName=information EventID=13003 TimeGenerated>NOW-1DAY"
           }
         },
         {
@@ -101,10 +99,9 @@
           ],
           "properties": {
             "ETag": "*",
-            "Category": "HyperV",
-            "DisplayName": "Replication throughput per VM",
-            "Query": "Type:Perf ObjectName=\"Hyper-V Azure Replication Agent\" CounterName=\"Replication Throughput\" TimeGenerated>NOW-8HOURS | measure  avg(CounterValue) by InstanceName  interval 15minutes",
-            "Version": 1
+            "category": "HyperV",
+            "displayName": "Replication throughput per VM",
+            "query": "Type:Perf ObjectName=\"Hyper-V Azure Replication Agent\" CounterName=\"Replication Throughput\" TimeGenerated>NOW-8HOURS | measure  avg(CounterValue) by InstanceName  interval 15minutes"
           }
         },
         {
