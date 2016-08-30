@@ -126,7 +126,7 @@
       "type": "Microsoft.Automation/automationAccounts",
       "comments": "Automation account for OMS",
       "dependsOn": [
-        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')]"
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
       ],
       "properties": {
         "sku": {
@@ -203,7 +203,7 @@
           }
         },
         {
-          "name": "[variables('AzureCredentials')]",
+          "name": "[variables('azureCredentials')]",
           "type": "credentials",
           "apiVersion": "2015-10-31",
           "dependsOn": [
@@ -227,7 +227,8 @@
           "properties": {
             "description": "OMS Recovery Vault Name",
             "value": "[concat('\"',parameters('omsWorkspaceName'),'\"')]"
-          },
+          }
+        },
           {
             "name": "[variables('psModules').azureRmOperationalInsights.name]",
             "type": "Modules",
