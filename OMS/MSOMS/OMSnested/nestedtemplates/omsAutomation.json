@@ -115,7 +115,8 @@
     "omsWorkspaceKey": "OMSWorkspacekey",
     "omsWorkspaceName": "OMSWorkspaceName",
     "omsResourceGroupName": "OMSResourceGroupName",
-    "omsRecoveryVault": "OMSRecoveryVault"
+    "omsRecoveryVault": "OMSRecoveryVault",
+    "azureCredentials": "AzureCredentials"
   },
   "resources": [
     {
