@@ -113,7 +113,7 @@
     "azureSubscriptionId": "AzureSubscriptionId",
     "omsWorkspaceId": "OMSWorkspaceId",
     "omsWorkspaceKey": "OMSWorkspacekey",
-    "omsWorkspaceName": "OMSWorkspaceName",
+    "omsWorkspaceNameAsset": "OMSWorkspaceName",
     "omsResourceGroupName": "OMSResourceGroupName",
     "omsRecoveryVault": "OMSRecoveryVault",
     "azureCredentials": "AzureCredentials"
@@ -125,9 +125,6 @@
       "name": "[parameters('omsAutomationAccountName')]",
       "type": "Microsoft.Automation/automationAccounts",
       "comments": "Automation account for OMS",
-      "dependsOn": [
-        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-      ],
       "properties": {
         "sku": {
           "name": "Free"
@@ -217,7 +214,7 @@
           }
         },
         {
-          "name": "[variables('omsWorkspaceName')]",
+          "name": "[variables('omsWorkspaceNameAsset')]",
           "type": "variables",
           "apiVersion": "2015-10-31",
           "dependsOn": [
