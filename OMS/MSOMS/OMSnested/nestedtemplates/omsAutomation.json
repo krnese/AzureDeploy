@@ -127,7 +127,7 @@
       "comments": "Automation account for OMS",
       "dependsOn": [
         "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')]"
-      ]
+      ],
       "properties": {
         "sku": {
           "name": "Free"
