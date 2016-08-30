@@ -65,7 +65,7 @@
         {
           "apiVersion": "2015-11-01-preview",
           "name": "[concat(parameters('omsWorkspaceName'), '/', 'HyperV1')]",
-          "type": "savedSearches",
+          "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
           "dependsOn": [
             "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
           ],
@@ -80,7 +80,7 @@
         {
           "apiVersion": "2015-11-01-preview",
           "name": "[concat(parameters('omsWorkspaceName'), '/', 'HyperV2')]",
-          "type": "savedSearches",
+          "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
           "dependsOn": [
             "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
           ],
@@ -95,7 +95,7 @@
         {
           "apiVersion": "2015-11-01-preview",
           "name": "[concat(parameters('omsWorkspaceName'), '/', 'HyperV3')]",
-          "type": "savedSearches",
+          "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
           "dependsOn": [
             "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
           ],
