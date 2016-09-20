@@ -74,7 +74,7 @@
             "name": "[variables('automationName')]",
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2015-10-31",
-            "location": "[resourceGroup().location]",
+            "location": "East US 2",
             "properties": {
                 "sku": {
                     "name": "Basic"
