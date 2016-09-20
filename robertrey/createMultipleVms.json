@@ -1,0 +1,163 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "instancecount": {
+            "type": "int",
+            "defaultValue": "2"
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D1",
+            "allowedValues": [
+                "Standard_A2",
+                "Standard_A5",
+                "Standard_D1"
+            ]
+        },
+        "username": {
+            "type": "string",
+            "defaultValue": "RobertRey"
+        },
+        "pwd": {
+            "type": "securestring"
+        }
+    },
+    "variables": {
+        "virtualNetworkName": "ignite",
+        "storageAccountName": "[toLower(concat('st', uniquestring(resourceGroup().name)))]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', variables('virtualnetworkname'))]",
+        "subnetname": "ignitesubnet",
+        "addressprefix": "192.168.0.0/16",
+        "subnetPrefix": "192.168.0.0/24",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/', variables('subnetname'))]",
+        "imagepublisher": "MicrosoftWindowsServer",
+        "imageoffer": "WindowsServer",
+        "ipallocation": "Dynamic",
+        "storagetype": "Standard_LRS",
+        "imagesku": "Windows-Server-Technical-Preview"
+    },
+    "resources": [
+        {
+            "apiversion": "2015-05-01-preview",
+            "type": "Microsoft.Storage/StorageAccounts",
+            "name": "[variables('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "accounttype": "[variables('storagetype')]"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/PublicIPAddresses",
+            "name": "[concat('IP', copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "IP",
+                "count": "[parameters('instancecount')]"
+            },
+            "properties": {
+                "publicIPallocationmethod": "[variables('ipallocation')]"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/virtualnetworks",
+            "name": "[variables('virtualNetworkName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressprefixes": [
+                        "[variables('addressprefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetname')]",
+                        "properties": {
+                            "addressprefix": "[variables('subnetprefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat('nic', copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nic",
+                "count": "[parameters('instancecount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', 'IP', copyindex())]",
+                "[concat('Microsoft.Network/virtualNetworks/', variables('virtualnetworkname'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat('IP', copyindex()))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Compute/VirtualMachines",
+            "name": "[concat('ignite', copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "ignite",
+                "count": "[parameters('instancecount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/StorageAccounts/', variables('storageaccountname'))]",
+                "[concat('Microsoft.Network/networkinterfaces/', 'nic', copyindex())]"
+            ],
+            "properties": {
+                "hardwareprofile": {
+                    "vmsize": "[parameters('vmsize')]"
+                },
+                "osprofile": {
+                    "computername": "[concat('ignite', copyindex())]",
+                    "adminusername": "[parameters('username')]",
+                    "adminpassword": "[parameters('pwd')]"
+                },
+                "storageprofile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagepublisher')]",
+                        "offer": "[variables('imageoffer')]",
+                        "version": "latest",
+                        "sku": "[variables('imagesku')]"
+                    },
+                    "osdisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://', variables('storageaccountname'), '.blob.core.windows.net/', 'vhds', '/', 'osdisk', copyindex(), '.vhd')]"
+                        },
+                        "caching": "readwrite",
+                        "createoption": "FromImage"
+                    }
+                },
+                "networkprofile": {
+                    "networkinterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces', concat('nic', copyindex()))]"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
