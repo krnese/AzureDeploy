@@ -1,4 +1,4 @@
-﻿Configuration OMS
+﻿Configuration OMSASR
 {
   
     $RemoteAzureAgent = 'http://go.microsoft.com/fwlink/p/?LinkId=394789'
