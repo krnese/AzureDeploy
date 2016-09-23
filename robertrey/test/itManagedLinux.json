@@ -78,6 +78,30 @@
         },
         "pwd": {
             "type": "securestring"
+        },
+                "omsWorkspaceResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of your OMS workspace Resource Group"
+            }
+        },
+        "omsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of your OMS workspace"
+            }
+        },
+        "automationUri": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the automation endpoint"
+            }
+        },
+        "automationPrimaryKey": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Primary Key for your automation account"
+            }
         }
     },
     "variables": {
@@ -96,9 +120,7 @@
             "imageOffer": "UbuntuServer",
             "imageSku": "12.04.5-LTS",
             "imagepublisher": "Canonical"
-        },
-        "omsWorkspaceResourceGroup": "MicrosoftOMS",
-        "omsWorkspaceName": "OMSLAworkspace"
+        }
     },
     "resources": [
         {
@@ -217,10 +239,10 @@
                 "typeHandlerVersion": "1.0",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "workspaceId": "[reference(resourceId(variables('omsWorkspaceResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', variables('omsWorkspaceName')), '2015-11-01-preview').customerId]"
+                    "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-11-01-preview').customerId]"
                 },
                 "protectedSettings": {
-                    "workspaceKey": "[listKeys(resourceId(variables('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', variables('omsWorkspaceName')), '2015-11-01-preview').primarySharedKey]"
+                    "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-11-01-preview').primarySharedKey]"
                 }
             }                            
         }        

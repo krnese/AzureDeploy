@@ -79,6 +79,34 @@
         },
         "pwd": {
             "type": "securestring"
+        },
+        "omsWorkspaceResourceGroup": {
+            "type": "string",
+            "defaultValue": "foo",
+            "metadata": {
+                "description": "Name of your OMS workspace Resource Group"
+            }
+        },
+        "omsWorkspaceName": {
+            "type": "string",
+            "defaultValue": "bar",
+            "metadata": {
+                "description": "Name of your OMS workspace"
+            }
+        },
+        "automationUri": {
+            "type": "string",
+            "defaultValue": "empty",
+            "metadata": {
+                "description": "Specify the automation endpoint"
+            }
+        },
+        "automationPrimaryKey": {
+            "type": "string",
+            "defaultValue": "emptyKey",            
+            "metadata": {
+                "description": "Specify the Primary Key for your automation account"
+            }
         }
     },
     "variables": {
@@ -95,9 +123,7 @@
             "imageOffer": "UbuntuServer",
             "imageSku": "12.04.5-LTS",
             "imagepublisher": "Canonical"
-        },
-        "omsWorkspaceResourceGroup": "MicrosoftOMS",
-        "omsWorkspaceName": "OMSLAworkspace"
+        }
     },
     "resources": [
         {
