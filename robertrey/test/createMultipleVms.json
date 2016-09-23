@@ -85,19 +85,6 @@
         "storageAccountName": "[toLower(concat('st', uniquestring(resourceGroup().name)))]",
         "vnetID": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualnetworks', parameters('vNetName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('vNetSubnetName'))]",
-        "managementType": "[variables(concat('managementType',parameters('platform')))]",
-        "managementTypeWindows": {
-            "type": "MicrosoftMonitoringAgent",
-            "dscType": "DSC",
-            "publisher": "Microsoft.PowerShell",
-            "version": "2.19"
-        },
-        "managementTypeLinux": {
-            "type": "OmsAgentForLinux",
-            "dscType": "DSCForLinux",
-            "publisher": "Microsoft.OSTCExtensions",
-            "version": "2.0"
-        },
         "osType": "[variables(concat('osType',parameters('platform')))]",        
         "osTypeWindows": {
             "imageOffer": "WindowsServer",
@@ -108,9 +95,7 @@
             "imageOffer": "UbuntuServer",
             "imageSku": "12.04.5-LTS",
             "imagepublisher": "Canonical"
-        },
-        "omsWorkspaceResourceGroup": "MicrosoftOMS",
-        "omsWorkspaceName": "OMSLAworkspace"
+        }
     },
     "resources": [
         {
@@ -210,111 +195,7 @@
                     ]
                 }
             }
-        },
-        {
-            "apiVersion": "2015-05-01-preview",
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vmNameSuffix'), 'VM', copyIndex(), '/OMS')]",
-            "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "[concat(parameters('vmNameSuffix'), 'VM', 'OMS')]",
-                "count": "[parameters('instancecount')]"
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameSuffix'), 'VM', copyIndex())]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-                "type": "[variables('managementType').type]",
-                "typeHandlerVersion": "1.0",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "workspaceId": "[reference(resourceId(variables('omsWorkspaceResourceGroup'), 'Microsoft.OperationalInsights/workspaces/', variables('omsWorkspaceName')), '2015-11-01-preview').customerId]"
-                },
-                "protectedSettings": {
-                    "workspaceKey": "[listKeys(resourceId(variables('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', variables('omsWorkspaceName')), '2015-11-01-preview').primarySharedKey]"
-                }
-            }            
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vmNameSuffix'),'VM', copyIndex(), '/Microsoft.Powershell.DSC')]",
-            "apiVersion": "2015-06-15",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameSuffix'), 'VM', copyIndex(), '/extensions/OMS')]"
-            ],
-            "copy": {
-                "name": "[concat(parameters('vmNameSuffix'), 'VM', 'DSC')]",
-                "count": "[parameters('instancecount')]"
-            },
-            "properties": {
-                "publisher": "[variables('managementType').publisher]",
-                "type": "[variables('managementType').dscType]",
-                "typeHandlerVersion": "[variables('managementType').version]",
-                "autoUpgradeMinorVersion": true,
-                "protectedSettings": {
-                    "Items": {
-                        "registrationKeyPrivate": "e+cWNm6UDczLMh1zVwcFHu4T+7QxzFnjMxMIU2Lp7C9e13bumlp+U+0ak3sOZAuxp6Kp5RQrasb6WVmK9V7UCA=="
-                    }
-                },
-                "settings": {
-                    "ModulesUrl": "https://github.com/Azure/azure-quickstart-templates/raw/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip",
-                    "SasToken": "",
-                    "ConfigurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
-                    "Properties": [
-                        {
-                            "Name": "RegistrationKey",
-                            "Value": {
-                                "UserName": "PLACEHOLDER_DONOTUSE",
-                                "Password": "PrivateSettingsRef:registrationKeyPrivate"
-                            },
-                            "TypeName": "System.Management.Automation.PSCredential"
-                        },
-                        {
-                            "Name": "RegistrationUrl",
-                            "Value": "https://we-agentservice-prod-1.azure-automation.net/accounts/d624f27a-8568-4d45-950f-f61b0cd6b8bf",
-                            "TypeName": "System.String"
-                        },
-                        {
-                            "Name": "NodeConfigurationName",
-                            "Value": "OMSSERVICE.localhost",
-                            "TypeName": "System.String"
-                        },
-                        {
-                            "Name": "ConfigurationMode",
-                            "Value": "ApplyAndMonitor",
-                            "TypeName": "System.String"
-                        },
-                        {
-                            "Name": "ConfigurationModeFrequencyMins",
-                            "Value": 15,
-                            "TypeName": "System.Int32"
-                        },
-                        {
-                            "Name": "RefreshFrequencyMins",
-                            "Value": 30,
-                            "TypeName": "System.Int32"
-                        },
-                        {
-                            "Name": "RebootNodeIfNeeded",
-                            "Value": true,
-                            "TypeName": "System.Boolean"
-                        },
-                        {
-                            "Name": "ActionAfterReboot",
-                            "Value": "ContinueConfiguration",
-                            "TypeName": "System.String"
-                        },
-                        {
-                            "Name": "AllowModuleOverwrite",
-                            "Value": true,
-                            "TypeName": "System.Boolean"
-                        }
-                    ]
-                }
-            }
-        }        
+        }      
     ],
     "outputs": {}
 }
