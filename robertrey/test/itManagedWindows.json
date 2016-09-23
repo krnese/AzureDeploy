@@ -96,8 +96,7 @@
             "imageOffer": "WindowsServer",
             "imageSku": "Windows-Server-Technical-Preview",
             "imagepublisher": "MicrosoftWindowsServer"
-        }    
-        },
+        },            
         "omsWorkspaceResourceGroup": "MicrosoftOMS",
         "omsWorkspaceName": "OMSLAworkspace"
     },
