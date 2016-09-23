@@ -68,7 +68,6 @@
                 "count": "[parameters('instancecount')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameSuffix'), 'VM', copyIndex())]"
             ],
             "properties": {
                 "publisher": "Microsoft.EnterpriseCloud.Monitoring",
@@ -89,7 +88,6 @@
             "apiVersion": "2015-06-15",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameSuffix'), 'VM', copyIndex(), '/extensions/OMS')]"
             ],
             "copy": {
                 "name": "[concat(parameters('vmNameSuffix'), 'VM', 'DSC')]",
