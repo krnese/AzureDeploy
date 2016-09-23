@@ -47,20 +47,13 @@
         "vNetName": {
             "type": "string",
             "defaultValue": "TestNet",
-            "allowedValues": [
-                "TestNet",
-                "CorpNet"
-            ],
             "metadata": {
                 "description": "Select the virtual network to connect the VMs"
             }
         },
         "vNetResourceGroupName": {
             "type": "string",
-            "defaultValue": "MicrosoftOMS",
-            "allowedValues": [
-                "MicrosoftOMS"
-            ],
+            "defaultValue": "foo",
             "metadata": {
                 "description": "Specify Resource Group for the corresponding vNet you selected"
             }
