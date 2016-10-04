@@ -1,8 +1,8 @@
 ﻿<#
 .Synopsis
-   Runbook for OMS ASR Log Ingestion
+   Runbook for OMS VM Management Log Ingestion
 .DESCRIPTION
-   This Runbook find all VMs without management extensions. 
+   This Runbook finds all VMs without management extensions. 
 .AUTHOR
     Kristian Nese (Kristian.Nese@Microsoft.com) ECG OMS CAT
 #>
