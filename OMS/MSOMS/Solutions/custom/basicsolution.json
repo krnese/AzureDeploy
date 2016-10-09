@@ -1,0 +1,395 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "omsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of your existing OMS Automation account to store the configuration"
+            }
+        },
+        "workspaceRegion": {
+            "type": "string",
+            "defaultValue": "West Europe",
+            "allowedValues": [
+                "West Europe",
+                "East US"
+            ],
+            "metadata": {
+                "description": "Specify the region for your OMS workspace"
+            }
+        },
+        "omsAutomationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of your Automation Account"
+            }
+        },
+        "automationRegion": {
+            "type": "string",
+            "defaultValue": "West Europe",
+            "allowedValues": [
+                "West Europe",
+                "East US2"
+            ],
+            "metadata": {
+                "description": "Specify region for your automation account"
+            }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/custom",
+            "metadata": {
+                "description": "Path of the template folder."
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated"
+            }
+        },
+        "jobGuid": {
+            "type": "string",
+            "defaultValue": "66533407-3d53-4131-a2a6-ead17a08fa0c",
+            "metadata": {
+                "description": "GUID for the schedule creation - create a unique before deploy"
+            }
+        }
+    },
+    "variables": {
+        "assets": {
+            "psModules": {
+                "xPSDSC": {
+                    "name": "xPSDesiredStateConfiguration",
+                    "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/xpsdesiredstateconfiguration.3.9.0.nupkg"
+                },
+                "ingestionAPI": {
+                    "name": "OMSIngestionAPI",
+                    "uri": "https://github.com/krnese/AzureDeploy/raw/master/OMS/MSOMS/Solutions/custom/OMSIngestionAPI.zip"
+                }
+            },
+            "aaVariables": {
+                "OMSWorkspaceId": {
+                    "name": "OMSWorkspaceId",
+                    "description": "Workspace ID for the Log Analytics workspace"
+                },
+                "OMSWorkspaceKey": {
+                    "name": "OMSWorkspaceKey",
+                    "description": "Primary key for the Log Analytics workspace"
+                },
+                "AzureSubscriptionId": {
+                    "name": "AzureSubscriptionId",
+                    "description": "Azure subscription Id"
+                }
+            },
+            "runbooks": {
+                "vmManagement": {
+                    "name": "vmmanagement",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/vmmanagement.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "version": "1.0.0.0",
+                    "type": "PowerShell",
+                    "description": "OMS runbook to capture unmanaged VMs into OMS Log Analytics",
+                    "Id": "",
+                    "ingestScheduleName": "IngestAPISchedule",
+                    "ingestInterval": 1,
+                    "ingestFrequency": "hour"
+                }
+            }
+        },
+        "omsSolutions": {
+            "customSolution": {
+                "name": "VM Management",
+                "solutionName": "[concat('Custom', '[', parameters('omsWorkspaceName'), ']')]",
+                "publisher": "krnese@microsoft.com"
+            }
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('omsWorkspaceName')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('workspaceRegion')]",
+            "properties": {
+                "sku": {
+                    "name": "pernode"
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "name": "[variables('omsSolutions').customSolution.name]",
+                    "type": "views",
+                    "id": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), variables('omsSolutions').customSolution.name)]",
+                    "dependson": [
+                        "[Concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+                    ],
+                    "properties": {
+                        "Name": "[variables('omsSolutions').customSolution.name]",
+                        "DisplayName": "My Custom Solution",
+                        "Description": "This is a demonstration of a custom OMS solution",
+                        "Author": "krnese@microsoft.com",
+                        "Source": "Local",
+                        "Version": 0,
+                        "Dashboard": [
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Overview",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Type:VMManagement_CL | measure count () by VMName_s",
+                                        "Legend": "Unmanaged VMs"
+                                    },
+                                    "List": {
+                                        "Query": "Type:VMManagement_CL | measure count () by VMName_s, Location_s, ResourceGroupName_s",
+                                        "HideGraph": true,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "VMName",
+                                            "Value": ""
+                                        },
+                                        "Color": "#00bcf2",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            }
+                        ],
+                        "OverviewTile": {
+                            "Id": "SingleNumberBuilderTile",
+                            "Type": "OverviewTile",
+                            "Version": 0,
+                            "Configuration": {
+                                "Tile": {
+                                    "Legend": "Unmanaged VMs",
+                                    "Query": "Type:VMManagement_CL | measure count () by VMName_s"
+                                },
+                                "Advanced": {
+                                    "DataFlowVerification": {
+                                        "Enabled": false,
+                                        "Query": "*",
+                                        "Message": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Automation/automationAccounts/providers/diagnosticSettings",
+            "name": "[concat(parameters('omsAutomationAccountName'), '/', 'Microsoft.Insights/service')]",
+            "apiVersion": "2015-07-01",
+            "dependsOn": [
+                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+            ],
+            "properties": {
+                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+                "logs": [
+                    {
+                        "category": "JobLogs",
+                        "enabled": true
+                    },
+                    {
+                        "category": "JobStreams",
+                        "enabled": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('omsAutomationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2015-10-31",
+            "location": "[parameters('automationRegion')]",
+            "properties": {
+                "sku": {
+                    "name": "Basic"
+                }
+            },
+            "resources": [
+                {
+                    "name": "[variables('assets').aaVariables.OMSWorkspaceId.name]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "[variables('assets').aaVariables.OMSWorkspaceId.description]",
+                        "value": "[concat('\"',reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-11-01-preview').customerId,'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('assets').aaVariables.OMSWorkspaceKey.name]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "Remote file for the passphrase",
+                        "value": "[concat('\"',listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-11-01-preview').primarySharedKey,'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('assets').aaVariables.AzureSubscriptionId.name]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "[variables('assets').aaVariables.AzureSubscriptionId.description]",
+                        "value": "[concat('\"',subscription().subscriptionId,'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('assets').psModules.ingestionAPI.name]",
+                    "type": "Modules",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/Variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/Variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('assets').psModules.ingestionAPI.uri]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('assets').runbooks.vmManagement.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/Modules/', variables('assets').psModules.ingestionAPI.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/Variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/Variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]"
+                    ],
+                    "properties": {
+                        "runbookType": "[variables('assets').runbooks.vmManagement.type]",
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "description": "[variables('assets').runbooks.vmManagement.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('assets').runbooks.vmManagement.url]",
+                            "version": "[variables('assets').runbooks.vmManagement.version]"
+                        }
+                    }
+                },
+                {
+                    "name": "[concat(parameters('omsAutomationAccountName'), '/', variables('assets').runbooks.vmManagement.ingestScheduleName)]",
+                    "type": "microsoft.automation/automationAccounts/schedules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.vmManagement.name)]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "OMS Ingestion API Scheduler",
+                        "startTime": "",
+                        "isEnabled": true,
+                        "interval": "[variables('assets').runbooks.vmManagement.ingestInterval]",
+                        "frequency": "[variables('assets').runbooks.vmManagement.ingestFrequency]"
+                    }
+                },
+                {
+                    "name": "[concat(parameters('omsAutomationAccountName'), '/', parameters('jobGuid'))]",
+                    "type": "microsoft.automation/automationAccounts/jobSchedules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('workspaceRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/schedules/', variables('assets').runbooks.vmManagement.ingestScheduleName)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.vmManagement.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "schedule": {
+                            "name": "[variables('assets').runbooks.vmManagement.ingestScheduleName]"
+                        },
+                        "runbook": {
+                            "name": "[variables('assets').runbooks.vmManagement.name]"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "[variables('omsSolutions').customSolution.solutionName]",
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('workspaceRegion')]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/views/', variables('omsSolutions').customSolution.name)]",
+                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/schedules/', variables('assets').runbooks.vmManagement.ingestScheduleName)]"
+            ],
+            "plan": {
+                "name": "[variables('omsSolutions').customSolution.solutionName]",
+                "product": "[variables('omsSolutions').customSolution.name]",
+                "publisher": "[variables('omsSolutions').customSolution.publisher]",
+                "promotionCode": ""
+            },
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                "referencedResources": [
+                    "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.AzureSubscriptionId.name)]",
+                    "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceId.name)]",
+                    "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceKey.name)]"
+                ],
+                "containedResources": [
+                    "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), variables('omsSolutions').customSolution.name)]",
+                    "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('omsAutomationAccountName'), variables('assets').runbooks.vmManagement.name)]",
+                    "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.ingestionAPI.name)]"
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}
