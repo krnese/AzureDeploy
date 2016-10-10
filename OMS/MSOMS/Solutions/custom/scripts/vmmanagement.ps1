@@ -30,7 +30,8 @@ foreach ($VM in $VMs)
                     VMName = $VM.Name;
                     ResourceGroupName = $VM.ResourceGroupName;
                     Location = $VM.Location;
-                    RecommendedActions = 'This VM should be managed by Azure OMS services'
+                    RecommendedActions = 'This VM should be managed by Azure OMS services';
+                    Managed = 'false'
                     #SubscriptionId = $SubscriptionID;
                    }
     $VMTable += $VMData
@@ -42,3 +43,5 @@ foreach ($VM in $VMs)
     Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $VMTableJson -logType $LogType
 
     }
+    
+                      

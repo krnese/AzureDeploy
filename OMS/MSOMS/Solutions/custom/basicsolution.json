@@ -101,7 +101,7 @@
         "omsSolutions": {
             "customSolution": {
                 "name": "VM Management",
-                "solutionName": "[concat('Custom', '[', parameters('omsWorkspaceName'), ']')]",
+                "solutionName": "[concat('VM Management', '[', parameters('omsWorkspaceName'), ']')]",
                 "publisher": "krnese@microsoft.com"
             }
         }
