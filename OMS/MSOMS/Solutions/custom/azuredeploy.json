@@ -101,7 +101,7 @@
             "runbooks": {
                 "vmManagement": {
                     "name": "vmmanagement",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/vmmanagement.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/advancedvmmanagement.ps1', parameters('_artifactsLocationSasToken'))]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "OMS runbook to capture unmanaged VMs into OMS Log Analytics",
