@@ -40,7 +40,7 @@
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/custom",
             "metadata": {
-                "description": "Path of the template folder."
+                "description": "URI to artifacts location"
             }
         },
         "_artifactsLocationSasToken": {
@@ -108,7 +108,7 @@
                     "Id": "",
                     "ingestScheduleName": "IngestAPISchedule",
                     "ingestInterval": 1,
-                    "ingestFrequency": "hour"                    
+                    "ingestFrequency": "hour"
                 }
             },
             "dsc": {
@@ -132,8 +132,11 @@
             },
             "customSolution": {
                 "name": "VM Management",
-                "solutionName": "[concat('Custom', '[', parameters('omsWorkspaceName'), ']')]",
-                "publisher": "krnese@microsoft.com"
+                "solutionName": "[concat('VM Management', '[', parameters('omsWorkspaceName'), ']')]",
+                "publisher": "krnese@microsoft.com",
+                "displayName": "VM Management",
+                "description": "Overview of unmanaged VMs in Azure",
+                "author": "krnese@microsoft.com"
             }
         }
     },
@@ -150,6 +153,30 @@
             },
             "resources": [
                 {
+                    "name": "AzureAuditLog",
+                    "type": "datasources",
+                    "apiVersion": "2015-11-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+                    ],
+                    "kind": "AzureAuditLog",
+                    "properties": {
+                        "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
+                    }
+                },
+                {
+                    "name": "Automation",
+                    "type": "linkedServices",
+                    "apiVersion": "2015-11-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "resourceId": "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    }
+                },
+                {
                     "apiVersion": "2015-11-01-preview",
                     "name": "[variables('omsSolutions').customSolution.name]",
                     "type": "views",
@@ -159,9 +186,9 @@
                     ],
                     "properties": {
                         "Name": "[variables('omsSolutions').customSolution.name]",
-                        "DisplayName": "My Custom Solution",
-                        "Description": "This is a demonstration of a custom OMS solution",
-                        "Author": "krnese@microsoft.com",
+                        "DisplayName": "[variables('omsSolutions').customSolution.displayName]",
+                        "Description": "[variables('omsSolutions').customSolution.description]",
+                        "Author": "[variables('omsSolutions').customSolution.author]",
                         "Source": "Local",
                         "Version": 0,
                         "Dashboard": [
@@ -171,17 +198,70 @@
                                 "Version": 0,
                                 "Configuration": {
                                     "General": {
-                                        "title": "Overview",
+                                        "title": "",
                                         "newGroup": false,
                                         "icon": "",
                                         "useIcon": false
                                     },
                                     "Tile": {
-                                        "Query": "Type:VMManagement_CL | measure count () by VMName_s",
-                                        "Legend": "Unmanaged VMs"
+                                        "Legend": "Unmanaged VMs",
+                                        "Query": "Type:VMManagement_CL Managed_s:false | measure countdistinct (VMName_s) by VMName_s"
                                     },
                                     "List": {
-                                        "Query": "Type:VMManagement_CL | measure count () by VMName_s, Location_s, ResourceGroupName_s",
+                                        "Query": "Type:VMManagement_CL Managed_s:false | measure countdistinct (VMName_s) by VMName_s, Location_s, ResourceGroupName_s",
+                                        "HideGraph": true,
+                                        "enableSparklines": false,
+                                        "ColumnsTitle": {
+                                            "Name": "VMName",
+                                            "Value": ""
+                                        },
+                                        "Color": "#00bcf2",
+                                        "operation": "Summary",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Type:VMManagement_CL Managed_s:true | measure countdistinct (VMName_s) by VMName_s",
+                                        "Legend": "Managed VMs"
+                                    },
+                                    "List": {
+                                        "Query": "Type:VMManagement_CL Managed_s:true | measure countdistinct (VMName_s) by VMName_s, Location_s, ResourceGroupName_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -189,7 +269,7 @@
                                             "Name": "VMName",
                                             "Value": ""
                                         },
-                                        "Color": "#00bcf2",
+                                        "Color": "#0072c6",
                                         "thresholds": {
                                             "isEnabled": false,
                                             "values": [
@@ -226,7 +306,7 @@
                             "Configuration": {
                                 "Tile": {
                                     "Legend": "Unmanaged VMs",
-                                    "Query": "Type:VMManagement_CL | measure count () by VMName_s"
+                                    "Query": "Type:VMManagement_CL Managed_s:false | measure countdistinct (VMName_s) by VMName_s"
                                 },
                                 "Advanced": {
                                     "DataFlowVerification": {
@@ -270,7 +350,7 @@
             "location": "[parameters('automationRegion')]",
             "properties": {
                 "sku": {
-                    "name": "Basic"
+                    "name": "OMS"
                 }
             },
             "resources": [
@@ -381,7 +461,7 @@
                             "name": "[variables('assets').dsc.omsConfig.name]"
                         }
                     }
-                },                            
+                },
                 {
                     "name": "[variables('assets').dsc.omsService.name]",
                     "type": "configurations",
@@ -418,7 +498,7 @@
                             "name": "[variables('assets').dsc.omsService.name]"
                         }
                     }
-                },                
+                },
                 {
                     "name": "[variables('assets').runbooks.vmManagement.name]",
                     "type": "runbooks",
@@ -441,7 +521,7 @@
                         }
                     }
                 },
-{
+                {
                     "name": "[concat(parameters('omsAutomationAccountName'), '/', variables('assets').runbooks.vmManagement.ingestScheduleName)]",
                     "type": "microsoft.automation/automationAccounts/schedules",
                     "apiVersion": "2015-10-31",
@@ -478,7 +558,7 @@
                             "name": "[variables('assets').runbooks.vmManagement.name]"
                         }
                     }
-                }                
+                }
             ]
         },
         {

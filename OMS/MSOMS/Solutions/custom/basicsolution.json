@@ -40,7 +40,7 @@
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/custom",
             "metadata": {
-                "description": "Path of the template folder."
+                "description": "URI to artifacts location"
             }
         },
         "_artifactsLocationSasToken": {
@@ -61,10 +61,6 @@
     "variables": {
         "assets": {
             "psModules": {
-                "xPSDSC": {
-                    "name": "xPSDesiredStateConfiguration",
-                    "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/xpsdesiredstateconfiguration.3.9.0.nupkg"
-                },
                 "ingestionAPI": {
                     "name": "OMSIngestionAPI",
                     "uri": "https://github.com/krnese/AzureDeploy/raw/master/OMS/MSOMS/Solutions/custom/OMSIngestionAPI.zip"
@@ -102,7 +98,10 @@
             "customSolution": {
                 "name": "VM Management",
                 "solutionName": "[concat('VM Management', '[', parameters('omsWorkspaceName'), ']')]",
-                "publisher": "krnese@microsoft.com"
+                "publisher": "krnese@microsoft.com",
+                "displayName": "VM Management",
+                "description": "Overview of unmanaged VMs in Azure",
+                "author": "krnese@microsoft.com"
             }
         }
     },
@@ -119,6 +118,18 @@
             },
             "resources": [
                 {
+                    "name": "Automation",
+                    "type": "linkedServices",
+                    "apiVersion": "2015-11-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "resourceId": "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    }
+                },                
+                {
                     "apiVersion": "2015-11-01-preview",
                     "name": "[variables('omsSolutions').customSolution.name]",
                     "type": "views",
@@ -128,9 +139,9 @@
                     ],
                     "properties": {
                         "Name": "[variables('omsSolutions').customSolution.name]",
-                        "DisplayName": "My Custom Solution",
-                        "Description": "This is a demonstration of a custom OMS solution",
-                        "Author": "krnese@microsoft.com",
+                        "DisplayName": "[variables('omsSolutions').customSolution.displayName]",
+                        "Description": "[variables('omsSolutions').customSolution.description]",
+                        "Author": "[variables('omsSolutions').customSolution.author]",
                         "Source": "Local",
                         "Version": 0,
                         "Dashboard": [
@@ -146,11 +157,11 @@
                                         "useIcon": false
                                     },
                                     "Tile": {
-                                        "Query": "Type:VMManagement_CL | measure count () by VMName_s",
+                                        "Query": "Type:VMManagement_CL Managed_s:false | measure countdistinct (VMName_s) by VMName_s",
                                         "Legend": "Unmanaged VMs"
                                     },
                                     "List": {
-                                        "Query": "Type:VMManagement_CL | measure count () by VMName_s, Location_s, ResourceGroupName_s",
+                                        "Query": "Type:VMManagement_CL Managed_s:false | measure countdistinct (VMName_s) by VMName_s, Location_s, ResourceGroupName_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -195,7 +206,7 @@
                             "Configuration": {
                                 "Tile": {
                                     "Legend": "Unmanaged VMs",
-                                    "Query": "Type:VMManagement_CL | measure count () by VMName_s"
+                                    "Query": "Type:VMManagement_CL Managed_s:false | measure countdistinct (VMName_s) by VMName_s"
                                 },
                                 "Advanced": {
                                     "DataFlowVerification": {
@@ -211,35 +222,13 @@
             ]
         },
         {
-            "type": "Microsoft.Automation/automationAccounts/providers/diagnosticSettings",
-            "name": "[concat(parameters('omsAutomationAccountName'), '/', 'Microsoft.Insights/service')]",
-            "apiVersion": "2015-07-01",
-            "dependsOn": [
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-            ],
-            "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
-                "logs": [
-                    {
-                        "category": "JobLogs",
-                        "enabled": true
-                    },
-                    {
-                        "category": "JobStreams",
-                        "enabled": true
-                    }
-                ]
-            }
-        },
-        {
             "name": "[parameters('omsAutomationAccountName')]",
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2015-10-31",
             "location": "[parameters('automationRegion')]",
             "properties": {
                 "sku": {
-                    "name": "Basic"
+                    "name": "OMS"
                 }
             },
             "resources": [

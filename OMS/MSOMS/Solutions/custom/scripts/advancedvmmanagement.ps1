@@ -32,13 +32,14 @@ foreach ($VM in $VMs)
                     Location = $VM.Location;
                     RecommendedActions = 'This VM should be managed by Azure OMS services';
                     Managed = 'false'
-                    #SubscriptionId = $SubscriptionID;
                    }
     $VMTable += $VMData
    
     $VMTableJson = ConvertTo-Json -InputObject $VMData
     
     $LogType = 'VMManagement'
+
+# Ingest data to OMS using HTTP Collector API
 
     Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $VMTableJson -logType $LogType
 
@@ -65,6 +66,8 @@ foreach ($VM in $VMs)
         $ExtensionsTableJson = ConvertTo-Json -InputObject $ExtensionTable
 
         $LogType = 'VMManagement'
+
+# Ingest data to OMS using HTTP Collector API
 
         Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $ExtensionsTableJson -logType $LogType
 
