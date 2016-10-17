@@ -1,0 +1,223 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "omsAutomationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of your Automation Account"
+            }
+        },
+        "automationRegion": {
+            "type": "string",
+            "defaultValue": "West Europe",
+            "allowedValues": [
+                "West Europe",
+                "East US2"
+            ],
+            "metadata": {
+                "description": "Specify region for your automation account"
+            }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/asrautomation",
+            "metadata": {
+                "description": "URI to artifacts location"
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated"
+            }
+        },
+        "storageName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the storage account for your script repository"
+            }
+        },
+        "storageRgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Resource Group containing your storage account"
+            }
+        },
+        "containerName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the container where the script(s) are located"
+            }
+        },
+        "scriptName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of the script you will add to your automation script"
+            }
+        }
+    },
+    "variables": {
+        "assets": {
+            "aaVariables": {
+                "OMSWorkspaceId": {
+                    "name": "OMSWorkspaceId",
+                    "description": "Workspace ID for the Log Analytics workspace"
+                },
+                "OMSWorkspaceKey": {
+                    "name": "OMSWorkspaceKey",
+                    "description": "Primary key for the Log Analytics workspace"
+                },
+                "AzureSubscriptionId": {
+                    "name": "AzureSubscriptionId",
+                    "description": "Azure subscription Id"
+                },
+                "storage": {
+                    "name": "StorageName",
+                    "rgName": "StorageRGName",
+                    "containerName": "ContainerName",
+                    "scriptName": "ScriptName",
+                    "description": "Asset for custom script"
+                }
+            },
+            "runbooks": {
+                "remoteAccess": {
+                    "name": "remoteaccess",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/remoteaccess.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "version": "1.0.0.0",
+                    "type": "PowerShell",
+                    "description": "ASR Runbook to enable public IP on every VM in a Recovery Plan",
+                    "Id": ""
+                },
+                "customScript": {
+                    "name": "CustomScript",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/customscript.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "version": "1.0.0.0",
+                    "type": "PowerShell",
+                    "description": "ASR Runbook to enable Public IP and execute custom script on every VM in a Recovery Plan",
+                    "id": ""
+                }
+            }
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('omsAutomationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2015-10-31",
+            "location": "[parameters('automationRegion')]",
+            "properties": {
+                "sku": {
+                    "name": "Free"
+                }
+            },
+            "resources": [
+                {
+                    "name": "[variables('assets').aaVariables.AzureSubscriptionId.name]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "[variables('assets').aaVariables.AzureSubscriptionId.description]",
+                        "value": "[concat('\"',subscription().subscriptionId,'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('assets').aaVariables.storage.containerName]",
+                    "type": "varibales",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "[variables('assets').aaVariables.storage.description]",
+                        "value": "[concat('\"',parameters('containerName'),'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('assets').aaVariables.storage.name]",
+                    "type": "varibales",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "[variables('assets').aaVariables.storage.description]",
+                        "value": "[concat('\"',parameters('storageName'),'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('assets').aaVariables.storage.rgName]",
+                    "type": "varibales",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "[variables('assets').aaVariables.storage.description]",
+                        "value": "[concat('\"',parameters('storageRgName'),'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('assets').aaVariables.storage.scriptName]",
+                    "type": "varibales",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "[variables('assets').aaVariables.storage.description]",
+                        "value": "[concat('\"',parameters('scriptName'),'\"')]"
+                    }
+                },                                                
+                {
+                    "name": "[variables('assets').runbooks.remoteAccess.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "runbookType": "[variables('assets').runbooks.remoteAccess.type]",
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "description": "[variables('assets').runbooks.remoteAccess.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('assets').runbooks.remoteAccess.url]",
+                            "version": "[variables('assets').runbooks.remoteAccess.version]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('assets').runbooks.customScript.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "runbookType": "[variables('assets').runbooks.customScript.type]",
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "description": "[variables('assets').runbooks.customScript.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('assets').runbooks.customScript.url]",
+                            "version": "[variables('assets').runbooks.customScript.version]"
+                        }
+                    }
+                }                
+            ]
+        }
+    ],
+    "outputs": {}
+}
