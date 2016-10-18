@@ -84,7 +84,7 @@
             "runbooks": {
                 "remoteAccess": {
                     "name": "PublicIP",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/remoteaccess.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/publicip.ps1', parameters('_artifactsLocationSasToken'))]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "ASR Runbook to enable public IP on every VM in a Recovery Plan",
