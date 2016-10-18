@@ -128,7 +128,7 @@
                 },
                 {
                     "name": "[variables('assets').aaVariables.storage.containerName]",
-                    "type": "varibales",
+                    "type": "variables",
                     "apiVersion": "2015-10-31",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
@@ -141,7 +141,7 @@
                 },
                 {
                     "name": "[variables('assets').aaVariables.storage.name]",
-                    "type": "varibales",
+                    "type": "variables",
                     "apiVersion": "2015-10-31",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
@@ -154,7 +154,7 @@
                 },
                 {
                     "name": "[variables('assets').aaVariables.storage.rgName]",
-                    "type": "varibales",
+                    "type": "variables",
                     "apiVersion": "2015-10-31",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
@@ -167,7 +167,7 @@
                 },
                 {
                     "name": "[variables('assets').aaVariables.storage.scriptName]",
-                    "type": "varibales",
+                    "type": "variables",
                     "apiVersion": "2015-10-31",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
