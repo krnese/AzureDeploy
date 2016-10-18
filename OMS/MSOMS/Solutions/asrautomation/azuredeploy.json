@@ -83,7 +83,7 @@
             },
             "runbooks": {
                 "remoteAccess": {
-                    "name": "remoteaccess",
+                    "name": "PublicIP",
                     "url": "[concat(parameters('_artifactsLocation'), '/scripts/remoteaccess.ps1', parameters('_artifactsLocationSasToken'))]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
@@ -96,6 +96,22 @@
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "ASR Runbook to enable Public IP and execute custom script on every VM in a Recovery Plan",
+                    "id": ""
+                },
+                "nsgAdvanced": {
+                    "name": "NSGwithCustomScript",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/nsgwithcustomscript.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "version": "1.0.0.0",
+                    "type": "PowerShell",
+                    "description": "ASR Runbook to enable NSG, Public IP and execute custom script on every VM in a Recovery Plan",
+                    "id": ""
+                },
+                "nsg": {
+                    "name": "NSG",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/nsg.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "version": "1.0.0.0",
+                    "type": "PowerShell",
+                    "description": "ASR Runbook to enable NSG and Public IP",
                     "id": ""
                 }
             }
@@ -177,7 +193,7 @@
                         "description": "[variables('assets').aaVariables.storage.description]",
                         "value": "[concat('\"',parameters('scriptName'),'\"')]"
                     }
-                },                                                
+                },
                 {
                     "name": "[variables('assets').runbooks.remoteAccess.name]",
                     "type": "runbooks",
@@ -213,6 +229,44 @@
                         "publishContentLink": {
                             "uri": "[variables('assets').runbooks.customScript.url]",
                             "version": "[variables('assets').runbooks.customScript.version]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('assets').runbooks.nsgAdvanced.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "runbookType": "[variables('assets').runbooks.nsgAdvanced.type]",
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "description": "[variables('assets').runbooks.nsgAdvanced.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('assets').runbooks.nsgAdvanced.url]",
+                            "version": "[variables('assets').runbooks.nsgAdvanced.version]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('assets').runbooks.nsg.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "runbookType": "[variables('assets').runbooks.nsg.type]",
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "description": "[variables('assets').runbooks.nsg.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('assets').runbooks.nsg.url]",
+                            "version": "[variables('assets').runbooks.nsg.version]"
                         }
                     }
                 }                
