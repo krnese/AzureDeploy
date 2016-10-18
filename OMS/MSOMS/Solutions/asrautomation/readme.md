@@ -25,6 +25,8 @@ The NSGwithCustomScript runbook will assign Public IP addresses to every VM with
 >Note: The runbooks provided are designed to execute across all the VMs within a Recovery Plan in Azure only, as we are iterating thru the VMs within the Resource Group that is being created when failover to Azure. If the failover direction is not Azure, the runbook will be ignored. 
 >
 > Both *CustomScript* and *NSGwithCustomScript* requires that the Azure VM Agent is present in the guest priort to failover
+
+
 ## Pre-requisites
 
 This template requires an exisitng Azure Automation account with RunAs account, and needs to be created using the Azure portal.
