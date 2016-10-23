@@ -1,0 +1,7 @@
+{
+  "itemDisplayName": "ASR Automation Runbooks",
+  "description": "Deploys ASR Runbooks",
+  "summary": "This template deploys ASR Automation Runbooks to an Automation account",
+  "githubUsername": "krnese",
+  "dateUpdated": "2016-10-25"
+}

@@ -1,0 +1,24 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "omsAutomationAccountName": {
+      "value": "GEN-UNIQUE-9"
+    },
+    "automationRegion": {
+      "value": "West Europe"
+    },
+    "storageName": {
+      "value": "storagename"
+    },
+    "storageRgName": {
+      "value": "rgname"
+    },
+    "containerName": {
+      "value": "scripts"
+    },
+    "scriptName": {
+      "value": "script.ps1"
+    }
+  }
+}

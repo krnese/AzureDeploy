@@ -10,27 +10,20 @@
         },
         "automationRegion": {
             "type": "string",
-            "defaultValue": "West Europe",
+            "defaultValue": "westeurope",
             "allowedValues": [
-                "West Europe",
-                "East US2"
+                "westeurope",
+                "southeastasia",
+                "eastus2",
+                "southcentralus",
+                "northeurope",
+                "japaneast",
+                "australiasoutheast",
+                "centralindia",
+                "canadacentral"
             ],
             "metadata": {
                 "description": "Specify region for your automation account"
-            }
-        },
-        "_artifactsLocation": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/asrautomation",
-            "metadata": {
-                "description": "URI to artifacts location"
-            }
-        },
-        "_artifactsLocationSasToken": {
-            "type": "securestring",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated"
             }
         },
         "storageName": {
@@ -84,7 +77,7 @@
             "runbooks": {
                 "remoteAccess": {
                     "name": "PublicIP",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/publicip.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "url": "https://www.powershellgallery.com/api/v2/package/ASRPublicIp/1.2.0",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "ASR Runbook to enable public IP on every VM in a Recovery Plan",
@@ -92,7 +85,7 @@
                 },
                 "customScript": {
                     "name": "CustomScript",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/customscript.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "url": "https://www.powershellgallery.com/api/v2/package/ASRCustomScriptandPublicIp/1.2.0",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "ASR Runbook to enable Public IP and execute custom script on every VM in a Recovery Plan",
@@ -100,7 +93,7 @@
                 },
                 "nsgAdvanced": {
                     "name": "NSGwithCustomScript",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/nsgwithcustomscript.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "url": "https://www.powershellgallery.com/api/v2/package/ASRCustomScriptandNSG/1.2.0",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "ASR Runbook to enable NSG, Public IP and execute custom script on every VM in a Recovery Plan",
@@ -108,7 +101,7 @@
                 },
                 "nsg": {
                     "name": "NSG",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/nsg.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "url": "https://www.powershellgallery.com/api/v2/package/ASRNSG/1.2.0",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "ASR Runbook to enable NSG and Public IP",
