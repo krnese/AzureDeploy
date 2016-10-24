@@ -1,6 +1,8 @@
 # Azure Site Recovery Automation Runbooks
 
->This is preliminary documentation for ASR Automation Runbooks and is likely to change in the near future.
+>NOTE: This is preliminary documentation for ASR Automation Runbooks and is likely to change in the near future.
+
+>The Runbooks can also be added automatically from the PowerShell Gallery
 
 These automation runbooks provides the following functionality when doing test, planned and unplanned failover to Azure:
 
