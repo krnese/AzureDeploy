@@ -1,0 +1,56 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of your existing OMS workspace"
+            }
+        },
+        "workspaceRegion": {
+            "type": "string",
+            "metadata": {
+                "description": "Select the Azure region where your workspace is deployed. Example: 'West Europe'"
+            }
+        }
+    },
+    "variables": {
+        "omsSolutions": {
+            "capacityPerformance": {
+                "name": "CapacityPerformance",
+                "solutionName": "[concat('CapacityPerformance', '(', parameters('workspaceName'), ')')]",
+                "publisher": "Microsoft"
+            }
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('workspaceName')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('workspaceRegion')]",
+            "properties": {
+                }            
+        },
+        {
+            "name": "[variables('omsSolutions').capacityPerformance.solutionName]",
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('workspaceRegion')]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
+            "plan": {
+                "name": "[variables('omsSolutions').capacityPerformance.solutionName]",
+                "product": "[concat('OMSGallery/', variables('omsSolutions').capacityPerformance.name)]",
+                "publisher": "[variables('omsSolutions').capacityPerformance.publisher]",
+                "promotionCode": ""
+            },
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            }
+        }
+    ],
+    "outputs": {}
+}
