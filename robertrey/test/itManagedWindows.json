@@ -111,7 +111,7 @@
         "osType": "[variables(concat('osType',parameters('platform')))]",        
         "osTypeWindows": {
             "imageOffer": "WindowsServer",
-            "imageSku": "Windows-Server-Technical-Preview",
+            "imageSku": "2016-Datacenter",
             "imagepublisher": "MicrosoftWindowsServer"
         }            
     },
