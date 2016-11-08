@@ -40,7 +40,7 @@
                     "dependsOn": [
                         "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
                     ],
-                    "kind": "AzureAuditLog",
+                    "kind": "AzureActivityLog",
                     "properties": {
                         "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
                     }
