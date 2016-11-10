@@ -13,7 +13,41 @@
         },
         "omsAutomationRegion": {
             "type": "string"
-        }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/custom",
+            "metadata": {
+                "description": "URI to artifacts location"
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated"
+            }
+        },
+        "jobGuid": {
+            "type": "string",
+            "defaultValue": "416ee58e-a925-4f9e-8b8d-b18e6500a3a7",
+            "metadata": {
+                "description": "GUID for the schedule creation - create a unique before deploy"
+            }
+        },
+        "dscJobGuid1": {
+            "type": "string",
+            "defaultValue": "68fb5c3a-d554-4faa-ba84-3799e396bb34",
+            "metadata": {
+                "description": "GUID for the DSC compilation job #1"
+            }
+        },
+        "dscJobGuid2": {
+            "type": "string",
+            "metadata": {
+                "description": "GUID for the DSC compilation job #2"
+            }
+        }        
     },
     "resources": [
         

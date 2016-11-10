@@ -25,7 +25,7 @@
                 "description": "Specify the name of your Automation Account"
             }
         },
-        "automationRegion": {
+        "omsAutomationRegion": {
             "type": "string",
             "defaultValue": "West Europe",
             "allowedValues": [
@@ -38,7 +38,7 @@
         },
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/oms-all-deploy",
+            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/custom",
             "metadata": {
                 "description": "URI to artifacts location"
             }
@@ -100,7 +100,7 @@
             },
             "runbooks": {
                 "vmManagement": {
-                    "name": "AzureMgmtAnalytics",
+                    "name": "azureMgmtAnalytics",
                     "url": "[concat(parameters('_artifactsLocation'), '/scripts/azureMgmtAnalytics.ps1', parameters('_artifactsLocationSasToken'))]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
@@ -162,18 +162,6 @@
                     "kind": "AzureActivityLog",
                     "properties": {
                         "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
-                    }
-                },
-                {
-                    "name": "Automation",
-                    "type": "linkedServices",
-                    "apiVersion": "2015-11-01-preview",
-                    "dependsOn": [
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-                    ],
-                    "properties": {
-                        "resourceId": "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     }
                 },
                 {
@@ -650,7 +638,7 @@
             "name": "[parameters('omsAutomationAccountName')]",
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2015-10-31",
-            "location": "[parameters('automationRegion')]",
+            "location": "[parameters('omsAutomationRegion')]",
             "properties": {
                 "sku": {
                     "name": "OMS"
@@ -740,10 +728,10 @@
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.xPSDSC.name)]"
                     ],
                     "properties": {
-                        "logVerbose": "false",
+                        "logVerbose": false,
                         "description": "[variables('assets').dsc.omsConfig.description]",
                         "state": "Published",
-                        "overwrite": "true",
+                        "overwrite": true,
                         "Source": {
                             "type": "uri",
                             "Value": "[variables('assets').dsc.omsConfig.uri]"
@@ -777,10 +765,10 @@
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.xPSDSC.name)]"
                     ],
                     "properties": {
-                        "logVerbose": "false",
+                        "logVerbose": false,
                         "description": "[variables('assets').dsc.omsService.description]",
                         "state": "Published",
-                        "overwrite": "true",
+                        "overwrite": true,
                         "Source": {
                             "type": "uri",
                             "Value": "[variables('assets').dsc.omsService.uri]"
@@ -806,7 +794,7 @@
                     "name": "[variables('assets').runbooks.vmManagement.name]",
                     "type": "runbooks",
                     "apiVersion": "2015-10-31",
-                    "location": "[parameters('automationRegion')]",
+                    "location": "[parameters('omsAutomationRegion')]",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.ingestionAPI.name)]",
@@ -828,7 +816,7 @@
                     "name": "[concat(parameters('omsAutomationAccountName'), '/', variables('assets').runbooks.vmManagement.ingestScheduleName)]",
                     "type": "microsoft.automation/automationAccounts/schedules",
                     "apiVersion": "2015-10-31",
-                    "location": "[parameters('automationRegion')]",
+                    "location": "[parameters('omsAutomationRegion')]",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.vmManagement.name)]"
@@ -888,8 +876,7 @@
             "apiVersion": "2015-11-01-preview",
             "location": "[parameters('omsWorkspaceRegion')]",
             "dependsOn": [
-                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/configurations/', variables('assets').dsc.omsService.name)]"
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
             ],
             "plan": {
                 "name": "[variables('omsSolutions').customSolution.solutionName]",
@@ -907,10 +894,7 @@
                 "containedResources": [
                     "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), variables('omsSolutions').customSolution.name)]",
                     "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('omsAutomationAccountName'), variables('assets').runbooks.vmManagement.name)]",
-                    "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.ingestionAPI.name)]",
-                    "[resourceId('Microsoft.Automation/automationAccounts/configurations/', parameters('omsAutomationAccountName'), variables('assets').runbooks.vmManagement.name)]",
-                    "[resourceId('Microsoft.Automation/automationAccounts/configurations/', parameters('omsAutomationAccountName'), variables('assets').dsc.omsConfig.name)]",
-                    "[resourceId('Microsoft.Automation/automationAccounts/configurations/', parameters('omsAutomationAccountName'), variables('assets').dsc.omsService.name)]"
+                    "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.ingestionAPI.name)]"
                 ]
             }
         }
