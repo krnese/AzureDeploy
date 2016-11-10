@@ -1,5 +1,4 @@
-﻿Configuration OMSSERVICE
-{
+﻿Configuration OMSSERVICE {
 
     Import-DscResource -ModuleName xPSDesiredStateConfiguration
 

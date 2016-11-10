@@ -1,5 +1,4 @@
-﻿Configuration OMS
-{
+﻿Configuration OMS {
   
     $OMSPackageLocalPath = 'C:\MMA\MMASetup-AMD64.exe'
     $OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
