@@ -42,19 +42,6 @@
         "description": "Assign a name for the ASR Recovery Vault"
       }
     },
-    "azureAdmin": {
-      "type": "string",
-      "defaultValue": "azureadmin",
-      "metadata": {
-        "description": "Enter your service admin user"
-      }
-    },
-    "azureAdminPwd": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Enter the pwd for the service admin user. The pwd is enrypted during runtime and in the Automation assets"
-      }
-    },
     "_artifactsLocation": {
       "type": "string",
       "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/oms-all-deploy",
@@ -140,7 +127,7 @@
       "comments": "Automation account for OMS",
       "properties": {
         "sku": {
-          "name": "Free"
+          "name": "OMS"
         }
       },
       "resources": [
@@ -213,20 +200,6 @@
           }
         },
         {
-          "name": "[variables('azureCredentials')]",
-          "type": "credentials",
-          "apiVersion": "2015-10-31",
-          "dependsOn": [
-            "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-          ],
-          "tags": { },
-          "properties": {
-            "description": "Azure Subscription Credentials",
-            "password": "[parameters('azureAdminPwd')]",
-            "userName": "[parameters('azureAdmin')]"
-          }
-        },
-        {
           "name": "[variables('omsWorkspaceNameAsset')]",
           "type": "variables",
           "apiVersion": "2015-10-31",
@@ -250,7 +223,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').azureRMOperationalInsights.url]"
+                "uri": "[variables('psModules').azureRmOperationalInsights.url]"
               }
             }
           },
@@ -265,7 +238,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').AzureRMResources.url]"
+                "uri": "[variables('psModules').azureRmResources.url]"
               }
             }
           },
@@ -281,7 +254,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').azureRMAutomation.url]"
+                "uri": "[variables('psModules').azureRmAutomation.url]"
               }
             }
           },
@@ -343,12 +316,12 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').AzureRmSiteRecovery.url]"
+                "uri": "[variables('psModules').azureRmSiteRecovery.url]"
               }
             }
           },
           {
-            "name": "[variables('psModules').azureRmbackup.name]",
+            "name": "[variables('psModules').azureRmBackup.name]",
             "type": "Modules",
             "apiVersion": "2015-10-31",
             "tags": { },
@@ -427,7 +400,28 @@
             }
           }
           ]
-        }
+        },
+        {
+            "type": "Microsoft.Automation/automationAccounts/providers/diagnosticSettings",
+            "name": "[concat(parameters('omsAutomationAccountName'), '/', 'Microsoft.Insights/service')]",
+            "apiVersion": "2015-07-01",
+            "dependsOn": [
+                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+            ],
+            "properties": {
+                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
+                "logs": [
+                    {
+                        "category": "JobLogs",
+                        "enabled": true
+                    },
+                    {
+                        "category": "JobStreams",
+                        "enabled": true
+                    }
+                ]
+            }
+        }        
       ],
   "outputs": { }
 }

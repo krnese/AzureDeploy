@@ -1,0 +1,24 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "omsWorkspaceName": {
+            "type": "string"
+        },
+        "omsWorkspaceRegion": {
+            "type": "string"
+        },
+        "omsAutomationAccount": {
+            "type": "string"
+        },
+        "omsAutomationRegion": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        
+    ],
+    "outputs": {
+        
+    }
+}
