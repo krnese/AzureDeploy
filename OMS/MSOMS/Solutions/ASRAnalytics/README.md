@@ -1,7 +1,7 @@
 # Azure Site Recovery Analytics
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2AzureDeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2FASRAnalytics%2Fazuredeploy.json) 
-<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2krnese%2AzureDeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2FASRAnalytics%2Fazuredeploy.json" target="_blank">
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2AzureDeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2FASRAnalytics%2Fazuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
