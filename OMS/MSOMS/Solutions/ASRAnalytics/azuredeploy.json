@@ -132,7 +132,7 @@
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:HyperV AND (ReplicationHealth_s=Normal OR ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) ProtectionStatus_s!=\"EnablingFailed\" ProtectionStatus_s!=\"Unprotected\"| dedup VMName_s | measure countdistinct(VMName_s) by ReplicationHealth_s",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:HyperV AND (ReplicationHealth_s=Normal OR ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) | dedup VMName_s | measure countdistinct(VMName_s) by ReplicationHealth_s",
                                         "CenterLegend": {
                                             "Text": "Total",
                                             "Operation": "Sum",
@@ -161,7 +161,7 @@
                                         }
                                     },
                                     "List": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:HyperV AND (ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) ProtectionStatus_s!=\"EnablingFailed\" ProtectionStatus_s!=\"Unprotected\" | dedup VMName_s |  measure count () by VMName_s, VaultName_s ,ReplicationHealth_s | select VMName_s, VaultName_s ,ReplicationHealth_s",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:HyperV AND (ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) | dedup VMName_s |  measure count () by VMName_s, VaultName_s ,ReplicationHealth_s | select VMName_s, VaultName_s ,ReplicationHealth_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -214,7 +214,7 @@
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:VMware && (ReplicationHealth_s=Normal OR ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) ProtectionStatus_s!=\"EnablingFailed\" ProtectionStatus_s!=\"Unprotected\"  | dedup VMName_s | measure countdistinct (VMName_s) by ReplicationHealth_s ",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:VMware && (ReplicationHealth_s=Normal OR ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) | dedup VMName_s | measure countdistinct (VMName_s) by ReplicationHealth_s ",
                                         "CenterLegend": {
                                             "Text": "Total",
                                             "Operation": "Sum",
@@ -243,7 +243,7 @@
                                         }
                                     },
                                     "List": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:VMware ReplicationHealth_s!=\"Normal\"  ProtectionStatus_s!=\"EnablingFailed\" ProtectionStatus_s!=\"Unprotected\"| dedup VMName_s  | measure count() by VMName_s, VaultName_s,ReplicationHealth_s | select VMName_s, VaultName_s,ReplicationHealth_s",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:VMware ReplicationHealth_s!=\"Normal\" | dedup VMName_s  | measure count() by VMName_s, VaultName_s,ReplicationHealth_s | select VMName_s, VaultName_s,ReplicationHealth_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -447,7 +447,7 @@
                             "Version": 0,
                             "Configuration": {
                                 "Donut": {
-                                    "Query": "Type:RecoveryServices_CL (LogType_s=HyperV OR LogType_s:VMware)  ProtectionStatus_s!=\"Unprotected\" ProtectionStatus_s!=\"EnablingFailed\" | dedup VMName_s | measure countdistinct(VMName_s) by ReplicationHealth_s",
+                                    "Query": "Type:RecoveryServices_CL (LogType_s=HyperV OR LogType_s:VMware) | dedup VMName_s | measure countdistinct(VMName_s) by ReplicationHealth_s",
                                     "CenterLegend": {
                                         "Text": "Protected Machines",
                                         "Operation": "Sum",
