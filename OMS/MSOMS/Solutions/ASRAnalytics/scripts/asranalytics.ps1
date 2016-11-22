@@ -47,11 +47,14 @@ $Vault = $vaults | where-object {$_.Name -eq $vaultname }
     $ASRJobs = $ASRJobs.Properties
     $ResourceGroupName = $vault.id.Split('/')
     $ResourceGroupName = $ResourceGroupName[4]
+    $NewJobs = (get-date).AddHours(((-1))).ToUniversalTime().ToString('yyyy-MM-ddtHH:mm:ssZ')
 
 # Getting all the ASR Jobs for the selected Vault and sending it to OMS Log Analytics
 
     foreach ($ASR in $ASRJobs)
     {
+        if ($ASR.startTime -gt $NewJobs)
+        {
         $JobTable = @()
         $JobData = New-Object psobject -property @{
             JobName = $asr.FriendlyName;
@@ -80,6 +83,11 @@ $Vault = $vaults | where-object {$_.Name -eq $vaultname }
 # Ingesting data to OMS Log Analytics
 
         Send-OMSAPIIngestionData -customerId $OMSWorkspaceId -sharedKey $OMSWorkspaceKey -body $JSONJobTable -logType $LogType
+        }
+        else
+        {
+            Write-Output "No new jobs to collect."
+        }
      }
 
 # Constructing the replicationEvents pipeline
@@ -90,9 +98,12 @@ $Vault = $vaults | where-object {$_.Name -eq $vaultname }
     $ASREvents = $ASREvents.Properties
     $ResourceGroupName = $vault.id.Split('/')
     $ResourceGroupName = $ResourceGroupName[4]
+    $NewEvents = (get-date).AddHours(((-1))).ToUniversalTime().ToString('yyyy-MM-ddtHH:mm:ssZ')
 
     foreach ($ASREvent in $ASREvents)
     {
+        if ($ASREvent.timeofOccurrence -gt $NewEvents)
+        {
         $EventTable = @()
         $EventData = New-Object psobject -property @{
             LogType = 'Events';
@@ -119,10 +130,14 @@ $Vault = $vaults | where-object {$_.Name -eq $vaultname }
 # Ingesting data to OMS Log Analytics
        
         Send-OMSAPIIngestionData -customerId $OMSWorkspaceId -sharedKey $OMSWorkspaceKey -body $JSONEventTable -logType $LogType
-
+        }
+        else
+        {
+            Write-Output "No new events to collect"
+        }
      }
 
-# Constructing the Protected/Unprotected VMs pipelien. Will iterate and filter based on replication provider and protection status
+# Constructing the Protected/Unprotected VMs pipeline. Will iterate and filter based on replication provider and protection status
 
     $uri = "https://management.azure.com" + $vault.id + "/replicationFabrics?api-version=2015-11-10"
     foreach ($ur in $uri)
