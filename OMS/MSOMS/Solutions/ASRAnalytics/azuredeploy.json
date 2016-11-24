@@ -4,7 +4,7 @@
     "parameters": {
         "omsLogAnalyticsWorkspaceName": {
             "type": "string",
-            "defaultValue": "omslawsasr",
+            "defaultValue": "",
             "metadata": {
                 "description": "Create new or refer to an existing Log Analytic Workspace"
             }
@@ -23,7 +23,7 @@
         },
         "omsAutomationAccountName": {
             "type": "string",
-            "defaultValue": "omsaaasr",
+            "defaultValue": "",
             "metadata": {
                 "description": "Use an existing Automation account or create a new"
             }
@@ -134,7 +134,7 @@
                                     "Donut": {
                                         "Query": "Type:RecoveryServices_CL LogType_s:HyperV AND (ReplicationHealth_s=Normal OR ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) | dedup VMName_s | measure countdistinct(VMName_s) by ReplicationHealth_s",
                                         "CenterLegend": {
-                                            "Text": "Total",
+                                            "Text": "Machines",
                                             "Operation": "Sum",
                                             "ArcsToSelect": []
                                         },
@@ -161,7 +161,7 @@
                                         }
                                     },
                                     "List": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:HyperV AND (ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) | dedup VMName_s |  measure count () by VMName_s, VaultName_s ,ReplicationHealth_s | select VMName_s, VaultName_s ,ReplicationHealth_s",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:HyperV AND (ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) ProtectionStatus_s!=\"EnablingFailed\" ProtectionStatus_s!=\"Unprotected\" | dedup VMName_s |  measure count () by VMName_s, VaultName_s ,ReplicationHealth_s | select VMName_s, VaultName_s ,ReplicationHealth_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -216,7 +216,7 @@
                                     "Donut": {
                                         "Query": "Type:RecoveryServices_CL LogType_s:VMware && (ReplicationHealth_s=Normal OR ReplicationHealth_s=Critical OR ReplicationHealth_s=Warning) | dedup VMName_s | measure countdistinct (VMName_s) by ReplicationHealth_s ",
                                         "CenterLegend": {
-                                            "Text": "Total",
+                                            "Text": "Machines",
                                             "Operation": "Sum",
                                             "ArcsToSelect": []
                                         },
@@ -243,7 +243,7 @@
                                         }
                                     },
                                     "List": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:VMware ReplicationHealth_s!=\"Normal\" | dedup VMName_s  | measure count() by VMName_s, VaultName_s,ReplicationHealth_s | select VMName_s, VaultName_s,ReplicationHealth_s",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:VMware ReplicationHealth_s!=\"Normal\"  ProtectionStatus_s!=\"EnablingFailed\" ProtectionStatus_s!=\"Unprotected\"| dedup VMName_s  | measure count() by VMName_s, VaultName_s,ReplicationHealth_s | select VMName_s, VaultName_s,ReplicationHealth_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -298,7 +298,7 @@
                                     "Donut": {
                                         "Query": "Type:RecoveryServices_CL LogType_s:Events TimeGenerated>NOW-24hours | dedup AffectedObject_s | measure countdistinct(AffectedObject_s) by Severity_s ",
                                         "CenterLegend": {
-                                            "Text": "Total",
+                                            "Text": "Events",
                                             "Operation": "Sum",
                                             "ArcsToSelect": []
                                         },
@@ -321,7 +321,7 @@
                                         }
                                     },
                                     "List": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:Events TimeGenerated>NOW-24hours | measure countdistinct(AffectedObject_s) by AffectedObject_s, Description_s   | select AffectedObject_s, Description_s",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:Events TimeGenerated>NOW-24hours | measure countdistinct(AffectedObject_s) by AffectedObject_s, Description_s, Severity_s   | select AffectedObject_s, Description_s, Severity_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -370,13 +370,13 @@
                                         "useIcon": false
                                     },
                                     "Header": {
-                                        "Title": "Recent ASR Jobs",
+                                        "Title": "ASR Jobs in the last 24 hours",
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:Jobs | dedup State_s | measure countdistinct (State_s) by State_s",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:Jobs TimeGenerated> NOW-24HOURS  | measure count () by State_s",
                                         "CenterLegend": {
-                                            "Text": "Total",
+                                            "Text": "Jobs",
                                             "Operation": "Sum",
                                             "ArcsToSelect": []
                                         },
@@ -403,7 +403,7 @@
                                         }
                                     },
                                     "List": {
-                                        "Query": "Type:RecoveryServices_CL LogType_s:Jobs | measure countdistinct (State_s) by JobName_s | select JobName_s",
+                                        "Query": "Type:RecoveryServices_CL LogType_s:Jobs TimeGenerated> NOW-24HOURS | measure countdistinct (State_s) by JobName_s, TargetName_s, State_s | select JobName_s, TargetName_s, State_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -447,7 +447,7 @@
                             "Version": 0,
                             "Configuration": {
                                 "Donut": {
-                                    "Query": "Type:RecoveryServices_CL (LogType_s=HyperV OR LogType_s:VMware) | dedup VMName_s | measure countdistinct(VMName_s) by ReplicationHealth_s",
+                                    "Query": "Type:RecoveryServices_CL (LogType_s=HyperV OR LogType_s:VMware)  | dedup VMName_s | measure countdistinct(VMName_s) by ReplicationHealth_s",
                                     "CenterLegend": {
                                         "Text": "Protected Machines",
                                         "Operation": "Sum",
@@ -482,30 +482,7 @@
                                         "Message": ""
                                     }
                                 }
-                            },
-                            "Navigation": [
-                                {
-                                    "Host": "OMSPortal",
-                                    "Link": {
-                                        "Type": "Builder",
-                                        "Id": "ASR"
-                                    }
-                                },
-                                {
-                                    "Host": "Mobile",
-                                    "Link": {
-                                        "Type": "Builder",
-                                        "Id": "ASR"
-                                    }
-                                },
-                                {
-                                    "Host": "Azure",
-                                    "Link": {
-                                        "Type": "Builder",
-                                        "Id": "ASR"
-                                    }
-                                }
-                            ]
+                            }
                         }
                     }
                 }
