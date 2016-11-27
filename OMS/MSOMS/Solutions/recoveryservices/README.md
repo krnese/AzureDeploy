@@ -108,8 +108,18 @@ To add another Recovery & Backup vault to the solution, you simply have to deplo
 
 Due to specific dependencies to modules, variables and more, the solution requires that you creates additional Automation accounts when scaling the solution to collect data from additional vaults. You must create an Automation Account in the Azure portal with the default settings so that the SPN account will be created.
 
-Once you have created the Automation account you want to use, you can deploy the template below.
+
+- **OMS workspace Id and Key**
+
+This template will have parameters that will ask for the workspace Id and the workspace Key, so that the runbooks are able to authenticate and ingest data.
+You can log in to the OMS classic portal and navigate to Settings --> Connected Sources to find these values
+
+![alt text](images/idandkey.png "ID and Key")
+
+Once you have completed the pre-reqs, you can click on the deploy button below
 
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveryservices%2FaddRecoveryServices.json) 
 
-  
+Once deployed you should start to see data from your additional vault flowing into your workspace, and you can query based on resourceId, subscriptionId, vault name, resource group and more.
+
+![alt text](images/addvaults.png "Add vault")
