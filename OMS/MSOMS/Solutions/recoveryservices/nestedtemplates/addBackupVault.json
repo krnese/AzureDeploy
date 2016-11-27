@@ -1,0 +1,344 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "omsLogAnalyticsWorkspaceId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Specify the workspaceId for the workspace containing the solution"
+            }
+        },
+        "omsLogAnalyticsWorkspaceKey": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the workspaceKey for the workspace containing the solution"
+            }
+        },
+        "omsAutomationAccountName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Use an existing Automation account or create a new"
+            }
+        },
+        "omsAutomationRegion": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "allowedValues": [
+                "westeurope",
+                "southeastasia",
+                "eastus2",
+                "southcentralus",
+                "japaneast"
+            ],
+            "metadata": {
+                "description": "Specify the Azure Region for your OMS Automation Account"
+            }
+        },
+        "omsRecoveryVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of your Recovery Vault you want to analyze"
+            }
+        },
+        "ingestScheduleGuid": {
+            "type": "string",
+            "defaultValue": "66533407-3d53-4131-a2a6-ead17a08fa0c",
+            "metadata": {
+                "description": "GUID for the schedule creation - create a unique before deploy"
+            }
+        }
+    },
+    "variables": {
+        "_assetLocation": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/recoveryservices",
+        "runbooks": {
+            "omsASRMonitoring": {
+                "name": "OMSABMonitoring",
+                "version": "1.0.0.0",
+                "description": "Runbook to automatically ingest Recovery Services data and events into OMS Log Analytics",
+                "type": "PowerShell",
+                "Id": ""
+            }
+        },
+        "psModules": {
+            "ingestionAPI": {
+                "name": "OMSIngestionAPI",
+                "uri": "[concat(variables('_assetLocation'),'/scripts/OMSIngestionAPI.zip')]"
+            },
+            "azureRmProfile": {
+                "name": "AzureRm.Profile",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.profile.2.3.0.nupkg"
+            },
+            "azureRmResources": {
+                "name": "AzureRm.Resources",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.resources.3.3.0.nupkg"
+            },
+            "azureRmRecoveryServices": {
+                "name": "AzureRm.RecoveryServices",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.recoveryservices.2.3.0.nupkg"
+            },
+            "azureRmBackup": {
+                "name": "AzureRM.RecoveryServices.Backup",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.recoveryservices.backup.2.3.0.nupkg"
+            },
+            "azureRmCompute": {
+                "name": "AzureRm.Compute",
+                "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.compute.2.3.0.nupkg"
+            }
+        },
+        "ingestScheduleName": "abIngestSchedule",
+        "ingestionScriptUri": "[concat(variables('_assetLocation'),'/scripts/abanalytics.ps1')]",
+        "ingestInterval": "1",
+        "ingestFrequency": "hour",
+        "azureSubscriptionId": "abAzureSubscriptionId",
+        "omsWorkspaceId": "abOMSWorkspaceId",
+        "omsWorkspaceKey": "abOMSWorkspacekey",
+        "omsVaultName": "abOMSVaultName"
+    },
+    "resources": [
+        {
+            "apiversion": "2015-10-31",
+            "location": "[parameters('omsAutomationRegion')]",
+            "name": "[parameters('omsAutomationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "properties": {
+                "sku": {
+                    "name": "Basic"
+                }
+            },
+            "resources": [
+                {
+                    "name": "[variables('omsVaultName')]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "OMSVaultName",
+                        "value": "[concat('\"',parameters('omsRecoveryVaultName'),'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('omsWorkspaceId')]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "OMS Workspace Id",
+                        "value": "[concat('\"',parameters('omsLogAnalyticsWorkspaceId'),'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('omsWorkspaceKey')]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "OMS Workspace key",
+                        "value": "[concat('\"',parameters('omsLogAnalyticsWorkspaceKey'),'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('azureSubscriptionId')]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "Azure Subscription Id",
+                        "isEncrypted": 0,
+                        "type": "string",
+                        "value": "[concat('\"',subscription().subscriptionId,'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('psModules').ingestionAPI.name]",
+                    "type": "Modules",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('psModules').ingestionAPI.uri]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('psModules').azureRmProfile.name]",
+                    "type": "Modules",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceId'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceKey'))]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('psModules').azureRmProfile.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('psModules').azureRmCompute.name]",
+                    "type": "Modules",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceId'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceKey'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmProfile.name)]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('psModules').azureRmCompute.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('psModules').azureRmBackup.name]",
+                    "type": "Modules",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceId'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceKey'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmProfile.name)]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('psModules').azureRmBackup.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('psModules').azureRmRecoveryServices.name]",
+                    "type": "Modules",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceId'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceKey'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmProfile.name)]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('psModules').azureRmRecoveryServices.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('psModules').azureRmResources.name]",
+                    "type": "Modules",
+                    "apiVersion": "2015-10-31",
+                    "tags": {},
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceId'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('OMSWorkspaceKey'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmProfile.name)]"
+                    ],
+                    "properties": {
+                        "contentLink": {
+                            "uri": "[variables('psModules').azureRmResources.url]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('runbooks').omsASRMonitoring.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('azureSubscriptionId'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('omsWorkspaceId'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('omsWorkspaceKey'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('omsVaultName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/Modules/', variables('psModules').ingestionAPI.name)]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "runbookType": "[variables('runbooks').omsASRMonitoring.type]",
+                        "logProgress": "false",
+                        "logVerbose": "false",
+                        "description": "[variables('runbooks').omsASRMonitoring.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('ingestionScriptUri')]",
+                            "version": "[variables('runbooks').omsASRMonitoring.version]"
+                        }
+                    }
+                },
+                {
+                    "name": "[concat(parameters('omsAutomationAccountName'), '/', variables('ingestscheduleName'))]",
+                    "type": "microsoft.automation/automationAccounts/schedules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('runbooks').omsASRMonitoring.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmProfile.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmCompute.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmBackup.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmResources.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('psModules').azureRmRecoveryServices.name)]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "OMS Ingestion API Scheduler",
+                        "startTime": "",
+                        "isEnabled": "true",
+                        "interval": "[variables('ingestInterval')]",
+                        "frequency": "[variables('ingestFrequency')]"
+                    }
+                },
+                {
+                    "name": "[concat(parameters('omsAutomationAccountName'), '/', parameters('IngestScheduleGuid'))]",
+                    "type": "microsoft.automation/automationAccounts/jobSchedules",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/schedules/', variables('ingestscheduleName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('runbooks').omsASRMonitoring.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "schedule": {
+                            "name": "[variables('ingestScheduleName')]"
+                        },
+                        "runbook": {
+                            "name": "[variables('Runbooks').omsASRMonitoring.name]"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "AutomationAccontName": {
+            "value": "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+            "type": "string"
+        }
+    }
+}

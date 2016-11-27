@@ -1,0 +1,138 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "omsLogAnalyticsWorkspaceId": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Specify the workspaceId for the workspace containing the solution"
+            }
+        },
+        "omsLogAnalyticsWorkspaceKey": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the workspaceKey for the workspace containing the solution"
+            }
+        },
+        "omsAutomationAccountName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Use an existing Automation account or create a new"
+            }
+        },
+        "omsAutomationRegion": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "allowedValues": [
+                "westeurope",
+                "southeastasia",
+                "eastus2",
+                "southcentralus",
+                "japaneast"
+            ],
+            "metadata": {
+                "description": "Specify the Azure Region for your OMS Automation Account"
+            }
+        },
+        "omsRecoveryVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of your Recovery Vault you want to analyze"
+            }
+        },
+        "asrIngestScheduleGuid": {
+            "type": "string",
+            "defaultValue": "66533407-3d53-4131-a2a6-ead17a08fa0c",
+            "metadata": {
+                "description": "GUID for the schedule creation - create a unique before deploy"
+            }
+        },
+        "abIngestScheduleGuid": {
+            "type": "string",
+            "defaultValue": "0a75f68b-4e22-4f28-8859-06ce1e34b456",
+            "metadata": {
+                "description": "GUID for the schedule creation - create a unique before deploy"
+            }
+        }
+    },
+    "variables": {
+        "_artifactsLocation": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/recoveryservices",
+        "nestedTemplates": {
+            "asrAnalytics": "[concat(variables('_artifactsLocation'), '/nestedtemplates/addSiteRecoveryVault.json')]",
+            "abAnalytics": "[concat(variables('_artifactsLocation'), '/nestedtemplates/addBackupVault.json')]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "name": "azureBackupAnalytics",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nestedTemplates').abAnalytics]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsLogAnalyticsWorkspaceName": {
+                        "value": "[parameters('omsLogAnalyticsWorkspaceId')]"
+                    },
+                    "omsLogAnalyticsRegion": {
+                        "value": "[parameters('omsLogAnalyticsWorkspaceKey')]"
+                    },
+                    "omsAutomationAccountName": {
+                        "value": "[parameters('omsAutomationAccountName')]"
+                    },
+                    "omsAutomationRegion": {
+                        "value": "[parameters('omsAutomationRegion')]"
+                    },
+                    "omsRecoveryVaultName": {
+                        "value": "[parameters('omsRecoveryVaultName')]"
+                    },
+                    "ingestScheduleGuid": {
+                        "value": "[parameters('abIngestScheduleGuid')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "name": "azureSiteRecoveryAnalytics",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'azureBackupAnalytics')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nestedTemplates').asrAnalytics]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsLogAnalyticsWorkspaceName": {
+                        "value": "[parameters('omsLogAnalyticsWorkspaceId')]"
+                    },
+                    "omsLogAnalyticsRegion": {
+                        "value": "[parameters('omsLogAnalyticsWorkspaceKey')]"
+                    },
+                    "omsAutomationAccountName": {
+                        "value": "[parameters('omsAutomationAccountName')]"
+                    },
+                    "omsAutomationRegion": {
+                        "value": "[parameters('omsAutomationRegion')]"
+                    },
+                    "omsRecoveryVaultName": {
+                        "value": "[parameters('omsRecoveryVaultName')]"
+                    },
+                    "ingestScheduleGuid": {
+                        "value": "[parameters('asrIngestScheduleGuid')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

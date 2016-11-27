@@ -21,7 +21,7 @@ If you **dont** have an existing OMS Log Analytics Workspace, the template will 
 
 ## Deploying the Azure Recovery Services Analytics Solution
 
-### Follow these instructions to deploy solution into an existing - or new Log Analytics Workspace
+### Follow these instructions to deploy the solution into an existing - or new Log Analytics Workspace
 
 Log into Azure Portal (https://portal.azure.com) and ensure you are in the subscription containing the recovery vault you want to monitor
 
@@ -44,7 +44,7 @@ Once the deployment has completed, you should see the Automation account and the
 ![alt text](images/knrg.png "Resource Group")
 
 ###You can now deploy the template   
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2FASRAnalytics%2Fazuredeploy.json)  
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveyservices%2Fazuredeploy.json) 
 
 This will send you to the Azure Portal with some default values for the template parameters. 
 Ensure that the parameters reflects your setup so that you are deploying this into the *existing* Resource Group containing the Log Analytics Workspace and the Automation account.
@@ -95,3 +95,21 @@ We categorize the VMs based on the scenario(s) you have enabled and will give yo
 ![alt text](images/siterecovery.png "Azure Site Recovery view")
 
 ![alt text](images/siterecovery2.png "Azure Site Recovery overview")
+
+
+## Monitoring additional Recovery & Backup vaults
+
+The solution is designed to support multiple Recovery & Backup vaults - also across subscriptions.
+To add another Recovery & Backup vault to the solution, you simply have to deploy this template and provide the workspace Id and the workspace Key for the workspace where you already have deployed the solution.
+
+## Pre-reqs
+
+- **Automation Account with SPN**
+
+Due to specific dependencies to modules, variables and more, the solution requires that you creates additional Automation accounts when scaling the solution to collect data from additional vaults. You must create an Automation Account in the Azure portal with the default settings so that the SPN account will be created.
+
+Once you have created the Automation account you want to use, you can deploy the template below.
+
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveyservices%2FaddRecoveryServices.json) 
+
+  
