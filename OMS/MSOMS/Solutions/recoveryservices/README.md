@@ -7,7 +7,7 @@
 
 >[AZURE.NOTE]This is preliminary documentation for Azure Recovery Services Analytics, a management solution you can deploy into OMS that will provide insights and analytics of your Recovery and Backup vaults. The solution is currently in preview. 
 
-Azure Recovery Services Analytics will monitor your Recovery and Backup Vault in Azure (ARM) and visualize the data in Log Analytics. The data ingestion is currently based on an Automation Runbook that has to be deployed to a dedicated Automation Account.
+Azure Recovery Services Analytics will monitor your Recovery and Backup Vault in Azure (ARM) and visualize the data in Log Analytics. The data ingestion is currently based on Automation Runbooks that has to be deployed to a dedicated Automation Account.
 
 ![alt text](images/overview.png "Overview")
 
