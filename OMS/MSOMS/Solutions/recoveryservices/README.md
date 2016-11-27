@@ -9,7 +9,7 @@
 
 Azure Recovery Services Analytics will monitor your Recovery and Backup Vault in Azure (ARM) and visualize the data in Log Analytics. The data ingestion is currently based on Automation Runbooks that has to be deployed to a dedicated Automation Account.
 
-![alt text](images/overview.png "Overview")
+![alt text](images/newoverview.png "Overview")
 
 ## Pre-reqs
 
@@ -19,7 +19,7 @@ Before you deploy this template, you must create an Automation Account in the Az
 
 If you **dont** have an existing OMS Log Analytics Workspace, the template will create and deploy this for you.
 
-## Deploying the Azure Recovery Services Solution
+## Deploying the Azure Recovery Services Analytics Solution
 
 ### Follow these instructions to deploy solution into an existing - or new Log Analytics Workspace
 
