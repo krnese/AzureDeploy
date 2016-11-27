@@ -1,22 +1,17 @@
-# Azure Site Recovery Analytics
+# Azure Recovery Services Analytics
 
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2FASRAnalytics%2Fazuredeploy.json) 
-<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2FASRAnalytics%2Fazuredeploy.json" target="_blank">
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveyservices%2Fazuredeploy.json) 
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveryservices%2Fazuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
->[AZURE.NOTE]This is preliminary documentation Azure Site Recovery Analytics in OMS which is currently in preview. 
+>[AZURE.NOTE]This is preliminary documentation for Azure Recovery Services Analytics, a management solution you can install into OMS that will provide insights and analytics towards your Recovery and Backup vaults. The solution is currently in preview. 
 
-Azure Site Recovery Analytics will monitor your Recovery Vault in Azure (ARM) and visualize the data in Log Analytics. The data ingestion is currently based on a PowerShell Runbook that will be deployed to your Automation Account.
+Azure Recovery Services Analytics will monitor your Recovery and Backup Vault in Azure (ARM) and visualize the data in Log Analytics. The data ingestion is currently based on an Automation Runbook that has to be deployed to a dedicated Automation Account.
 
 ![alt text](images/overview.png "Overview")
 
 ## Pre-reqs
-
-- **Hyper-V 2 Azure or/and VMware/Physical 2 Azure**
-
-The current ASR Analytics solution is mainly targeting Hyper-V To Azure and VMWare/Physical To Azure scenarios. If you have Recovery Vaults configured for one of these scenarios, it will automatically show up in the Log Analytics workspace after the first runbook execution. 
-
 
 - **Automation Account with SPN**
 
@@ -24,11 +19,11 @@ Before you deploy this template, you must create an Automation Account in the Az
 
 If you **dont** have an existing OMS Log Analytics Workspace, the template will create and deploy this for you.
 
-## Setup - Using an existing OMS Log Analytics Workspace
+## Deploying the Azure Recovery Services Solution
 
-### Follow these instructions to deploy the OMS ASR Solution into an existing OMS Log Analytics Workspace
+### Follow these instructions to deploy solution into an existing - or new Log Analytics Workspace
 
-Log into Azure Portal (https://portal.azure.com) and ensure you are in the subscription containing your OMS Workspace
+Log into Azure Portal (https://portal.azure.com) and ensure you are in the subscription containing the recovery vault you want to monitor
 
 Locate your existing OMS Log Analytics Workspace and note the name of the workspace, the location of the workspace, and the Resource Group
 
@@ -40,11 +35,9 @@ Next, create a new Automation Account and click on *New* and search for 'Automat
  
 Select Automation and click *Create* 
 
-![alt text](images/kncreate.png "create")
-
 Specify the name of the Automation Account and ensure you are selecting 'Use existing' and selects the Resource Group containing the OMS Log Analytics workspace. If possible, use the same Azure Region for the Automation Account. Ensure that 'Create Azure Run As account' is set to 'Yes' and click 'Create'
 
-![alt text](images/knaaccount.png "Create account") 
+![alt text](images/kncreate.png "create")
 
 Once the deployment has completed, you should see the Automation account and the Log Analytics workspace in the same Resource Group
 
@@ -58,67 +51,47 @@ Ensure that the parameters reflects your setup so that you are deploying this in
 
 *It is important that you type the exact values for your workspace name and automation account name, and points to the regions where these resources are deployed.* 
 
-You should also change the *INGESTSCHEDULEGUID* value. You can generate your own using PowerShell with the following cmdlet:
+You should also change the values for the *Asr Ingest Schedule Guid* and *Ab Ingest Schedule Guid*. You can generate your own using PowerShell with the following cmdlet:
 
 
 ![alt text](images/knguid.png "guid")
 
 Once you have customized all the parameters, click *Create*
 
-![alt text](images/knarmtemp.png "template")
+![alt text](images/template.png "template")
 
 The ingestion will start 5-10 minutes post deployment.
 
-Note: You will not see any data ingestion if you don't have any Recovery Vaults in your subscription
+## Exploring the views
 
-## Setup - Creating a new OMS Log Analytics Workspace
+Once the template has successfully been deployed, the first data ingestion should occur 6-8 minutes post deployment. If you are deploying the solution to a new workspace, it can take approximately 30 minutes before the indexing has completed for the workspace in general. 
 
-### Follow these instructions to deploy the OMS ASR Solution into a new OMS Log Analytics Workspace
+In the Resource Group where you deployed the template, you should see two solution resources.
 
-Log into Azure Portal (https://portal.azure.com) and ensure you are in the subscription where you want to deploy the OMS ASR Solution
+* AzureBackup[workspaceName]
+* AzureSiteRecovery[workspaceName]
 
-Create a new Automation Account and click on *New* and search for 'Automation'
+![alt text](images/solutions.png "Solutions")
 
-![alt text](images/knautomation.png "automation")
- 
-Select Automation and click *Create* 
+### Azure Backup
 
-![alt text](images/kncreate.png "create")
+The views for Azure Backup will give you an overview of all the virtual machines within the region where your vault is deployed, and tell you whether they are protected or unprotected. 
 
-Specify the name of the Automation Account and create the account into a new Resource Group. Ensure that 'Create Azure Run As account' is set to 'Yes' and click 'Create'
+The job view shows the last jobs and their state, so you can ensure that your backup operations are compliant.
 
-![alt text](images/knnewrg.png "Create account") 
+![alt text](images/azurebackup.png "Azure Backup view")
 
-Once the deployment has completed, you should see the new Resource Group with the Automation account
+![alt text](images/azurebackup2.png "Azure Backup overview")
 
-![alt text](images/knautorg.png "RG")
+### Azure Site Recovery
 
-###You can now deploy the template   
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2FASRAnalytics%2Fazuredeploy.json) 
+In the views for Azure Site Recovery, we are currently looking at all your protected VMs, and the supported scenarios in this release is:
 
-This will send you to the Azure Portal with some default values for the template parameters. 
-Ensure that the parameters reflects your setup so that you are deploying this into the *existing* Resource Group containing the Automation account, and also change the parameters for 'omsautomationaccountname' and 'omsautomationregion' to point to the existing account. 
+* Hyper-V 2 Azure
+* VMware/physical 2 Azure
 
-This template will create a new OMS Log Analytics Workspace in the specified region.
+We categorize the VMs based on the scenario(s) you have enabled and will give you a holistic view across all the events and jobs for the recovery vault
 
-You should also change the *INGESTSCHEDULEGUID* value. You can generate your own using PowerShell with the following cmdlet:
+![alt text](images/siterecovery.png "Azure Site Recovery view")
 
-
-![alt text](images/knguid.png "guid")
-
-Once you have customized all the parameters, click *Create*
-
-![alt text](images/knarmtemp.png "New workspace")
-
-The ingestion will start 5-10 minutes post deployment.
-
-Note: You will not see any data ingestion if you don't have any Recovery Vaults in your subscription
-
-Once the solution has been enabled, OMS will perform an assessment and start to show data once ingested.
-You should expect to see the following view for the next hour.
-
-![alt text](images/overview.png "Assessment")
-
-When the first data has been ingested, you can drill into the ASR Private Preview solution and explore the views
-
-![alt text](images/asrpreview.png "ASR Private Preview")           
+![alt text](images/siterecovery2.png "Azure Site Recovery overview")
