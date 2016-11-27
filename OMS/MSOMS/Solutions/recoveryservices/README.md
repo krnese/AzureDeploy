@@ -1,6 +1,6 @@
 # Azure Recovery Services Analytics
 
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveyservices%2Fazuredeploy.json) 
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveryservices%2Fazuredeploy.json) 
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveryservices%2Fazuredeploy.json" target="_blank">
     <img src="http://armviz.io/visualizebutton.png"/>
 </a>
@@ -97,7 +97,7 @@ We categorize the VMs based on the scenario(s) you have enabled and will give yo
 ![alt text](images/siterecovery2.png "Azure Site Recovery overview")
 
 
-## Monitoring additional Recovery & Backup vaults
+## Scale-out: Adding additional vaults
 
 The solution is designed to support multiple Recovery & Backup vaults - also across subscriptions.
 To add another Recovery & Backup vault to the solution, you simply have to deploy this template and provide the workspace Id and the workspace Key for the workspace where you already have deployed the solution.
@@ -110,6 +110,6 @@ Due to specific dependencies to modules, variables and more, the solution requir
 
 Once you have created the Automation account you want to use, you can deploy the template below.
 
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveyservices%2FaddRecoveryServices.json) 
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrnese%2Fazuredeploy%2Fmaster%2FOMS%2FMSOMS%2FSolutions%2Frecoveryservices%2FaddRecoveryServices.json) 
 
   
