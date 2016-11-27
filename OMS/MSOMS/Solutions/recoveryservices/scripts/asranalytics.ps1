@@ -3,10 +3,10 @@ Add-AzureRMAccount -ServicePrincipal -Tenant $Conn.TenantID -ApplicationId $Conn
 
 # Getting automation variables from the Autoamtion Account
 
-$OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
-$OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
-$AzureSubscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionId'
-$VaultName = Get-AutomationVariable -Name 'OMSVaultName'
+$OMSWorkspaceId = Get-AutomationVariable -Name 'asrOMSWorkspaceId'
+$OMSWorkspaceKey = Get-AutomationVariable -Name 'asrOMSWorkspaceKey'
+$AzureSubscriptionId = Get-AutomationVariable -Name 'asrAzureSubscriptionId'
+$VaultName = Get-AutomationVariable -Name 'asrOMSVaultName'
 
 # Authenticating with ARM Rest API
 
@@ -39,7 +39,14 @@ $Vaults = $RestResult.Value
 
 $Vault = $vaults | where-object {$_.Name -eq $vaultname }
 
-# Constructing the replicationJobs pipeline
+    if ($vault.name -ne $VaultName)
+    {
+        Write-Output "Vault not found - Nothing to ingest into Log Analytics"
+    }
+    else
+    {
+
+# Constructing the replicationJobs Collection
 
     $uri = "https://management.azure.com" + $vault.id + "/replicationJobs?api-version=2015-11-10"
     $RestResult = Invoke-RestMethod -method Get -headers $authHeader -uri $uri
@@ -137,7 +144,7 @@ $Vault = $vaults | where-object {$_.Name -eq $vaultname }
         }
      }
 
-# Constructing the Protected/Unprotected VMs pipeline. Will iterate and filter based on replication provider and protection status
+# Constructing the Protected/Unprotected VM collection. Will iterate and filter based on replication provider and protection status
 
     $uri = "https://management.azure.com" + $vault.id + "/replicationFabrics?api-version=2015-11-10"
     foreach ($ur in $uri)
@@ -329,3 +336,4 @@ $Vault = $vaults | where-object {$_.Name -eq $vaultname }
                }
             }
          }
+    }
