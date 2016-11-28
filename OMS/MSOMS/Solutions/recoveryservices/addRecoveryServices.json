@@ -77,10 +77,10 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "omsLogAnalyticsWorkspaceName": {
+                    "omsLogAnalyticsWorkspaceId": {
                         "value": "[parameters('omsLogAnalyticsWorkspaceId')]"
                     },
-                    "omsLogAnalyticsRegion": {
+                    "omsLogAnalyticsWorkspaceKey": {
                         "value": "[parameters('omsLogAnalyticsWorkspaceKey')]"
                     },
                     "omsAutomationAccountName": {
@@ -112,10 +112,10 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "omsLogAnalyticsWorkspaceName": {
+                    "omsLogAnalyticsWorkspaceId": {
                         "value": "[parameters('omsLogAnalyticsWorkspaceId')]"
                     },
-                    "omsLogAnalyticsRegion": {
+                    "omsLogAnalyticsWorkspaceKey": {
                         "value": "[parameters('omsLogAnalyticsWorkspaceKey')]"
                     },
                     "omsAutomationAccountName": {
