@@ -49,7 +49,27 @@ Once the deployment has completed, you should see the Automation account and the
 This will send you to the Azure Portal with some default values for the template parameters. 
 Ensure that the parameters reflects your setup so that you are deploying this into the *existing* Resource Group containing the Log Analytics Workspace and the Automation account.
 
-*It is important that you type the exact values for your workspace name and automation account name, and points to the regions where these resources are deployed.* 
+#### Parameters
+
+* OMS Log Analytics Workspace Name
+
+Specify the name of the workspace you want to deploy this solution to
+
+* OMS Log Analytics Region
+
+Select the Azure Region where your existing workspace is located
+
+* OMS Automation Account Name
+
+Specify the name of the automation account you created earlier
+
+* OMS Automation Region
+
+Select the Azure Region where your automation account is located
+
+* OMS Recovery Vault Name
+
+Type in the name of your recovery vault. Note that this parameter is case-sensitive and you must spell out the name correctly for the data collection to work
 
 You should also change the values for the *Asr Ingest Schedule Guid* and *Ab Ingest Schedule Guid*. You can generate your own using PowerShell with the following cmdlet:
 
