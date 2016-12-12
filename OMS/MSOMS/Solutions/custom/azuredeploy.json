@@ -38,7 +38,7 @@
         },
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/custom",
+            "defaultValue": "https://github.com/krnese/AzureDeploy/tree/master/OMS/MSOMS/Solutions/custom",
             "metadata": {
                 "description": "URI to artifacts location"
             }
@@ -159,7 +159,7 @@
                     "dependsOn": [
                         "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
                     ],
-                    "kind": "AzureAuditLog",
+                    "kind": "AzureActivityLog",
                     "properties": {
                         "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
                     }
