@@ -1,18 +1,12 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify existing workspace"
-            }
+            "type": "string"            
         },
         "workspaceRegion": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify region of existing workspace"
-            }
+            "type": "string"
         }
     },
     "variables": {
@@ -24,7 +18,7 @@
             }
         }
     },
-    "resources": [
+    "resources": [            
         {
             "apiVersion": "2015-11-01-preview",
             "name": "[parameters('workspaceName')]",
@@ -44,7 +38,7 @@
                     "properties": {
                         "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
                     }
-                },
+                }
              ]
         },
         {
@@ -64,7 +58,8 @@
             "properties": {
                 "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
             }
-        },
+        }                    
     ],
-    "outputs": {}
+"outputs": {    
+    }
 }
