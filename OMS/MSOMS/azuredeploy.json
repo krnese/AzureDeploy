@@ -2,14 +2,14 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "OMSRecoveryVaultName": {
+    "omsRecoveryVaultName": {
       "type": "string",
       "defaultValue": "OMSRecovery",
       "metadata": {
         "Description": "Assign a name for the OMS Recovery Vault"
       }
     },
-    "region": {
+    "omsRecoveryVaultRegion": {
       "type": "string",
       "defaultValue": "westeurope",
       "allowedValues": [
@@ -22,73 +22,21 @@
         "Description": "Specify region for the OMS Resources"
       }
     },
-    "OMSRecoveryApiVersion": {
-      "type": "string",
-      "defaultValue": "2015-08-15",
-      "allowedValues": [
-        "2016-03-30",
-        "2015-11-01",
-        "2015-08-15"
-      ],
-      "metadata": {
-        "Description": "Select API version for the Resource Provider"
-      }
-    },
-    "storageaccountname": {
-      "type": "string",
-      "defaultValue": "asrstorage",
-      "maxLength": 15,
-      "metadata": {
-        "Description": "Assign a name for the storage account for OMS Recovery Services"
-      }
-    },
-    "Storagetype": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS"
-      ],
-      "metadata": {
-        "Description": "Specify the storage type for you OMS Recovery storage blob"
-      }
-    },
-    "StorageApiVersion": {
-      "type": "string",
-      "defaultValue": "2015-06-15",
-      "metadata": {
-        "Description": "Select the API Version for the Resource Provider"
-      }
-    },
-    "OMSLogAnalyticsWorkspaceName": {
+    "omsWorkspaceName": {
       "type": "string",
       "defaultValue": "OMSLA",
       "metadata": {
         "Description": "Assign a name for the Log Analytic Workspace Name"
       }
     },
-    "OMSLogAnalyticsApiVersion": {
-      "type": "string",
-      "defaultValue": "2015-11-01-preview",
-      "metadata": {
-        "Description": "Select the API Version for the Resource Provider"
-      }
-    },
-    "OMSAutomationAccountName": {
+    "omsAutomationAccountName": {
       "type": "string",
       "defaultValue": "OMSAutomation",
       "metadata": {
         "Description": "Assign a name for the Automation account"
       }
     },
-    "OMSAutomationApiVersion": {
-      "type": "string",
-      "defaultValue": "2015-10-31",
-      "metadata": {
-        "Description": "Select the API Version for the resource provider"
-      }
-    },
-    "OMSSKU": {
+    "omsSKU": {
       "type": "string",
       "defaultValue": "Free",
       "allowedValues": [
@@ -102,33 +50,34 @@
     }
   },
   "variables": {
-    "storagename": "[toLower(concat(parameters('storageaccountname'), uniqueString(resourceGroup().id)))]"
+    "recoveryStorageAccountName": "[toLower(concat('asr', uniqueString(resourceGroup().id)))]",
+    "recoveryStorageType": "Standard_LRS"      
   },
   "resources": [
     {
-      "apiVersion": "[Parameters('OMSRecoveryApiVersion')]",
-      "location": "[Parameters('region')]",
-      "name": "[Parameters('OMSRecoveryVaultName')]",
+      "apiVersion": "2016-06-01",
+      "location": "West Europe",
+      "name": "[Parameters('omsRecoveryVaultName')]",
       "type": "Microsoft.RecoveryServices/vaults",
       "sku": {
-        "name": "[parameters('OMSRecoveryVaultName')]",
+        "name": "[parameters('omsRecoveryVaultName')]",
         "tier": "[parameters('OMSSKU')]"
       },
       "properties": { }
     },
     {
-      "apiVersion": "[Parameters('StorageApiVersion')]",
-      "location": "[Parameters('region')]",
-      "name": "[Variables('storagename')]",
+      "apiVersion": "2015-06-15",
+      "location": "West Europe",
+      "name": "[variables('recoveryStorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "properties": {
-        "accountType": "[Parameters('storagetype')]"
+        "accountType": "[variables('recoveryStorageType')]"
       }
     },
     {
-      "apiVersion": "[Parameters('OMSLogAnalyticsApiVersion')]",
-      "location": "[Parameters('region')]",
-      "name": "[parameters('OMSLogAnalyticsWorkspaceName')]",
+      "apiVersion": "2015-11-01-preview",
+      "location": "West Europe",
+      "name": "[parameters('omsWorkspaceName')]",
       "type": "Microsoft.OperationalInsights/workspaces",
       "properties": {
         "sku": {
@@ -137,9 +86,9 @@
       }
     },
     {
-      "apiversion": "[parameters('OMSAutomationApiVersion')]",
-      "location": "[parameters('region')]",
-      "name": "[parameters('OMSAutomationAccountName')]",
+      "apiversion": "2015-10-31",
+      "location": "West Europe",
+      "name": "[parameters('omsAutomationAccountName')]",
       "type": "Microsoft.Automation/automationAccounts",
       "properties": {
         "sku": {
@@ -150,7 +99,7 @@
   ],
   "outputs": {
     "OMSworkspaceID": {
-      "value": "[reference(Concat('Microsoft.OperationalInsights/workspaces/', parameters('OMSLogAnalyticsWorkspaceName')), parameters('OMSLogAnalyticsApiVersion')).customerId]",
+      "value": "[reference(Concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-11-01-preview').customerId]",
       "type": "string"
     },
     "OMSAutomation": {
