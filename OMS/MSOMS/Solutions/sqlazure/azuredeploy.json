@@ -1,0 +1,804 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspace": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspaceapiversion": {
+            "type": "string",
+            "defaultValue": "2015-11-01-preview"
+        }
+    },
+    "variables": {
+        "sqlAzureSolution": {
+            "name": "SQL Azure Analytics",
+            "id": "[concat('SQL Azure Analytics', '[', parameters('workspace'), ']')]",
+            "version": "1.0",
+            "publisher": "Microsoft",
+            "description": "Management solution for SQL Azure",
+            "author": "Satya Vel"
+        },
+        "alert1": {
+            "searchName": "Azure SQL Database DTU",
+            "description": "A Database Transaction Unit (DTU) is a blended measure of CPU, memory, data I/O and transaction log I/O in a ratio determined by an OLTP benchmark workload designed to be typical of real-world OLTP workloads. This alert is indicator that one of your databases maybe underperforming and unhealthy.",
+            "severity": "Critical",
+            "query": "Type=AzureMetrics ResourceId=*\"DATABASES\"* MetricName-dtu_consumption_percent | measure avg(Average) by Resource interval 1minute",
+            "alertTresholdValue": 90,
+            "operator": "gt",
+            "alertThrottleInMinutes": 60,
+            "alertBreach": 1,
+            "searchCategory": "Azure SQL",
+            "scheduleIntervalInMinutes": 5,
+            "scheduleQueryTimeSpan": 5,
+            "alertName": "Azure SQL Database DTU Consumption is greater than 90%"
+        },
+        "alertConstruct1": {
+            "searchId": "[concat(toLower(variables('alert1').searchCategory), '|', toLower(variables('alert1').searchName))]",
+            "scheduleId": "[toLower(concat('schedule-', uniqueString(resourceGroup().id, deployment().name)))]",
+            "alertId": "[toLower(concat('alert1-', uniqueString(resourceGroup().id, deployment().name)))]"
+        },
+        "alert2": {
+            "searchName": "Azure SQL Elastic Pool",
+            "description": "A Database Transaction Unit (DTU) is a blended measure of CPU, memory, data I/O and transaction log I/O in a ratio determined by an OLTP benchmark workload designed to be typical of real-world OLTP workloads. This alert is indicator that one of your Elastic Pools maybe underperforming and unhealthy.",
+            "severity": "Critical",
+            "query": "Type=AzureMetrics ResourceId=*\"ELASTICPOOLS\"* MetricName=dtu_consumption_percent | measure avg(Average) by Resource interval 1minute",
+            "alertTresholdValue": 90,
+            "operator": "gt",
+            "alertThrottleInMinutes": 60,
+            "alertBreach": 1,
+            "searchCategory": "Azure SQL",
+            "scheduleIntervalInMinutes": 5,
+            "scheduleQueryTimeSpan": 5,
+            "alertName": "Azure SQL Elastic Pool DTU Consumption is greater than 90%"
+        },
+        "alertConstruct2": {
+            "searchId": "[concat(toLower(variables('alert2').searchCategory), '|', toLower(variables('alert2').searchName))]",
+            "scheduleId": "[toLower(concat('schedule2-', uniqueString(resourceGroup().id, deployment().name)))]",
+            "alertId": "[toLower(concat('alert2-', uniqueString(resourceGroup().id, deployment().name)))]"
+        },
+        "alert3": {
+            "searchName": "Azure SQL Elastic Pool Storage",
+            "description": "Azure SQL Elastic Pool storage consumption is greater than 90%",
+            "severity": "Critical",
+            "query": "Type=AzureMetrics ResourceId=*\"ELASTICPOOLS\"* MetricName=storage_percent | measure avg(Average) by Resource interval 1minute",
+            "alertTresholdValue": 90,
+            "operator": "gt",
+            "alertThrottleInMinutes": 60,
+            "alertBreach": 1,
+            "searchCategory": "Azure SQL",
+            "scheduleIntervalInMinutes": 5,
+            "scheduleQueryTimeSpan": 5,
+            "alertName": "Azure SQL Elastic Pool storage consumption is greater than 90%"
+        },
+        "alertConstruct3": {
+            "searchId": "[concat(toLower(variables('alert3').searchCategory), '|', toLower(variables('alert3').searchName))]",
+            "scheduleId": "[toLower(concat('schedule3-', uniqueString(resourceGroup().id, deployment().name)))]",
+            "alertId": "[toLower(concat('alert3-', uniqueString(resourceGroup().id, deployment().name)))]"
+        },
+        "alert4": {
+            "searchName": "Azure SQL Database Size Percentage",
+            "description": "Azure SQL Database Size Percentage is greater than 90%",
+            "severity": "Critical",
+            "query": "Type=AzureMetrics ResourceId=*\"DATABASES\"* MetricName=storage_percent | measure avg(Average) by Resource interval 1minute",
+            "alertTresholdValue": 90,
+            "operator": "gt",
+            "alertThrottleInMinutes": 60,
+            "alertBreach": 1,
+            "searchCategory": "Azure SQL",
+            "scheduleIntervalInMinutes": 5,
+            "scheduleQueryTimeSpan": 5,
+            "alertName": "Azure SQL Database Size Percentage is greater than 90%"
+        },
+        "alertConstruct4": {
+            "searchId": "[concat(toLower(variables('alert4').searchCategory), '|', toLower(variables('alert4').searchName))]",
+            "scheduleId": "[toLower(concat('schedule4-', uniqueString(resourceGroup().id, deployment().name)))]",
+            "alertId": "[toLower(concat('alert4-', uniqueString(resourceGroup().id, deployment().name)))]"
+        }                                                               
+    },
+    "resources": [
+        {
+            "apiVersion": "[parameters('workspaceapiversion')]",
+            "name": "[parameters('workspace')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "location": "[parameters('location')]",            
+            "resources": [
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "name": "Azure SQL Analytics",
+                    "type": "views",
+                    "location": "[parameters('location')]",
+                    "id": "[resourceId('Microsoft.OperationalInsights/workspaces/views', parameters('workspace'),'Azure SQL Analytics')]",
+                    "dependson": [
+                        "[Concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
+                    ],
+                    "properties": {
+                        "Id": "Azure SQL Analytics",
+                        "Name": "Azure SQL Analytics",
+                        "Description": "Azure SQL Monitoring and Analytics Solution",
+                        "Author": "satyavel@microsoft.com",
+                        "Source": "Local",
+                        "Dashboard": [
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "SQL Azure Database Analytics",
+                                        "newGroup": true,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/DATABASES/\"* MetricName-dtu_consumption_percent | measure avg(Average) by Resource | Where AggregatedValue>90",
+                                        "Legend": "Top N Databases by DTU Utilization > 90%"
+                                    },
+                                    "List": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/DATABASES/\"* MetricName=dtu_consumption_percent | measure avg(Average) by Resource",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "SQL Database Name",
+                                            "Value": "Average % DTU"
+                                        },
+                                        "Color": "#00bcf2",
+                                        "thresholds": {
+                                            "isEnabled": true,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "85",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Legend": "Top N Databases by CPU Utilization > 90%",
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/DATABASES/\"* MetricName=cpu_percent | measure avg(Average) by Resource | Where AggregatedValue>90"
+                                    },
+                                    "List": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/DATABASES/\"* MetricName=cpu_percent | measure avg(Average) by Resource",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "ColumnsTitle": {
+                                            "Name": "SQL Database Name",
+                                            "Value": "AVERAGE % CPU"
+                                        },
+                                        "Color": "#007233",
+                                        "operation": "Summary",
+                                        "thresholds": {
+                                            "isEnabled": true,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "85",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/DATABASES/\"* MetricName=storage_percent | measure avg(Average) by Resource | Where AggregatedValue>90",
+                                        "Legend": "Top N Databases by Storage Consumption > 90%"
+                                    },
+                                    "List": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/DATABASES/\"* MetricName=storage_percent | measure avg(Average) by Resource",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "SQL Database Name",
+                                            "Value": "Average % Storage"
+                                        },
+                                        "Color": "#002050",
+                                        "thresholds": {
+                                            "isEnabled": true,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "85",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "SQL Azure Elastic Pools",
+                                        "newGroup": true,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/ELASTICPOOLS/\"* MetricName-dtu_consumption_percent | measure avg(Average) by Resource | Where AggregatedValue>90",
+                                        "Legend": "Top N Elastic Pools by DTU > 90%"
+                                    },
+                                    "List": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/ELASTICPOOLS/\"* MetricName=dtu_consumption_percent | measure avg(Average) by Resource",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "SQL Elastic Pool Name",
+                                            "Value": "Average % DTU"
+                                        },
+                                        "Color": "#ff8c00",
+                                        "thresholds": {
+                                            "isEnabled": true,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "85",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Legend": "Top N Elastic Pools by CPU >90%",
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/ELASTICPOOLS/\"* MetricName=cpu_percent | measure avg(Average) by Resource | Where AggregatedValue>90"
+                                    },
+                                    "List": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/ELASTICPOOLS/\"* MetricName=cpu_percent | measure avg(Average) by Resource",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "ColumnsTitle": {
+                                            "Name": "SQL ELASTIC POOL NAME",
+                                            "Value": "AVERAGE % CPU"
+                                        },
+                                        "Color": "#008272",
+                                        "operation": "Summary",
+                                        "thresholds": {
+                                            "isEnabled": true,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "85",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Legend": "Top N Elastic Pools by Storage Consumption > 90%",
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/ELASTICPOOLS/\"* MetricName=storage_percent | measure avg(Average) by Resource | Where AggregatedValue>90"
+                                    },
+                                    "List": {
+                                        "Query": "Type=AzureMetrics ResourceId=*\"/ELASTICPOOLS/\"* MetricName=storage_percent | measure avg(Average) by Resource",
+                                        "HideGraph": false,
+                                        "enableSparklines": true,
+                                        "ColumnsTitle": {
+                                            "Name": "SQL Elastic Pool Name",
+                                            "Value": "Average % Storage"
+                                        },
+                                        "Color": "#68217a",
+                                        "operation": "Summary",
+                                        "thresholds": {
+                                            "isEnabled": true,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "85",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "SQL Azure Activity Logs",
+                                        "newGroup": true,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Legend": "SQL Azure Activity Audit",
+                                        "Query": "Type=AzureActivity ResourceProvider= \"Microsoft SQL\" | measure count() by OperationName"
+                                    },
+                                    "List": {
+                                        "Query": "Type=AzureActivity ResourceProvider= \"Microsoft SQL\" | measure count() by OperationName",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "ColumnsTitle": {
+                                            "Name": "SQL Operation Name",
+                                            "Value": "Count"
+                                        },
+                                        "Color": "#0072c6",
+                                        "operation": "Summary",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "{selected item}"
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NotableQueriesBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "List of popular SQL Azure Search Queries",
+                                        "newGroup": true,
+                                        "preselectedFilters": "Type, Computer",
+                                        "renderMode": "grid"
+                                    },
+                                    "queries": [
+                                        {
+                                            "query": "Type=AzureMetrics ResourceProvider=\"MICROSOFT.SQL\"",
+                                            "displayName": "All SQL Azure Data"
+                                        },
+                                        {
+                                            "query": "Type=AzureMetrics ResourceProvider=\"MICROSOFT.SQL\" ResourceId=*\"/DATABASES/\"* | measure count() by MetricName",
+                                            "displayName": "List of all SQL Azure Database Performance Metrics"
+                                        },
+                                        {
+                                            "query": "Type=AzureMetrics ResourceProvider=\"MICROSOFT.SQL\" ResourceId=*\"/ELASTICPOOLS/\"* | measure count() by MetricName",
+                                            "displayName": "List of all SQL Azure Elastic Pool Performance Metrics"
+                                        },
+                                        {
+                                            "query": "Type=AzureMetrics ResourceId=*\"/DATABASES/\"* MetricName=dtu_consumption_percent | measure avg(Average) by MetricName interval 1minute",
+                                            "displayName": "Database DTU Consumption over time"
+                                        },
+                                        {
+                                            "query": "Type=AzureMetrics ResourceId=*\"/ELASTICPOOLS/\"* MetricName=dtu_consumption_percent | measure avg(Average) by MetricName interval 1minute",
+                                            "displayName": "Elastic Pool DTU Consumption over time"
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "OverviewTile": {
+                            "Id": "DoubleNumberBuilderTile",
+                            "Type": "OverviewTile",
+                            "Version": 0,
+                            "Configuration": {
+                                "TileOne": {
+                                    "Legend": "Total SQL Azure Databases",
+                                    "Query": "Type=AzureMetrics ResourceId=*\"/DATABASES/\"* | measure countdistinct(Resource) by Resource | Top 100000"
+                                },
+                                "TileTwo": {
+                                    "Legend": "Total SQL Azure Elastic Pools",
+                                    "Query": "Type=AzureMetrics ResourceId=*\"/ELASTICPOOLS/\"* | measure countdistinct(Resource) by Resource | Top 100000"
+                                },
+                                "Advanced": {
+                                    "DataFlowVerification": {
+                                        "Enabled": false,
+                                        "Query": "*",
+                                        "Message": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct1').searchId)]",
+            "dependsOn": [                
+            ],
+            "properties": {
+                "etag": "*",
+                "query": "[variables('alert1').query]",
+                "displayName": "[variables('alert1').searchName]",
+                "category": "[variables('alert1').searchCategory]"
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct1').searchId, '/', variables('alertConstruct1').scheduleId)]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct1').searchId)]"
+            ],
+            "properties": {
+                "etag": "*",
+                "Interval": "[variables('alert1').scheduleIntervalInMinutes]",
+                "QueryTimeSpan": "[variables('alert1').scheduleQueryTimeSpan]",
+                "enabled": true
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct1').searchId, '/', variables('alertConstruct1').scheduleId, '/', variables('alertConstruct1').alertId)]",
+            "dependsOn": [
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct1').searchId)]",
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct1').searchId, '/schedules/', variables('alertConstruct1').scheduleId)]" 
+            ],
+            "properties": {
+                "etag": "*",
+                "Type": "Alert",
+                "Name": "[variables('alert1').alertName]",
+                "Description": "[variables('alert1').description]",
+                "Severity": "[variables('alert1').severity]",
+                "Throttling": {
+                    "DurationInMinutes": "[variables('alert1').alertThrottleInMinutes]"                    
+                },
+                "Threshold": {
+                    "Operator": "[variables('alert1').operator]",
+                    "Value": "[variables('alert1').alertTresholdValue]",
+                    "MetricsTrigger": {
+                        "TriggerCondition": "Total",
+                        "Operator": "[variables('alert1').operator]",
+                        "Value": "[variables('alert1').alertBreach]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct2').searchId)]",
+            "dependsOn": [                
+            ],
+            "properties": {
+                "etag": "*",
+                "query": "[variables('alert2').query]",
+                "displayName": "[variables('alert2').searchName]",
+                "category": "[variables('alert2').searchCategory]"
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct2').searchId, '/', variables('alertConstruct2').scheduleId)]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct2').searchId)]"
+            ],
+            "properties": {
+                "etag": "*",
+                "Interval": "[variables('alert2').scheduleIntervalInMinutes]",
+                "QueryTimeSpan": "[variables('alert2').scheduleQueryTimeSpan]",
+                "enabled": true
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct2').searchId, '/', variables('alertConstruct2').scheduleId, '/', variables('alertConstruct2').alertId)]",
+            "dependsOn": [
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct2').searchId)]",
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct2').searchId, '/schedules/', variables('alertConstruct2').scheduleId)]" 
+            ],
+            "properties": {
+                "etag": "*",
+                "Type": "Alert",
+                "Name": "[variables('alert2').alertName]",
+                "Description": "[variables('alert2').description]",
+                "Severity": "[variables('alert2').severity]",
+                "Throttling": {
+                    "DurationInMinutes": "[variables('alert2').alertThrottleInMinutes]"                    
+                },
+                "Threshold": {
+                    "Operator": "[variables('alert2').operator]",
+                    "Value": "[variables('alert2').alertTresholdValue]",
+                    "MetricsTrigger": {
+                        "TriggerCondition": "Total",
+                        "Operator": "[variables('alert2').operator]",
+                        "Value": "[variables('alert2').alertBreach]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct3').searchId)]",
+            "dependsOn": [                
+            ],
+            "properties": {
+                "etag": "*",
+                "query": "[variables('alert3').query]",
+                "displayName": "[variables('alert3').searchName]",
+                "category": "[variables('alert3').searchCategory]"
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct3').searchId, '/', variables('alertConstruct3').scheduleId)]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct3').searchId)]"
+            ],
+            "properties": {
+                "etag": "*",
+                "Interval": "[variables('alert3').scheduleIntervalInMinutes]",
+                "QueryTimeSpan": "[variables('alert3').scheduleQueryTimeSpan]",
+                "enabled": true
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct3').searchId, '/', variables('alertConstruct3').scheduleId, '/', variables('alertConstruct3').alertId)]",
+            "dependsOn": [
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct3').searchId)]",
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct3').searchId, '/schedules/', variables('alertConstruct3').scheduleId)]" 
+            ],
+            "properties": {
+                "etag": "*",
+                "Type": "Alert",
+                "Name": "[variables('alert3').alertName]",
+                "Description": "[variables('alert3').description]",
+                "Severity": "[variables('alert3').severity]",
+                "Throttling": {
+                    "DurationInMinutes": "[variables('alert3').alertThrottleInMinutes]"                    
+                },
+                "Threshold": {
+                    "Operator": "[variables('alert3').operator]",
+                    "Value": "[variables('alert1').alertTresholdValue]",
+                    "MetricsTrigger": {
+                        "TriggerCondition": "Total",
+                        "Operator": "[variables('alert3').operator]",
+                        "Value": "[variables('alert3').alertBreach]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct4').searchId)]",
+            "dependsOn": [                
+            ],
+            "properties": {
+                "etag": "*",
+                "query": "[variables('alert4').query]",
+                "displayName": "[variables('alert4').searchName]",
+                "category": "[variables('alert4').searchCategory]"
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct4').searchId, '/', variables('alertConstruct4').scheduleId)]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct4').searchId)]"
+            ],
+            "properties": {
+                "etag": "*",
+                "Interval": "[variables('alert4').scheduleIntervalInMinutes]",
+                "QueryTimeSpan": "[variables('alert4').scheduleQueryTimeSpan]",
+                "enabled": true
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+            "name": "[concat(parameters('workspace'), '/', variables('alertConstruct4').searchId, '/', variables('alertConstruct4').scheduleId, '/', variables('alertConstruct4').alertId)]",
+            "dependsOn": [
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct4').searchId)]",
+               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct4').searchId, '/schedules/', variables('alertConstruct4').scheduleId)]" 
+            ],
+            "properties": {
+                "etag": "*",
+                "Type": "Alert",
+                "Name": "[variables('alert4').alertName]",
+                "Description": "[variables('alert4').description]",
+                "Severity": "[variables('alert4').severity]",
+                "Throttling": {
+                    "DurationInMinutes": "[variables('alert4').alertThrottleInMinutes]"                    
+                },
+                "Threshold": {
+                    "Operator": "[variables('alert4').operator]",
+                    "Value": "[variables('alert4').alertTresholdValue]",
+                    "MetricsTrigger": {
+                        "TriggerCondition": "Total",
+                        "Operator": "[variables('alert4').operator]",
+                        "Value": "[variables('alert4').alertBreach]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationsManagement/solutions",
+            "name": "[variables('sqlAzureSolution').id]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
+            ],
+            "plan": {
+                "name": "[variables('sqlAzureSolution').id]",
+                "product": "[variables('sqlAzureSolution').name]",
+                "publisher": "[variables('sqlAzureSolution').publisher]",
+                "promotionCode": ""
+            },
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+                "referencedResources": [],
+                "containedResources": [
+                   "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('workspace'), 'Azure SQL Analytics')]"
+                ]
+            }
+        }                        
+    ],
+    "outputs": {}
+}
