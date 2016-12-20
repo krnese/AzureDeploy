@@ -4,7 +4,12 @@
     "parameters": {
         "location": {
             "type": "string",
-            "defaultValue": ""
+            "allowedValues": [
+                "East US",
+                "West Europe",
+                "Southeast Asia",
+                "Australia Southeast"
+            ]
         },
         "workspace": {
             "type": "string",
@@ -99,14 +104,14 @@
             "searchId": "[concat(toLower(variables('alert4').searchCategory), '|', toLower(variables('alert4').searchName))]",
             "scheduleId": "[toLower(concat('schedule4-', uniqueString(resourceGroup().id, deployment().name)))]",
             "alertId": "[toLower(concat('alert4-', uniqueString(resourceGroup().id, deployment().name)))]"
-        }                                                               
+        }
     },
     "resources": [
         {
             "apiVersion": "[parameters('workspaceapiversion')]",
             "name": "[parameters('workspace')]",
             "type": "Microsoft.OperationalInsights/workspaces",
-            "location": "[parameters('location')]",            
+            "location": "[parameters('location')]",
             "resources": [
                 {
                     "apiVersion": "2015-11-01-preview",
@@ -561,7 +566,8 @@
             "apiVersion": "2015-11-01-preview",
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct1').searchId)]",
-            "dependsOn": [                
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
             ],
             "properties": {
                 "etag": "*",
@@ -575,6 +581,7 @@
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct1').searchId, '/', variables('alertConstruct1').scheduleId)]",
             "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
                 "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct1').searchId)]"
             ],
             "properties": {
@@ -589,8 +596,9 @@
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct1').searchId, '/', variables('alertConstruct1').scheduleId, '/', variables('alertConstruct1').alertId)]",
             "dependsOn": [
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct1').searchId)]",
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct1').searchId, '/schedules/', variables('alertConstruct1').scheduleId)]" 
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct1').searchId)]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct1').searchId, '/schedules/', variables('alertConstruct1').scheduleId)]"
             ],
             "properties": {
                 "etag": "*",
@@ -599,7 +607,7 @@
                 "Description": "[variables('alert1').description]",
                 "Severity": "[variables('alert1').severity]",
                 "Throttling": {
-                    "DurationInMinutes": "[variables('alert1').alertThrottleInMinutes]"                    
+                    "DurationInMinutes": "[variables('alert1').alertThrottleInMinutes]"
                 },
                 "Threshold": {
                     "Operator": "[variables('alert1').operator]",
@@ -616,7 +624,8 @@
             "apiVersion": "2015-11-01-preview",
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct2').searchId)]",
-            "dependsOn": [                
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
             ],
             "properties": {
                 "etag": "*",
@@ -630,6 +639,7 @@
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct2').searchId, '/', variables('alertConstruct2').scheduleId)]",
             "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
                 "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct2').searchId)]"
             ],
             "properties": {
@@ -644,8 +654,9 @@
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct2').searchId, '/', variables('alertConstruct2').scheduleId, '/', variables('alertConstruct2').alertId)]",
             "dependsOn": [
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct2').searchId)]",
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct2').searchId, '/schedules/', variables('alertConstruct2').scheduleId)]" 
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct2').searchId)]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct2').searchId, '/schedules/', variables('alertConstruct2').scheduleId)]"
             ],
             "properties": {
                 "etag": "*",
@@ -654,7 +665,7 @@
                 "Description": "[variables('alert2').description]",
                 "Severity": "[variables('alert2').severity]",
                 "Throttling": {
-                    "DurationInMinutes": "[variables('alert2').alertThrottleInMinutes]"                    
+                    "DurationInMinutes": "[variables('alert2').alertThrottleInMinutes]"
                 },
                 "Threshold": {
                     "Operator": "[variables('alert2').operator]",
@@ -671,7 +682,8 @@
             "apiVersion": "2015-11-01-preview",
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct3').searchId)]",
-            "dependsOn": [                
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
             ],
             "properties": {
                 "etag": "*",
@@ -685,6 +697,7 @@
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct3').searchId, '/', variables('alertConstruct3').scheduleId)]",
             "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
                 "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct3').searchId)]"
             ],
             "properties": {
@@ -699,8 +712,9 @@
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct3').searchId, '/', variables('alertConstruct3').scheduleId, '/', variables('alertConstruct3').alertId)]",
             "dependsOn": [
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct3').searchId)]",
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct3').searchId, '/schedules/', variables('alertConstruct3').scheduleId)]" 
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct3').searchId)]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct3').searchId, '/schedules/', variables('alertConstruct3').scheduleId)]"
             ],
             "properties": {
                 "etag": "*",
@@ -709,7 +723,7 @@
                 "Description": "[variables('alert3').description]",
                 "Severity": "[variables('alert3').severity]",
                 "Throttling": {
-                    "DurationInMinutes": "[variables('alert3').alertThrottleInMinutes]"                    
+                    "DurationInMinutes": "[variables('alert3').alertThrottleInMinutes]"
                 },
                 "Threshold": {
                     "Operator": "[variables('alert3').operator]",
@@ -726,7 +740,8 @@
             "apiVersion": "2015-11-01-preview",
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct4').searchId)]",
-            "dependsOn": [                
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
             ],
             "properties": {
                 "etag": "*",
@@ -740,6 +755,7 @@
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct4').searchId, '/', variables('alertConstruct4').scheduleId)]",
             "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
                 "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct4').searchId)]"
             ],
             "properties": {
@@ -754,8 +770,9 @@
             "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
             "name": "[concat(parameters('workspace'), '/', variables('alertConstruct4').searchId, '/', variables('alertConstruct4').scheduleId, '/', variables('alertConstruct4').alertId)]",
             "dependsOn": [
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct4').searchId)]",
-               "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct4').searchId, '/schedules/', variables('alertConstruct4').scheduleId)]" 
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct4').searchId)]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspace'), '/savedSearches/', variables('alertConstruct4').searchId, '/schedules/', variables('alertConstruct4').scheduleId)]"
             ],
             "properties": {
                 "etag": "*",
@@ -764,7 +781,7 @@
                 "Description": "[variables('alert4').description]",
                 "Severity": "[variables('alert4').severity]",
                 "Throttling": {
-                    "DurationInMinutes": "[variables('alert4').alertThrottleInMinutes]"                    
+                    "DurationInMinutes": "[variables('alert4').alertThrottleInMinutes]"
                 },
                 "Threshold": {
                     "Operator": "[variables('alert4').operator]",
@@ -795,10 +812,10 @@
                 "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
                 "referencedResources": [],
                 "containedResources": [
-                   "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('workspace'), 'Azure SQL Analytics')]"
+                    "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('workspace'), 'Azure SQL Analytics')]"
                 ]
             }
-        }                        
+        }
     ],
     "outputs": {}
 }
