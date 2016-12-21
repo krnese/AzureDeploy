@@ -107,7 +107,7 @@
                 "query": "[variables('searches').batch1.queries[copyIndex()].query]",
                 "displayName": "[variables('searches').batch1.queries[copyIndex()].Name]",
                 "category": "[variables('searches').batch1.category]",
-                "Etag": "*"
+                "etag": "*"
             }
         },
         {
@@ -126,7 +126,7 @@
                 "Interval": "[variables('alerts').batch1[copyIndex()].scheduleIntervalMinutes]",
                 "QueryTimeSpan": "[variables('alerts').batch1[copyIndex()].scheduleQueryTimeSpan]",
                 "enabled": true,
-                "Etag": "*"
+                "etag": "*"
             }
         },
         {
@@ -151,7 +151,7 @@
                     "Operator": "[variables('alerts').batch1[copyIndex()].thresholdOperator]",
                     "Value": "[variables('alerts').batch1[copyIndex()].thresholdValue]"
                 },
-                "ETag": "*"
+                "etag": "*"
             }
         },        
         {
