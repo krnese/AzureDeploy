@@ -1,0 +1,178 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string"            
+        },
+        "workspaceRegion": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "omsSolutions": {
+            "solution": {
+                "name": "AzureActivity",
+                "solutionName": "[concat('AzureActivity', '(', parameters('workspaceName'), ')')]",
+                "publisher": "Microsoft"
+            }
+        },
+// Using complex variables below to create array for search        
+ "searches": {
+            "batch1": {
+                "category": "Azure CreationDeletion",
+                "queries": [
+                    {
+                        "Name": "VM Deployments",
+                        "query": "Type:AzureActivity OperationName:\"Microsoft.Compute/virtualMachines/write\"",
+                        "description": "List of VM creation jobs in Azure",
+                        "alert": true
+                    },
+                    {
+                        "Name": "VM Deletions",
+                        "query": "Type:AzureActivity OperationName:\"Microsoft.Compute/virtualMachines/delete\"",
+                        "description": "List VM deletion jobs in Azure",
+                        "alert": true
+                    }
+                ]
+            }
+        },
+// Using complex variables below to create array for alerts        
+        "alerts": {
+            "batch1": [
+                {
+                    "savedSearchId": "[concat(toLower(variables('searches').batch1.category), '|', toLower(variables('searches').batch1.queries[0].Name))]",
+                    "savedSearchName": "[variables('searches').batch1.queries[0].Name]",
+                    "scheduleId": "[toLower(concat('AzureVM-schedule-', uniqueString(toLower(variables('searches').batch1.category), '|', toLower(variables('searches').batch1.queries[0].Name))))]",
+                    "alertId": "[toLower(concat('AzureVM-alert-', uniquestring(toLower(variables('searches').batch1.category), '|', toLower(variables('searches').batch1.queries[0].Name))))]",
+                    "scheduleIntervalMinutes": 5,
+                    "scheduleQueryTimeSpan": 5,
+                    "alertDescription": "VM Creation alert",
+                    "severity": "critical",
+                    "thresholdOperator": "gt",
+                    "thresholdValue": 0,
+                    "alertThrottleMinutes": 0
+                },
+                {
+                    "savedSearchId": "[concat(toLower(variables('searches').batch1.category), '|', toLower(variables('searches').batch1.queries[1].Name))]",
+                    "savedSearchName": "[variables('searches').batch1.queries[1].Name]",
+                    "scheduleId": "[toLower(concat('AzureVM-schedule-', uniqueString(toLower(variables('searches').batch1.category), '|', toLower(variables('searches').batch1.queries[1].Name))))]",
+                    "alertId": "[toLower(concat('AzureVM-alert-', uniqueString(toLower(variables('searches').batch1.category), '|', toLower(variables('searches').batch1.queries[1].Name))))]",
+                    "scheduleIntervalMinutes": 5,
+                    "scheduleQueryTimeSpan": 5,
+                    "alertDescription": "VM Deletion alert",
+                    "severity": "critical",
+                    "thresholdOperator": "gt",
+                    "thresholdValue": 0,
+                    "alertThrottleMinutes": 0
+                }
+            ]
+        }        
+    },
+    "resources": [            
+        {
+            "apiVersion": "2015-11-01-preview",
+            "name": "[parameters('workspaceName')]",
+            "location": "[parameters('workspaceRegion')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "properties": {
+             },
+             "resources": [
+                {
+                    "name": "AzureActivityLog",
+                    "type": "datasources",
+                    "apiVersion": "2015-11-01-preview",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                    ],
+                    "kind": "AzureActivityLog",
+                    "properties": {
+                        "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
+                    }
+                }
+             ]
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "name": "[concat(parameters('workspaceName'), '/', toLower(variables('searches').batch1.category), '|', toLower(variables('searches').batch1.queries[copyIndex()].Name))]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationsManagement/solutions/', variables('omsSolutions').solution.solutionName)]"
+            ],
+            "copy": {
+                "name": "search1Copy",
+                "count": "[length(variables('searches').batch1.queries)]"
+            },
+            "properties": {
+                "query": "[variables('searches').batch1.queries[copyIndex()].query]",
+                "displayName": "[variables('searches').batch1.queries[copyIndex()].Name]",
+                "category": "[variables('searches').batch1.category]",
+                "Etag": "*"
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/",
+            "name": "[concat(parameters('workspaceName'), '/', variables('alerts').batch1[copyIndex()].savedSearchId, '/', variables('alerts').batch1[copyIndex()].scheduleId)]",
+            "dependsOn": [
+                "search1Copy",
+                "[concat('Microsoft.OperationsManagement/solutions/', variables('omsSolutions').solution.solutionName)]"
+            ],
+            "copy": {
+                "name": "schedule1Copy",
+                "count": "[length(variables('alerts').batch1)]"
+            },
+            "properties": {
+                "Interval": "[variables('alerts').batch1[copyIndex()].scheduleIntervalMinutes]",
+                "QueryTimeSpan": "[variables('alerts').batch1[copyIndex()].scheduleQueryTimeSpan]",
+                "enabled": true,
+                "Etag": "*"
+            }
+        },
+        {
+            "apiVersion": "2015-11-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+            "name": "[concat(parameters('workspaceName'), '/', variables('alerts').batch1[copyIndex()].savedSearchId, '/', variables('alerts').batch1[copyIndex()].scheduleId, '/', variables('alerts').batch1[copyIndex()].alertId)]",
+            "dependsOn": [
+                "search1Copy",
+                "schedule1Copy",
+                "[concat('Microsoft.OperationsManagement/solutions/', variables('omsSolutions').solution.solutionName)]"
+            ],
+            "copy": {
+                "name": "alert1Copy",
+                "count": "[length(variables('alerts').batch1)]"
+            },
+            "properties": {
+                "Type": "Alert",
+                "Name": "[variables('alerts').batch1[copyIndex()].savedSearchName]",
+                "Description": "[variables('alerts').batch1[copyIndex()].alertDescription]",
+                "Severity": "[variables('alerts').batch1[copyIndex()].Severity]",
+                "Throttling": {
+                    "Operator": "[variables('alerts').batch1[copyIndex()].thresholdOperator]",
+                    "Value": "[variables('alerts').batch1[copyIndex()].thresholdValue]"
+                },
+                "ETag": "*"
+            }
+        },        
+        {
+            "name": "[variables('omsSolutions').solution.solutionName]",
+            "type": "Microsoft.OperationsManagement/solutions",
+            "apiVersion": "2015-11-01-preview",
+            "location": "[parameters('workspaceRegion')]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
+            "plan": {
+                "name": "[variables('omsSolutions').solution.solutionName]",
+                "product": "[concat('OMSGallery/', variables('omsSolutions').solution.name)]",
+                "publisher": "[variables('omsSolutions').solution.publisher]",
+                "promotionCode": ""
+            },
+            "properties": {
+                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            }
+        }                    
+    ],
+"outputs": {    
+}
+}
