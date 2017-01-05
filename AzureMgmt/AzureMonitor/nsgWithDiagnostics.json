@@ -1,0 +1,139 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nsgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the managed NSG"
+            }
+        },
+        "region": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the region to where you want to create the NSG"
+            }
+        },
+        "ruleName": {
+            "type": "string",
+            "metadata": {
+                "description": "Assign a name for the default rule"
+            }
+        },
+        "ruleDescription": {
+            "type": "string",
+            "metadata": {
+                "description": "Assign a description for the rule"
+            }
+        },
+        "ruleProtocol": {
+            "type": "string",
+            "allowedValues": [
+                "TCP",
+                "UDP"
+            ],
+            "defaultValue": "TCP",
+            "metadata": {
+                "description": "Specify the protocol - TCP or UDP"
+            }
+        },
+        "rulePort": {
+            "type": "int",
+            "metadata": {
+                "description": "Specify the port for this rule"
+            }
+        },
+        "ruleAccess": {
+            "type": "string",
+            "allowedValues": [
+                "Allow",
+                "Deny"                
+            ],
+            "defaultValue": "Allow",
+            "metadata": {
+                "description": "Allow or Deny access"
+            }
+        },
+        "workspaceResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource Group where the Workspace is located"
+            }
+        },
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Log Analytics Workspace"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('nsgName')]",
+            "location": "[parameters('region')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "[parameters('ruleName')]",
+                        "properties": {
+                            "description": "[parameters('ruleDescription')]",
+                            "protocol": "[parameters('ruleProtocol')]",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "[parameters('rulePort')]",
+                            "sourceAddressPrefix": "Internet",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-07-01",
+                    "type": "/providers/diagnosticSettings",
+                    "name": "Microsoft.Insights/service",
+                    "dependsOn": [
+                        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('nsgName'))]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('workspaceResourceGroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                        "logs": [
+                            {
+                                "category": "NetworkSecurityGroupEvent",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            },
+                            {
+                                "category": "NetworkSecurityGroupRuleCounter",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                }
+                            }
+                        ],
+                        "metrics": [
+                            {
+                                "timeGrain": "PT1M",
+                                "enabled": true,
+                                "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}

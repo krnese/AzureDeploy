@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lockedResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of the resource group you want to lock"
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-01-01",
+            "type": "Microsoft.Authorization/locks",
+            "name": "[parameters('lockedResourceGroupName')]",
+            "properties": {
+                "level": "CannotDelete",
+                "notes": "Contains Management services"
+            }
+        }
+    ],
+    "outputs": {
+        
+    }
+}

@@ -1,0 +1,69 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "omsAutomationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of the automation account you will create"
+            }
+        },
+        "omsAutomationRegion": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "Specify the region where you want to deploy your automation account"
+            }
+        },
+        "workspaceResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "descrption": "Resource Group where the Workspace is located"
+            }
+        },
+        "workspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Log Analytics Workspace"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Automation/automationAccounts",
+            "name": "[parameters('omsAutomationAccountName')]",
+            "location": "[parameters('omsAutomationRegion')]",
+            "apiVersion": "2015-10-31",
+            "properties": {
+                "sku": {
+                    "name": "Free"
+                }
+            },
+            "resources": [
+                {
+                    "type": "providers/diagnosticSettings",
+                    "name": "Microsoft.Insights/service",
+                    "apiVersion": "2015-07-01",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "workspaceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('workspaceResourceGroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                        "logs": [
+                            {
+                                "category": "JobLogs",
+                                "enabled": true
+                            },
+                            {
+                                "category": "JobStreams",
+                                "enabled": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}
