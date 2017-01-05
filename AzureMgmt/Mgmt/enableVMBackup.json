@@ -1,0 +1,55 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "OMSRecoveryResourceGroupName": {
+      "type": "string",
+      "defaultValue": "KNOMS"
+    },
+    "vaultName": {
+      "type": "string",
+      "defaultValue": "KNRecovery"
+    },
+    "fabricName": {
+      "type": "string",
+      "defaultValue": "Azure"
+    },
+    "vmResourceGroupName": {
+      "type": "string",
+      "defaultValue": "dsc"
+    },
+    "vmName": {
+      "type": "string",
+      "defaultValue": "dsc01"
+    },
+    "policyName": {
+      "type": "string",
+      "defaultValue": "DefaultPolicy"
+    }
+  },
+  "variables": {
+    "ProtectionContainers": "[concat('iaasvmcontainer;iaasvmcontainerv2;', parameters('vmResourceGroupName'), ';', parameters('vmName'))]",
+    "protectedItems": "[concat('vm;iaasvmcontainerv2;', parameters('vmResourceGroupName'), ';', parameters('vmName'))]",
+    "protectedItemType": "Microsoft.Compute/virtualMachines",
+    "virtualMachineId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmResourceGroupName'), '/providers/', variables('protectedItemType'), '/' , parameters('vmName'))]",
+    "backupManagementType": "AzureIaasVM",
+    "workloadType": "VM",
+    "containerName": "[concat('iaasvmcontainerv2;', parameters('vmResourceGroupName'), ';', parameters('vmName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems",
+      "name": "[concat(parameters('vaultName'), '/', parameters('fabricName'), '/', variables('protectionContainers'), '/', variables('protectedItems'))]",
+      "apiVersion": "2015-11-10",
+      "properties": {
+        "friendlyname": "[parameters('vmName')]",
+        "policyName": "[parameters('policyName')]",
+        "protectedItemType": "[variables('protectedItemType')]",
+        "virtualMachineId": "[variables('virtualMachineId')]",
+        "backupmanagementtype": "[variables('backupManagementType')]",
+        "workloadtype": "[variables('workloadType')]",
+        "containername": "[variables('containerName')]"
+      }
+    }
+  ]
+}
