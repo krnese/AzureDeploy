@@ -1,0 +1,184 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The name of the OMS Log Analytics workspace you will deploy the alert to"
+      }
+    },
+    "savedSearchQuery": {
+      "type": "string",
+      "defaultValue": "Type=AzureActivity ResourceProvider=\"Microsoft.Compute\" OperationName=\"Microsoft.Compute/virtualMachines/write\"",
+      "metadata": {
+        "description": "The saved search query. Example: Type:AzureActivity | measure count() by ResourceType"
+      }
+    },
+    "savedSearchName": {
+      "type": "string",
+      "defaultValue": "VMCreation",
+      "metadata": {
+        "description": "The name of the saved search"
+      }
+    },
+    "savedSearchCategory": {
+      "type": "string",
+      "defaultValue": "Azure Operations",
+      "metadata": {
+        "description": "The category for the saved search"
+      }
+    },
+    "scheduleIntervalInMinutes": {
+      "type": "int",
+      "minValue": 5,
+      "maxValue": 1440,
+      "defaultValue": 5,
+      "metadata": {
+        "description": "The interval in minutes that the query will be executed in schedule."
+      }
+    },
+    "scheduleQueryTimeSpanInMinutes": {
+      "type": "int",
+      "minValue": 5,
+      "maxValue": 60,
+      "defaultValue": 5,
+      "metadata": {
+        "description": "The timeframe in minutes for which the query will be executed on the schedule."
+      }
+    },
+    "alertName": {
+      "type": "string",
+      "defaultValue": "ManagedVMBackup",
+      "metadata": {
+        "description": "The name of the alert that will be created."
+      }
+    },
+    "alertDescription": {
+      "type": "string",
+      "defaultValue": "Alert to notify when managed VMs are created",
+      "metadata": {
+        "description": "The description of the alert that will be created."
+      }
+    },
+    "alertSeverity": {
+      "type": "string",
+      "allowedValues": [
+        "critical",
+        "warning",
+        "informational"
+      ],
+      "defaultValue": "informational",
+      "metadata": {
+        "description": "The severity level of the alert."
+      }
+    },
+    "alertThresholdOperator": {
+      "type": "string",
+      "defaultValue": "gt",
+      "allowedValues": [
+        "gt",
+        "lt"
+      ],
+      "metadata": {
+        "description": "The threshold operator that will be used when comparing results from every schedule to raise alert. gt stands for greater than and lt stands for less than."
+      }
+    },
+    "alertThresholdValue": {
+      "type": "int",
+      "minValue": 0,
+      "maxValue": 10000,
+      "defaultValue": 15,
+      "metadata": {
+        "description": "The threshold value that needs to be reached in order to be raised alert. It is integer value for the number of results that will be returned when the query is generate on every schedule."
+      }
+    },
+    "alertThrottleInMinutes": {
+      "type": "int",
+      "minValue": 0,
+      "maxValue": 10000,
+      "defaultValue": 5,
+      "metadata": {
+        "description": "Throttle alerts. When the alert is generated, wait a set amount of time before checking for this alert again. Value of 0 means no throttling."
+      }
+    },  
+    "runbookName": {
+      "type": "string",
+      "defaultValue": "ManagedIaaSBackup",
+      "metadata": {
+        "description": "Enter the name of the runbook to associate with the alert"
+      }
+    },
+    "runbookWebhookUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter the webhook Uri for the automation account. Example: https://s2events.azure-automation.net/webhooks?token=r2asdfe323f"
+      }
+    }
+  },
+  "variables": {
+    // You can use your own pattern to generate the Ids for search, schedule and alert - the below is an example
+    "savedSearchID": "[toLower(concat(parameters('savedSearchCategory'), '|', parameters('savedSearchName')))]",
+    "scheduleID": "[toLower(concat('schedule-',uniqueString(resourceGroup().id, deployment().name)))]",
+    "alertID": "[toLower(concat('alert-',uniqueString(resourceGroup().id, deployment().name)))]"
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('workspaceName'), '/', variables('savedSearchID'))]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+      "apiVersion": "2015-11-01-preview",
+      "dependsOn": [
+      ],
+      "properties": {
+        "etag": "*",
+        "query": "[parameters('savedSearchQuery')]",
+        "displayName": "[parameters('savedSearchName')]",
+        "category": "[parameters('savedSearchCategory')]"
+      }
+    },
+    {
+      "name": "[concat(parameters('workspaceName'), '/', variables('savedSearchID'), '/', variables('scheduleID'))]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/",
+      "apiVersion": "2015-11-01-preview",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('savedSearchID'))]"
+      ],
+      "properties": {  
+        "etag": "*",               
+        "Interval": "[parameters('scheduleIntervalInMinutes')]",
+        "QueryTimeSpan": "[parameters('scheduleQueryTimeSpanInMinutes')]",
+        "enabled": true       
+      }
+    },
+    {
+      "name": "[concat(parameters('workspaceName'), '/', variables('savedSearchID'), '/', variables('scheduleID'), '/', variables('alertID'))]",
+      "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+      "apiVersion": "2015-11-01-preview",
+      "dependsOn": [
+        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/savedSearches/', variables('savedSearchID'),'/schedules/', variables('scheduleID'))]"
+      ],
+      "properties": {
+        "etag": "*",
+        "Type": "Alert",
+        "Name": "[parameters('alertName')]",
+        "Description": "[parameters('alertDescription')]",
+        "Severity": "[parameters('alertSeverity')]",
+        "Remediation": {
+          "RunbookName": "[parameters('runbookName')]",
+          "WebhookUri": "[parameters('runbookWebhookUri')]"          
+        },
+        "Throttling": {
+          "DurationInMinutes": "[parameters('alertThrottleInMinutes')]"
+        },
+        "Threshold": {
+          "Operator": "[parameters('alertThresholdOperator')]",
+          "Value": "[parameters('alertThresholdValue')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+} 
+

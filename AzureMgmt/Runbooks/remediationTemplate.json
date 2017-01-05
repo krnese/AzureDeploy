@@ -1,0 +1,69 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "automationName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of your existing OMS Automation account to store the configuration"
+            }
+        },
+        "sku": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Basic",
+                "OMS"
+            ],
+            "defaultValue": "OMS"
+        }
+    },
+    "variables": {
+        "assets": {
+            "runbook": {
+                "name": "ManagedIaaSBackup",
+                "uri": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureMgmt/Runbooks/ManagedIaaSBackup.ps1",
+                "version": "1.0.0.0",
+                "description": "Runbook to recieve webhooks from Log Analytics to enable backup on VMs",
+                "type": "PowerShell",
+                "id": ""
+            }
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('automationName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2015-10-31",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "name": "[parameters('sku')]"
+                }
+            },
+            "resources": [
+                {
+                    "name": "[variables('assets').runbook.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "runbookType": "[variables('assets').runbook.type]",
+                        "logProgress": "false",
+                        "logVerbose": "false",
+                        "description": "[variables('assets').runbook.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('assets').runbook.uri]",
+                            "version": "[variables('assets').runbook.version]"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}
