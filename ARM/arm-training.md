@@ -83,7 +83,71 @@ You have now completed the basics in **lab 1**, by familiarizing yourself with t
 
 ## Lab 2 - Getting started with ARM templates
 
-In this lab, you will learn the basics of Resource Manager templates, and create a reusable template
+In this lab, you will learn the basics of Resource Manager templates, and create a reusable template.
+You will learn and explore more about the capabilities of ARM templates, how they work, are idempotent and declarative. 
+
+As a comparison to *imperative*, which you might be used to if you are familiar with Azure *Classic*, you can deploy a new virtual machine following the example script below:
+
+		# Connect to your Azure subscription
+		
+		# Add some variables that you will use as you move forward
+		
+		$RGname = ""
+		$Location = ""
+		
+		# Storage
+		
+		$StorageName = ""
+		$StorageType = "Standard_LRS"
+		
+		# Network
+		
+		$vnicName = "vmvNic"
+		$Subnet1Name = "Subnet1"
+		$vNetName = "MyVnet"
+		$vNetAddressPrefix = "192.168.0.0/16"
+		$vNetSubnetAddressPrefix = "192.168.0.0/24"
+		
+		# Compute
+		
+		$VMName = ""
+		$ComputerName = $VMName
+		$VMSize = "Standard_A2"
+		$OSDiskName = $VMName + "osDisk"
+		
+		# Create a new Azure Resource Grou
+		
+		$RG = New-AzureRmResourceGroup -Name $RGname -Location $location -Verbose
+		
+		# Create Storage
+		
+		
+		$StorageAccount = New-AzureRmStorageAccount -ResourceGroupName $RGname -Name $StorageName -Type $StorageType -Location $Location 
+		
+		# Create Network
+		
+		$PIP = New-AzureRmPublicIpAddress -Name $vnicName -ResourceGroupName $RGname -Location $Location -AllocationMethod Dynamic
+		$SubnetConfig = New-AzureRmVirtualNetworkSubnetConfig -Name $Subnet1Name -AddressPrefix $vNetSubnetAddressPrefix
+		$vNET = New-AzureRmVirtualNetwork -Name $vNetName -ResourceGroupName $RGname -Location $Location -AddressPrefix $vNetAddressPrefix -Subnet $SubnetConfig
+		$Interface = New-AzureRmNetworkInterface -Name $vnicName -ResourceGroupName $RGname -Location $Location -SubnetId $vnet.Subnets[0].Id -PublicIpAddressId $pip.Id
+		
+		# Create Compute
+		
+		# Setup local VM object
+		
+		$Credential = Get-Credential
+		$VirtualMachine = New-AzureRmVMConfig -VMName $VMName -VMSize $VMSize 
+		$VirtualMachine = Set-AzureRmVMOperatingSystem -VM $VirtualMachine -Windows -ComputerName $ComputerName -Credential $credential -ProvisionVMAgent -EnableAutoUpdate
+		$VirtualMachine = Set-AzureRmVMSourceImage -VM $VirtualMachine -PublisherName MicrosoftWindowsServer -Offer WindowsServer -Skus 2012-R2-Datacenter -Version "latest"
+		$VirtualMachine = Add-AzureRmVMNetworkInterface -VM $VirtualMachine -Id $interface.Id 
+		$OSDiskUri = $StorageAccount.PrimaryEndpoints.Blob.ToString() + "vhds/" + $OSDiskName + ".vhd" 
+		$VirtualMachine = Set-AzureRmVMOSDisk -VM $VirtualMachine -Name $OSDiskName -VhdUri $OSDiskUri -CreateOption fromImage 
+		
+		# Deploy the VM in Azure
+		
+		New-AzureRmVM -ResourceGroupName $RGname -Location $Location -VM $VirtualMachine
+		
+Now try to rerun the exact script. What happened?
 
 #### Creating a resource manager template for storage accounts
 
