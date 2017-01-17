@@ -78,17 +78,18 @@ You will be prompted for the credentials and be routed to your default subscript
 		New-AzureRmResourceGroup -Name [name of the resource group] -Location [your preferred location, like "West Europe", East US" etc]
 
 
-You have now completed the basics in **lab 1**, by familiarizing yourself with the Azure portal and Azure PowerShell module, which will be essential as you proceed with the labs
+You have now completed the basics in **Lab 1**, by familiarizing yourself with the Azure portal and Azure PowerShell module, which will be essential as you proceed with the labs
 
 
 ## Lab 2 - Getting started with ARM templates
 
 In this lab, you will learn the basics of Resource Manager templates, and create a reusable template.
-You will learn and explore more about the capabilities of ARM templates, how they work, are idempotent and declarative. 
+You will learn and explore more about the capabilities of ARM templates, how they work, that they are idempotent and declarative. 
 
-As a comparison to *imperative*, which you might be used to if you are familiar with Azure *Classic*, you can deploy a new virtual machine following the example script below:
+As a comparison to *imperative*, which you might have used to if you are familiar with Azure *Classic*, you can deploy a new virtual machine following the example script below, using the AzureRm PowerShell modules:
 
 		# Connect to your Azure subscription
+		Login-AzureRmAccount
 		
 		# Add some variables that you will use as you move forward
 		
@@ -115,7 +116,7 @@ As a comparison to *imperative*, which you might be used to if you are familiar 
 		$VMSize = "Standard_A2"
 		$OSDiskName = $VMName + "osDisk"
 		
-		# Create a new Azure Resource Grou
+		# Create a new Azure Resource Group
 		
 		$RG = New-AzureRmResourceGroup -Name $RGname -Location $location -Verbose
 		
@@ -133,7 +134,7 @@ As a comparison to *imperative*, which you might be used to if you are familiar 
 		
 		# Create Compute
 		
-		# Setup local VM object
+		## Creating VM Profile
 		
 		$Credential = Get-Credential
 		$VirtualMachine = New-AzureRmVMConfig -VMName $VMName -VMSize $VMSize 
@@ -148,6 +149,7 @@ As a comparison to *imperative*, which you might be used to if you are familiar 
 		New-AzureRmVM -ResourceGroupName $RGname -Location $Location -VM $VirtualMachine
 		
 Now try to rerun the exact script. What happened?
+We will now move over to template authoring and explore *some* of the functions and techniques you can use as you move forward to author your own templates.
 
 #### Creating a resource manager template for storage accounts
 
@@ -184,7 +186,7 @@ Did the template succeed? If no, why not? What was the error?
 
 #### Adding parameters
 
-3. The template was designed to be static with hard coded values for each property. A storage account in Azure has to have a unique name, which cause the deployment to fail. To mitigate this, we will add two parameters to the template, so the user can determine the storage account name and the location of it. Add two parameters to the template as shown below, and reflect these parameters in the resource section
+3. The template was designed to be static with hard coded values for each property. A storage account in Azure need to have a unique name, which caused the deployment to fail. To mitigate this, we will add two parameters to the template, so the user can determine the storage account name and the location of it. Add two parameters to the template as shown below, and reflect these parameters in the resource section
 
 		{
 	    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -268,10 +270,52 @@ Follow the example below to add a uniqueString to the variables section, and rem
 		                                   -location <your preferred location> `
 		                                   -Verbose
 
+Did the deployment fail? If yes, what was the error?
+
+7. To ensure that the storage account will be unique within the deployment, we will use **uniqueString** in conjunction with **deployment().name** - which will generate a unique string based on the name of the deployment. In addition, we will ensure that the string is in lower case by using the **toLower** function.
+
+Modify your template to be similar to the example below
+
+	{
+	    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	    "contentVersion": "1.0.0.0",
+	    "parameters": {
+	        "location": {
+	            "type": "string"
+	        }
+	    },
+	    "variables": {
+	        "storageName": "[toLower(uniqueString(deployment().name))]"
+	    },
+	    "resources": [
+	        {
+	            "apiVersion": "2015-05-01-preview",
+	            "type": "Microsoft.Storage/storageAccounts",
+	            "name": "[variables('storageName')]",
+	            "location": "[parameters('location')]",
+	            "tags": {
+	            },
+	            "properties":{
+	                "accountType": "Standard_LRS"
+	            }
+	        }
+	    ],
+	    "outputs": {        
+	    }
+	}
+
+8. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
+
+		New-AzureRmResourceGroupDeployment -Name storageTest `
+		                                   -ResourceGroupName <name of your existing resource group> `
+		                                   -TemplateFile <path to your json file> `
+		                                   -location <your preferred location> `
+		                                   -Verbose
+ 
 
 #### Adding Outputs
 
-1. Templates can also provide outputs, which can be useful in case you need to retrieve information from resources in other resource groups, or from resources in the deployment itself. We will here use the **reference** function to retrieve a particular value from the storage account in the output section. Create a template similar to the example below
+1. Templates can also provide outputs, which can be useful in case you need to retrieve information from resources in other resource groups, or from resources in the deployment itself. We will here use the **reference** function to retrieve a particular value from the storage account in the output section. Create a template similar to the example below, and note the output section. This will show the fqdn of the primary endpoint of the storage account that is created
 
 		{
 		    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -282,7 +326,7 @@ Follow the example below to add a uniqueString to the variables section, and rem
 		        }
 		    },
 		    "variables": {
-		        "storageName": "[uniqueString('storage')]"
+		        "storageName": "[toLower(uniqueString(deployment().name))]"
 		    },
 		    "resources": [
 		        {
@@ -301,7 +345,7 @@ Follow the example below to add a uniqueString to the variables section, and rem
 		        "fqdn": {
 		            "type": "string",
 		            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName')), '2015-05-01-preview').primaryEndpoints.blob]"
-		        }
+		        }                
 		    }
 		}
 
@@ -380,11 +424,59 @@ Verify that the template successfully deployed. If you didn't change the deploym
 		                                   -location <your preferred location> `
 		                                   -Verbose
 
+#### Resolving template issues
+
+Based on the techniques you have used and learned so far, try to deploy the template below. If it fails, what are the required steps you must take to ensure a successful deployment, and limit the potential issues a user might run into when deploy a storage account using a template?
+
+1. Copy and paste the template below into a json file that you save into a directory on your computer
+
+		{
+		    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+		    "contentVersion": "1.0.0.0",
+		    "parameters": {
+		        "storageName": {
+		            "defaultValue": "MYSTORAGEACCOUNTINPRODUCTION",
+		            "type": "string"            
+		        },
+		        "location": {
+		            "type": "int"
+		        }
+		    },
+		    "resources": [
+		        {
+		            "apiVersion": "2017-01-15",
+		            "type": "Microsoft.Storage/storageAccounts",
+		            "name": "[parameters('storageName')]",
+		            "location": "[parameters('location')]",
+		            "tags": {
+		            },
+		            "properties":{
+		                "accountType": "Standard_LRS"
+		            }
+		        }
+		    ],
+		    "outputs": {        
+		    }
+		}
+
+2. Deploy the template using the following PowerShell cmdlets
+
+		New-AzureRmResourceGroupDeployment -Name storageTest `
+		                                   -ResourceGroupName <name of your existing resource group> `
+		                                   -TemplateFile <path to your json file> `
+		                                   -location <your preferred location> `
+		                                   -Verbose `
+										   -DeploymentDebugLogLevel All
+
+How did you troubleshoot this template? Were you able to successfully deploy it?
+Share the resolution you implemented.
+
+
 ## Lab 3 - Deploying advanced workload
 
-In this lab, you will explore the creation of a Service Fabric with ARM and deploy an application using PowerShell
+In this lab, you will explore the creation of a Service Fabric Cluster using Resource Manager template
 
-Create a template similar to the one below
+1. Create a template similar to the one below
 
 	{
 	  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
@@ -392,7 +484,7 @@ Create a template similar to the one below
 	  "parameters": {
 	    "clusterName": {
 	      "type": "string",
-	      "defaultValue": "sfcluster01",
+	      "defaultValue": "",
 	      "metadata": {
 	        "description": "Name of your cluster - Between 3 and 23 characters. Letters and numbers only"
 	      }
@@ -406,7 +498,7 @@ Create a template similar to the one below
 	    },
 	    "computeLocation": {
 	      "type": "string",
-	      "defaultValue": "West Europe",
+	      "defaultValue": "",
 	      "allowedValues": [
 	        "East Asia",
 	        "Southeast Asia",
@@ -463,7 +555,7 @@ Create a template similar to the one below
 	    },
 	    "dnsName": {
 	      "type": "string",
-	      "defaultvalue": "sfclusterdns",
+	      "defaultvalue": "",
 	      "metadata": {
 	        "description": "DNS name for your Service Fabric Cluster endpoint"
 	      }
@@ -477,7 +569,7 @@ Create a template similar to the one below
 	    },
 	    "vmNodeType0Name": {
 	      "type": "string",
-	      "defaultValue": "omssf",
+	      "defaultValue": "",
 	      "maxLength": 9,
 	      "metadata": {
 	        "description": "Specify type name"
@@ -492,7 +584,7 @@ Create a template similar to the one below
 	    },
 	    "omsRegion": {
 	      "type": "string",
-	      "defaultValue": "West Europe",
+	      "defaultValue": "",
 	      "allowedValues": [
 	        "West Europe",
 	        "East US",
@@ -1123,9 +1215,23 @@ Create a template similar to the one below
 	  }
 	}
 
-Save the file to disk and deploy it into a new resource group. First using PowerShell, then into a new resource group using the template deployment experience in Azure portal.
+2. Save the file to disk and deploy it into a new resource group. First using PowerShell, then into a new resource group using the template deployment experience in Azure portal.
 
-Another advanced scenario to showcase the flexibility with ARM templates, is to deploy a web application and a SQL server database:
+#### Q&A
+
+For this template to work in **Azure Stack**, you are likely to make many changes. 
+
+- How many resources did you deploy, and are there any dependencies to control the order of deployment?
+
+- What are the required changes if you wanted to deploy this to an **Azure Stack** region?
+
+- Are there any resources that you *won't* be able to deploy into **Azure Stack**? If yes, why?
+
+- Can you modify the template so it will work for the resources you *can* deploy to **Azure Stack**?
+
+
+
+3. Another advanced scenario is to deploy an application using PaaS services in Azure, where the app layer will be connected to the SQL database during runtime of the template:
 
 Create a template similar to the one below:
 
@@ -1140,18 +1246,10 @@ Create a template similar to the one below:
 	        "F1",
 	        "D1",
 	        "B1",
-	        "B2",
-	        "B3",
-	        "S1",
-	        "S2",
-	        "S3",
-	        "P1",
-	        "P2",
-	        "P3",
-	        "P4"
+	        "B2"
 	      ],
 	      "metadata": {
-	        "description": "Describes plan's pricing tier and instance size. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+	        "description": "Describes plan's pricing tier and instance size"
 	      }
 	    },
 	    "skuCapacity": {
@@ -1508,3 +1606,13 @@ Create a template similar to the one below:
 	    }
 	  }	
 	}
+
+4. Save the template to a json file on your computer and deploy using PowerShell.
+
+Where you able to successfully deploy the template? If not, what are the required changes you would have to do?
+
+#### Summary
+
+You have now gone through some exercises to familiarize yourself with Azure Resource Manager and template authoring. We encourage you to come back and check for updates to further expand your knowledge on Resource Manager templates.
+
+### End of hands-on labs
