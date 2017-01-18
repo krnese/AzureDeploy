@@ -4,7 +4,7 @@
   "parameters": {
     "omsAutomationAccountName": {
       "type": "string",
-      "defaultValue": "OMSAutomation",
+      "defaultValue": "",
       "metadata": {
         "description": "Assign a name for the Automation account"
       }
@@ -30,16 +30,28 @@
     },
     "omsWorkspaceName": {
       "type": "string",
-      "defaultValue": "OMSWorkspace",
+      "defaultValue": "",
       "metadata": {
         "description": "Assign a name for the OMS workspace"
       }
     },
     "omsRecoveryVaultName": {
       "type": "string",
-      "defaultValue": "OMSRecovery",
+      "defaultValue": "",
       "metadata": {
         "description": "Assign a name for the ASR Recovery Vault"
+      }
+    },
+    "azureAdmin": {
+      "type": "string",
+      "metadata": {
+        "description": "Enter your service admin user"
+      }
+    },
+    "azureAdminPwd": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Enter the pwd for the service admin user. The pwd is enrypted during runtime and in the Automation assets"
       }
     },
     "_artifactsLocation": {
@@ -127,7 +139,7 @@
       "comments": "Automation account for OMS",
       "properties": {
         "sku": {
-          "name": "OMS"
+          "name": "Free"
         }
       },
       "resources": [
@@ -200,6 +212,20 @@
           }
         },
         {
+          "name": "[variables('azureCredentials')]",
+          "type": "credentials",
+          "apiVersion": "2015-10-31",
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+          ],
+          "tags": { },
+          "properties": {
+            "description": "Azure Subscription Credentials",
+            "password": "[parameters('azureAdminPwd')]",
+            "userName": "[parameters('azureAdmin')]"
+          }
+        },
+        {
           "name": "[variables('omsWorkspaceNameAsset')]",
           "type": "variables",
           "apiVersion": "2015-10-31",
@@ -223,7 +249,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').azureRmOperationalInsights.url]"
+                "uri": "[variables('psModules').azureRMOperationalInsights.url]"
               }
             }
           },
@@ -238,7 +264,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').azureRmResources.url]"
+                "uri": "[variables('psModules').AzureRMResources.url]"
               }
             }
           },
@@ -254,7 +280,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').azureRmAutomation.url]"
+                "uri": "[variables('psModules').azureRMAutomation.url]"
               }
             }
           },
@@ -316,12 +342,12 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').azureRmSiteRecovery.url]"
+                "uri": "[variables('psModules').AzureRmSiteRecovery.url]"
               }
             }
           },
           {
-            "name": "[variables('psModules').azureRmBackup.name]",
+            "name": "[variables('psModules').azureRmbackup.name]",
             "type": "Modules",
             "apiVersion": "2015-10-31",
             "tags": { },
@@ -400,28 +426,7 @@
             }
           }
           ]
-        },
-        {
-            "type": "Microsoft.Automation/automationAccounts/providers/diagnosticSettings",
-            "name": "[concat(parameters('omsAutomationAccountName'), '/', 'Microsoft.Insights/service')]",
-            "apiVersion": "2015-07-01",
-            "dependsOn": [
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-            ],
-            "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
-                "logs": [
-                    {
-                        "category": "JobLogs",
-                        "enabled": true
-                    },
-                    {
-                        "category": "JobStreams",
-                        "enabled": true
-                    }
-                ]
-            }
-        }        
+        }
       ],
   "outputs": { }
 }
