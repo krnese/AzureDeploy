@@ -4,16 +4,16 @@
 
 >Author: dairwin (OMS PM)
 
-### Demo Overview
+### Service Map Demo Overview
 
-*Log into OMS-Experience-Center-2016 Workspace in OMS Portal using your MSFT alias:
+Log into OMS-Experience-Center-2016 Workspace in OMS Portal using your MSFT alias:
  * https://oms-experience-center-2016.portal.mms.microsoft.com/#Workspace/overview/index
 
-*Incident management
- *Show Service Map for discovery and dependency alerting
- *Change tracking integration showing backup process being added
- *Drill into Log Search
- *Isolate backup process
+* Incident management
+ * Show Service Map for discovery and dependency alerting
+ * Change tracking integration showing backup process being added
+ * Drill into Log Search
+ * Isolate backup process
 
 ### Demo Scenario Setup
 Let’s assume I’m a web server admin for ACME Co, and I’ve just received a notification that the ACME Customer Portal Application is having performance issues.
@@ -24,8 +24,9 @@ Now, instead of just jumping in to look at a list of alerts, what if I can get a
 
 With Service Map I get list of all the systems in our environment, and automatic discovery of all dependencies for those systems.
 
-[click on Service Map]
 ![Service Map Tile](./media/ServiceMapTile.png "Service Map Tile")
+
+[click on Service Map]
 
 [Click on the AcmeWFE001 machine in list on left]
 
@@ -56,14 +57,13 @@ Now that I’ve loaded a broader time range, we can see if there are any issues 
 
 In fact, we can see that my app server has an alert.
 
-![acmetomcat](./media/acmetomcat.png "acmetomcat")
-
 [Expand the acmetomcat machine and click on the alert icon]
+
+![acmetomcat](./media/acmetomcat.png "acmetomcat")
 
 Here we can see that the app server is showing high CPU alerts. Given that, let’s take a closer look at that machine.
 
-[Click on the … on the top right of the acmetomcat machine and select Load Server Map]
-![acmetomcat_menu](./media/acmetomcat_menu.png "acmetomcat_menu")
+[Click on the … on the top right of the acmetomcat machine and select Load Server Map]![acmetomcat_menu](./media/acmetomcat_menu.png "acmetomcat_menu")
 
 Looking at the app server, we can see our front-end web servers, back-end dependencies, and a failed connection shown by the dotted red lines coming from a backup process.
 
