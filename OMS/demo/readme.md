@@ -27,5 +27,8 @@ In short, these are the goals:
 * Resource Manager templates for deploying the same demo environment and its scenarios into your own Azure subscription will be released in CY 2017
 * Add Service Map, Azure Security Center, Azure Monitor and Application Insights to the storyline
 
-### Check out the latest version of the [demo instructions](./oms-demo.md)
+### Demo instructions
+
+* For the **"OMS - better together"** demo instructions, click [here](./oms-demo.md)
+* For **"Service Map"** demo instructions, click [here](./service-map-demo.md)
 
