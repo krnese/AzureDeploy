@@ -6,7 +6,7 @@
 
 ### Service Map Demo Overview
 
-Log into OMS-Experience-Center-2016 Workspace in OMS Portal using your MSFT alias:
+* Log into OMS-Experience-Center-2016 Workspace in OMS Portal using your MSFT alias:
  * https://oms-experience-center-2016.portal.mms.microsoft.com/#Workspace/overview/index
 
 * Incident management
