@@ -4,8 +4,8 @@
 
 >Author: krnese
 >
->This training material is developed by Hybrid CAT, with the intention to onboard customers and the community to Azure Resource Manager template authoring and management, targeting both Azure and Azure Stack
->![alt text](media/cat.png "Hybrid CAT")
+>This training material is developed by Azure CAT, with the intention to onboard customers and the community to Azure Resource Manager template authoring and management, targeting both Azure and Azure Stack
+>![alt text](media/azurecat.png "Azure CAT")
 
 >For questions or feedback, contact **krnese@microsoft.com**
 

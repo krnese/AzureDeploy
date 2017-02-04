@@ -1,8 +1,8 @@
 ## Microsoft OMS - Field & Partner Readiness
 >Note: this is work in progress and the demo content will be refreshed and updated to reflect latest features and capabilities of the OMS suite
->The demo script is developed by OMS CAT, and we recommend you to check in every now and then for updates.
+>The demo script is developed by Azure CAT, and we recommend you to check in every now and then for updates.
 
-![alt text](./media/cat.png "OMS CAT")
+![alt text](/media/azurecat.png "Azure CAT")
 
 >Latest update: 1/16/2017
 
