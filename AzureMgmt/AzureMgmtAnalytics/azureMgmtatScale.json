@@ -44,7 +44,7 @@
         },
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/custom",
+            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureMgmt/AzureMgmtAnalytics",
             "metadata": {
                 "description": "URI to artifacts location"
             }
@@ -142,7 +142,7 @@
                     "ingestInterval": 1,
                     "ingestFrequency": "hour"
                 }
-            },
+            }
         },
         "omsSolutions": {
             "azureActivity": {
@@ -158,6 +158,25 @@
                 "description": "Management assessment of Azure resources",
                 "author": "krnese@microsoft.com"
             }
+        },
+        "alert1": {
+            "searchName": "Azure VM Creation",
+            "description": "A new virtual machines has been created.",
+            "severity": "Critical",
+            "query": "Type:AzureActivity OperationName:\"Microsoft.Compute/virtualMachines/write\"",
+            "alertTresholdValue": 2,
+            "operator": "gt",
+            "alertThrottleInMinutes": 60,
+            "alertBreach": 1,
+            "searchCategory": "Azure",
+            "scheduleIntervalInMinutes": 5,
+            "scheduleQueryTimeSpan": 5,
+            "alertName": "Azure VM creation"
+        },
+        "alertConstruct1": {
+            "searchId": "[concat(toLower(variables('alert1').searchCategory), '|', toLower(variables('alert1').searchName))]",
+            "scheduleId": "[toLower(concat('schedule-', uniqueString(resourceGroup().id, deployment().name)))]",
+            "alertId": "[toLower(concat('alert1-', uniqueString(resourceGroup().id, deployment().name)))]"
         }
     },
     "resources": [
@@ -182,6 +201,59 @@
                     "kind": "AzureActivityLog",
                     "properties": {
                         "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+                    "name": "[concat(parameters('omsWorkspaceName'), '/', variables('alertConstruct1').searchId)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+                    ],
+                    "properties": {
+                        "etag": "*",
+                        "query": "[variables('alert1').query]",
+                        "displayName": "[variables('alert1').searchName]",
+                        "category": "[variables('alert1').searchCategory]"
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
+                    "name": "[concat(parameters('omsWorkspaceName'), '/', variables('alertConstruct1').searchId, '/', variables('alertConstruct1').scheduleId)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/savedSearches/', variables('alertConstruct1').searchId)]"
+                    ],
+                    "properties": {
+                        "etag": "*",
+                        "Interval": "[variables('alert1').scheduleIntervalInMinutes]",
+                        "QueryTimeSpan": "[variables('alert1').scheduleQueryTimeSpan]",
+                        "enabled": true
+                    }
+                },
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
+                    "name": "[concat(parameters('omsWorkspaceName'), '/', variables('alertConstruct1').searchId, '/', variables('alertConstruct1').scheduleId, '/', variables('alertConstruct1').alertId)]",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/savedSearches/', variables('alertConstruct1').searchId)]",
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/savedSearches/', variables('alertConstruct1').searchId, '/schedules/', variables('alertConstruct1').scheduleId)]"
+                    ],
+                    "properties": {
+                        "etag": "*",
+                        "Type": "Alert",
+                        "Name": "[variables('alert1').alertName]",
+                        "Description": "[variables('alert1').description]",
+                        "Severity": "[variables('alert1').severity]",
+                        "Throttling": {
+                            "DurationInMinutes": "[variables('alert1').alertThrottleInMinutes]"
+                        },
+                        "Threshold": {
+                            "Operator": "[variables('alert1').operator]",
+                            "Value": "[variables('alert1').alertTresholdValue]"
+                        }
                     }
                 },
                 {
@@ -1174,7 +1246,7 @@
                             "uri": "[variables('assets').psModules.azureRmResources.url]"
                         }
                     }
-                },                                                                                                                                                                               
+                },
                 {
                     "name": "[variables('assets').psModules.ingestionAPI.name]",
                     "type": "Modules",
@@ -1206,7 +1278,7 @@
                             "uri": "[variables('assets').psModules.xPSDSC.uri]"
                         }
                     }
-                },                
+                },
                 {
                     "name": "[variables('assets').runbooks.vmManagement.name]",
                     "type": "runbooks",
@@ -1300,6 +1372,7 @@
             "location": "[parameters('omsWorkspaceRegion')]",
             "dependsOn": [
                 "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/views/', variables('omsSolutions').customSolution.name)]",
                 "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.ingestionAPI.name)]",
                 "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.vmManagement.name)]"
             ],
@@ -1318,7 +1391,8 @@
                 ],
                 "containedResources": [
                     "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('omsAutomationAccountName'), variables('assets').runbooks.vmManagement.name)]",
-                    "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.ingestionAPI.name)]"
+                    "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.ingestionAPI.name)]",
+                    "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), variables('omsSolutions').customSolution.name)]"
                 ]
             }
         }
