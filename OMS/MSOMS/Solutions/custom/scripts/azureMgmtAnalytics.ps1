@@ -1,11 +1,13 @@
 ﻿<#
 .Synopsis
-   Runbook for OMS VM Management Log Ingestion
+   Runbook for Azure Mgmt Analytics
 .DESCRIPTION
-   This Runbook finds all VMs without management extensions. 
+   This Runbook does an assessment on your Azure subscription, and brings visibility into the resources and subscription from a mgmt. perspective
 .AUTHOR
-    Kristian Nese (Kristian.Nese@Microsoft.com) ECG OMS CAT
+    Kristian Nese (Kristian.Nese@Microsoft.com) Azure CAT
 #>
+
+# Login to Azure using RunAs account in Azure Automation
 
 "Logging in to Azure..."
 $Conn = Get-AutomationConnection -Name AzureRunAsConnection 
@@ -13,6 +15,8 @@ $Conn = Get-AutomationConnection -Name AzureRunAsConnection
 
 "Selecting Azure subscription..."
 Select-AzureRmSubscription -SubscriptionId $Conn.SubscriptionID -TenantId $Conn.tenantid 
+
+# Collecting Automation variables - created by the Azure Resource Manager Template
 
 $OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
 $OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
@@ -79,6 +83,7 @@ foreach ($VM in $VMs)
 # Finding Automation Accounts
 
 $AutomationAccounts = Find-AzureRmResource -ResourceType Microsoft.Automation/automationAccounts
+
 foreach ($Automation in $AutomationAccounts)
 {
    $Diagnostics = Get-AzureRmDiagnosticSetting -ResourceId $Automation.ResourceId
@@ -251,10 +256,7 @@ $DSCManaged = Get-AzureRmAutomationDscNode -AutomationAccountName $Au.Name -Reso
         Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $DSCTableJson -logType $LogType
     }
 }
-
-$omsworkspaceId = '88e919fd-7857-4d95-b706-3ca6fef01279'
-$omsworkspaceKey = 'gfzYBcZfX3fVWLULP0mUlc9x0j+/gbEvR/ukIBQOtEkj8FUF1wNfX2shfC/PF9Bdw5QLHk2qMLwnYE7Xm082Og=='   
-
+  
 # Getting an overview of all existing Azure resources
     
 $Resources = Get-AzureRmResource 
@@ -288,7 +290,6 @@ foreach ($resource in $resources)
 $ResourceGroups = Get-AzureRmResourceGroup
 
 foreach ($resourcegroup in $ResourceGroups)
-
 {
     $Deployments = Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourcegroup.ResourceGroupName
 
@@ -319,6 +320,8 @@ foreach ($resourcegroup in $ResourceGroups)
         Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $DeploymentsJson -logType $LogType
     }
 }
+
+# Getting all storage accounts to see storageType
 
 $StorageAccounts = Get-AzureRmStorageAccount
 
@@ -361,6 +364,8 @@ foreach ($StorageAccount in $StorageAccounts)
     Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $StorageJson -logType $LogType
 }          
 
+# Getting usage across regions
+
 $regions = Get-AzureRmLocation
 foreach ($region in $regions)
 {
@@ -393,7 +398,7 @@ foreach ($region in $regions)
 $Policies = Get-AzureRmPolicyAssignment
 
 foreach ($Pol in $Policies)
-    {
+{
     $PolicyTable = @()
     $PolicyData = new-object psobject -property @{
         Name = $Pol.Name;
@@ -414,7 +419,9 @@ foreach ($Pol in $Policies)
 
     Write-Output $policyjson
     Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $PolicyJson -logType $LogType
-    }
+}
+
+# Getting overview over Tags
 
 $Tags = Get-AzureRmTag
 
@@ -437,7 +444,10 @@ foreach ($Tag in $Tags)
     Send-OMSAPIIngestionData -customerId $OMSWorkspaceId -sharedKey $OMSWorkspaceKey -body $TagJson -logType $LogType
     }
 
+# Getting overview over RBAC
+
 $RoleAssignments = Get-AzureRmRoleAssignment
+
 foreach ($role in $RoleAssignments)
 {
     $RoleTable = @()
@@ -461,6 +471,8 @@ foreach ($role in $RoleAssignments)
 
     Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $RoleJson -logType $LogType
     }
+
+# Getting overview over resource lock usage
 
 $locks = Get-AzureRmResourceLock
 
