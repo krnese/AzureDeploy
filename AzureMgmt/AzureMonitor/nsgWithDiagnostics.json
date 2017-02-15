@@ -119,16 +119,6 @@
                                     "enabled": false
                                 }
                             }
-                        ],
-                        "metrics": [
-                            {
-                                "timeGrain": "PT1M",
-                                "enabled": true,
-                                "retentionPolicy": {
-                                    "enabled": false,
-                                    "days": 0
-                                }
-                            }
                         ]
                     }
                 }
