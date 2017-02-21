@@ -183,7 +183,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat(resourceId('Microsoft.Compute/virtualMachines', parameters('adVMName')), 'extensions/', 'InstallDomainController')]"
+        "[concat(resourceId('Microsoft.Compute/virtualMachines', parameters('adVMName')),'/extensions/','InstallDomainController')]"
       ],
       "properties": {
         "mode": "Incremental",
