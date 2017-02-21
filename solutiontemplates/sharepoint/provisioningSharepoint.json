@@ -173,7 +173,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "[concat(resourceId('Microsoft.Compute/virtualMachines', parameters('spVMName')),'/extensions/','ConfigureSPServer')]"
+        //"[concat(resourceId('Microsoft.Compute/virtualMachines', parameters('spVMName')),'/extensions/','ConfigureSPServer')]"
       ],
       "properties": {
         "mode": "Incremental",
