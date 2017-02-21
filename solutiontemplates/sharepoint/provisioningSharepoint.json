@@ -140,7 +140,7 @@
             }
         },
         {
-            "name": "SettingUpBackup",
+            "name": "SPSettingUpBackup",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [
@@ -169,7 +169,7 @@
             }
         },
         {
-            "name": "SettingUpWorkspaceVm",
+            "name": "SPSettingUpWorkspaceVm",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [

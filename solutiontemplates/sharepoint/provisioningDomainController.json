@@ -150,7 +150,7 @@
             ]
         },
         {
-            "name": "SettingUpBackup",
+            "name": "DCSettingUpBackup",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [
@@ -179,7 +179,7 @@
             }
         },
         {
-            "name": "SettingUpWorkspaceVm",
+            "name": "DCSettingUpWorkspaceVm",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [

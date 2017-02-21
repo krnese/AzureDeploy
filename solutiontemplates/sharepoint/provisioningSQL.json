@@ -152,7 +152,7 @@
             }
         },
         {
-            "name": "SettingUpBackup",
+            "name": "SQLSettingUpBackup",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [
@@ -181,7 +181,7 @@
             }
         },
         {
-            "name": "SettingUpWorkspaceVm",
+            "name": "SQLSettingUpWorkspaceVm",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2015-01-01",
             "dependsOn": [
