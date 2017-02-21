@@ -39,7 +39,7 @@
             "value": "Standard_DS3_v2"
         },
         "baseUrl": {
-            "value": "https://managedsp.blob.core.windows.net/test"
+            "value": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/solutiontemplates/sharepoint"
         },
         "enableBackup": {
             "value": "Yes"
