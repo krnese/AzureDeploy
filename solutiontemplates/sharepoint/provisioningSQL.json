@@ -179,29 +179,6 @@
                     }
                 }
             }
-        },
-        {
-            "name": "SQLSettingUpWorkspaceVm",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "[concat(resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVMName')),'/extensions/','CreateSQLServer')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[parameters('settingUpWorkspaceVmUrl')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "workspaceName": {
-                        "value": "[parameters('workspaceName')]"
-                    },
-                    "virtualMachine": {
-                        "value": "[parameters('sqlVMName')]"
-                    }
-                }
-            }
         }
     ],
     "outputs": {}
