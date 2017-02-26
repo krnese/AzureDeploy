@@ -45,7 +45,7 @@
             "value": "Yes"
         },
         "enableMonitoring": {
-            "value": "No"
+            "value": "Yes"
         },
         "storageAccountNamePrefix": {
             "value": "kkn910"
