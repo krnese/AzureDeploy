@@ -27,7 +27,7 @@
             "value": "!!Passw0rd!!"
         },
         "sppublicIPAddressName": {
-            "value": "sppublicIP1"
+            "value": "sppublicIP01"
         },
         "adVMSize": {
             "value": "Standard_DS1_v2"
@@ -48,10 +48,10 @@
             "value": "No"
         },
         "storageAccountNamePrefix": {
-            "value": "k910"
+            "value": "kkn910"
         },
         "spDNSPrefix": {
-            "value": "knsddsf"
+            "value": "kknsddsf"
         }
     }
 }
