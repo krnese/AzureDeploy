@@ -46,10 +46,6 @@
                     "marketplaceName": "AzureActivity"
                 },
                 {
-                    "name": "[concat('AzureNetworking', '(', parameters('omsWorkspaceName'), ')')]",
-                    "marketplaceName": "AzureNetworking"
-                },
-                {
                     "name": "[concat('AzureAutomation', '(', parameters('omsWorkspaceName'), ')')]",
                     "marketplaceName": "AzureAutomation"
                 },
@@ -385,9 +381,9 @@
             },
             "plan": {
                 "name": "[variables('batch1').solutions[copyIndex()].name]",
-                "publisher": "Microsoft",
                 "product": "[concat('OMSGallery/', variables('batch1').solutions[copyIndex()].marketplaceName)]",
-                "promotionCode": ""
+                "promotionCode": "",
+                "publisher": "Microsoft"
             }
         }
     ],

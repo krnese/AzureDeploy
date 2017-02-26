@@ -45,13 +45,13 @@
             "value": "Yes"
         },
         "enableMonitoring": {
-            "value": "Yes"
+            "value": "No"
         },
         "storageAccountNamePrefix": {
-            "value": "knn1010"
+            "value": "k910"
         },
         "spDNSPrefix": {
-            "value": "knffdsf"
+            "value": "knsddsf"
         }
     }
 }
