@@ -395,8 +395,7 @@
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
-                "solutionCopy",
-                "[concat(resourceGroup().name, 'Microsoft.RecoveryServices/vaults/', 'Backup-vault')]"
+                "solutionCopy"                
             ],
             "properties": {
                 "mode": "Incremental",
