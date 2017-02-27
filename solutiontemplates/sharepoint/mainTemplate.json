@@ -320,6 +320,7 @@
     "SettingUpBackUpUrl": "[concat(parameters('baseUrl'),'/setUpBackupForVM',parameters('enableBackup'),'.json')]",
     "SettingUpWorkspaceUrl": "[concat(parameters('baseUrl'), '/createWorkspace', parameters('enableMonitoring'),'.json')]",
     "SettingUpWorkspaceVmUrl": "[concat(parameters('baseUrl'), '/setUpWorkspaceForVM', parameters('enableMonitoring'),'.json')]",
+    "SettingUpDashboardUrl": "[concat(parameters('baseUrl'), 'dashboard.json')]",
     "storageAccountSetupURL": "[concat(parameters('baseUrl'),'/storageAccount.json')]",
     "omsName": "[concat(parameters('sharepointFarmName'), 'oms')]",
     "creatingPublicIPsUrl": "[concat(parameters('baseUrl'),'/creatingPublicIPs.json')]",
@@ -376,6 +377,9 @@
           },
           "omsWorkspaceRegion": {
             "value": "[parameters('location')]"
+          },
+          "dashboardUri": {
+            "value": "[variables('SettingUpDashboardUrl')]"
           }
         }
       }

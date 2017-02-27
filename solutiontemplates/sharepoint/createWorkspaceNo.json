@@ -13,6 +13,9 @@
             "metadata": {
                 "description": "Specify the region for your Workspace"
             }
+        },
+        "dashboardUri": {
+            "type": "string"
         }
     },
     "variables": {

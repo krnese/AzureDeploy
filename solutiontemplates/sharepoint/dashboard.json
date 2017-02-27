@@ -1,0 +1,1684 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "omsWorkspaceName": {
+            "type": "string"            
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat('ManagedSharePoint', '-', resourceGroup().name)]",
+            "type": "Microsoft.Portal/dashboards",
+            "apiVersion": "2015-08-01-preview",
+            "location": "westeurope",
+            "tags": {
+                "hidden-title": "[concat('Managed SharePoint', ' - ', resourceGroup().name)]"
+            },
+            "properties": {
+                "lenses": {
+                    "0": {
+                        "order": 0,
+                        "parts": {
+                            "0": {
+                                "position": {
+                                    "x": 0,
+                                    "y": 2,
+                                    "rowSpan": 4,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "resourceGroup",
+                                            "value": "[resourceGroup().id]"
+                                        }
+                                    ],
+                                    "type": "Extension/HubsExtension/PartType/ResourceGroupMapPinnedPart",
+                                    "viewState": {
+                                        "content": {
+                                            "selectableData": {
+                                                "activatedItems": [],
+                                                "selectedItems": []
+                                            }
+                                        }
+                                    },
+                                    "asset": {
+                                        "idInputName": "resourceGroup",
+                                        "type": "ResourceGroups"
+                                    },
+                                    "defaultMenuItemId": "overview"
+                                }
+                            },
+                            "1": {
+                                "position": {
+                                    "x": 0,
+                                    "y": 0,
+                                    "rowSpan": 2,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/Blade/WorkspaceBlade/Lens/ManagementLens/PartInstance/LogSearchPart"
+                                }
+                            },
+                            "2": {
+                                "position": {
+                                    "x": 4,
+                                    "y": 0,
+                                    "rowSpan": 2,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/Blade/SolutionBlade/Lens/SolutionListLens/PartInstance/View",
+                                    "viewState": {
+                                        "content": {
+                                            "dynamicBladeSelection": {
+                                                "isSelected": false
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "3": {
+                                "position": {
+                                    "x": 8,
+                                    "y": 0,
+                                    "rowSpan": 2,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('AgentHealthAssessment', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/Blade/SolutionBlade/Lens/SolutionListLens/PartInstance/View",
+                                    "viewState": {
+                                        "content": {
+                                            "dynamicBladeSelection": {
+                                                "isSelected": false
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "4": {
+                                "position": {
+                                    "x": 4,
+                                    "y": 2,
+                                    "rowSpan": 2,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('ChangeTracking', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/Blade/SolutionBlade/Lens/SolutionListLens/PartInstance/View",
+                                    "viewState": {
+                                        "content": {
+                                            "dynamicBladeSelection": {
+                                                "isSelected": false
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "5": {
+                                "position": {
+                                    "x": 8,
+                                    "y": 2,
+                                    "rowSpan": 2,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Security', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Security', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/Blade/SolutionBlade/Lens/SolutionListLens/PartInstance/View",
+                                    "viewState": {
+                                        "content": {
+                                            "dynamicBladeSelection": {
+                                                "isSelected": false
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "6": {
+                                "position": {
+                                    "x": 4,
+                                    "y": 4,
+                                    "rowSpan": 2,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourcegroups/knsp17/providers/Microsoft.OperationsManagement/solutions/SQLAssessment(spfarmoms)",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/Blade/SolutionBlade/Lens/SolutionListLens/PartInstance/View",
+                                    "viewState": {
+                                        "content": {
+                                            "dynamicBladeSelection": {
+                                                "isSelected": false
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "7": {
+                                "position": {
+                                    "x": 8,
+                                    "y": 4,
+                                    "rowSpan": 2,
+                                    "colSpan": 4
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        },
+                                        {
+                                            "name": "id",
+                                            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]"
+                                        },
+                                        {
+                                            "name": "solutionId",
+                                            "value": "[resourceId('Microsoft.OperationsManagement/solutions/', concat('Updates', '(', parameters('omsWorkspaceName'), ')'))]",
+                                            "isOptional": true
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/Blade/SolutionBlade/Lens/SolutionListLens/PartInstance/View",
+                                    "viewState": {
+                                        "content": {
+                                            "dynamicBladeSelection": {
+                                                "isSelected": false
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "8": {
+                                "position": {
+                                    "x": 12,
+                                    "y": 0,
+                                    "rowSpan": 2,
+                                    "colSpan": 2
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "resourceId",
+                                            "value": "[resourceId('Microsoft.RecoveryServices/vaults/', 'Backup-vault')]"
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_Azure_RecoveryServices/Blade/ResourceBlade/Lens/BackupItemsLens/PartInstance/BackupProtectedItemsSummaryPart"
+                                }
+                            },
+                            "9": {
+                                "position": {
+                                    "x": 12,
+                                    "y": 2,
+                                    "rowSpan": 2,
+                                    "colSpan": 2
+                                },
+                                "metadata": {
+                                    "inputs": [
+                                        {
+                                            "name": "resourceId",
+                                            "value": "[resourceId('Microsoft.RecoveryServices/vaults/', 'Backup-vault')]"
+                                        }
+                                    ],
+                                    "type": "Extension/Microsoft_Azure_RecoveryServices/Blade/ResourceBlade/Lens/BackupItemsLens/PartInstance/BackupJobsSummaryPartViewModel",
+                                    "viewState": {
+                                        "content": {
+                                            "selectableData": {
+                                                "activatedItems": [],
+                                                "selectedItems": []
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "model": {
+                        "timeRange": {
+                            "value": {
+                                "relative": {
+                                    "duration": 24,
+                                    "timeUnit": 1
+                                }
+                            },
+                            "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
