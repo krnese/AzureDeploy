@@ -100,7 +100,27 @@
                 ]
               },
               "visible": true
-          }
+          },
+          {
+              "name": "monitoring",
+              "type": "Microsoft.Common.OptionsGroup",
+              "label": "Enable monitoring?",
+              "defaultValue": "Yes",
+              "toolTip": "Select Yes to set up monitoring for the virtual machines in the farm",
+              "constraints": {
+                "allowedValues": [
+                  {
+                    "label": "Yes",
+                    "value": "Yes"
+                  },
+                  {
+                    "label": "No",
+                    "value": "No"
+                  }
+                ]
+              },
+              "visible": true
+          }          
         ]
       },
       {

@@ -48,10 +48,10 @@
             "value": "Yes"
         },
         "storageAccountNamePrefix": {
-            "value": "kknn911"
+            "value": "sp911"
         },
         "spDNSPrefix": {
-            "value": "kknnsddsf"
+            "value": "spddsf"
         }
     }
 }
