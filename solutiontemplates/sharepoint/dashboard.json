@@ -4,6 +4,9 @@
     "parameters": {
         "omsWorkspaceName": {
             "type": "string"            
+        },
+        "recoveryServicesVault": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -1630,7 +1633,7 @@
                                     "inputs": [
                                         {
                                             "name": "resourceId",
-                                            "value": "[resourceId('Microsoft.RecoveryServices/vaults/', 'Backup-vault')]"
+                                            "value": "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('recoveryServicesVault'))]"
                                         }
                                     ],
                                     "type": "Extension/Microsoft_Azure_RecoveryServices/Blade/ResourceBlade/Lens/BackupItemsLens/PartInstance/BackupProtectedItemsSummaryPart"
@@ -1647,7 +1650,7 @@
                                     "inputs": [
                                         {
                                             "name": "resourceId",
-                                            "value": "[resourceId('Microsoft.RecoveryServices/vaults/', 'Backup-vault')]"
+                                            "value": "[resourceId('Microsoft.RecoveryServices/vaults/', parameters('recoveryServicesVault'))]"
                                         }
                                     ],
                                     "type": "Extension/Microsoft_Azure_RecoveryServices/Blade/ResourceBlade/Lens/BackupItemsLens/PartInstance/BackupJobsSummaryPartViewModel",

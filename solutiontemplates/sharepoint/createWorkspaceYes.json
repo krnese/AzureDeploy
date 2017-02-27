@@ -23,6 +23,9 @@
         },
         "dashboardUri": {
             "type": "string"
+        },
+        "recoveryServicesVault": {
+            "type": "string"
         }
     },
     "variables": {
@@ -406,6 +409,9 @@
                 "parameters": {
                     "omsWorkspaceName": {
                         "value": "[parameters('omsWorkspaceName')]"
+                    },
+                    "recoveryServicesVault": {
+                        "value": "[parameters('recoveryServicesVault')]"
                     }
                 }
             }

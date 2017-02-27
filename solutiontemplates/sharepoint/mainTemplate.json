@@ -380,6 +380,9 @@
           },
           "dashboardUri": {
             "value": "[variables('SettingUpDashboardUrl')]"
+          },
+          "recoveryServicesVault": {
+            "value": "[variables('backUpVault')]"
           }
         }
       }
