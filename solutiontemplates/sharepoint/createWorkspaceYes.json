@@ -396,7 +396,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
                 "solutionCopy",
-                "[resourceId('Microsoft.RecoveryServices/vaults/', 'Backup-vault')]"
+                "[concat(resourceGroup().name, 'Microsoft.RecoveryServices/vaults/', 'Backup-vault')]"
             ],
             "properties": {
                 "mode": "Incremental",
