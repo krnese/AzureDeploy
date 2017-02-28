@@ -7,7 +7,7 @@
       "metadata": {
         "description": "The name of the Sharepoint farm"
       },
-      "defaultValue": "knspfarm"
+      "defaultValue": "kn1spfarm"
     },
     "location": {
       "type": "string",
