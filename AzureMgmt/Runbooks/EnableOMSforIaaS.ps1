@@ -16,7 +16,7 @@ $workspaceKey = (Get-AzureRmOperationalInsightsWorkspaceSharedKeys -ResourceGrou
 
 Write-Output "Done, now we'll iterate throught the VMs, do a light assessment, and install the OMS extension if missing..."
 
-$VMs = Get-AzureRmVM -ResourceGroupName omsscript
+$VMs = Get-AzureRmVM
 
 foreach ($VM in $VMs)
 {
