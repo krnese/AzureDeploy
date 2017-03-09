@@ -26,8 +26,8 @@ Write-Output "Preparing the extensions in case we need them... :-)"
 
     $winPublicConfig = @{"workspaceId"= $workspaceId; "azureResourceId" = $vm.Id}
     $winPrivateConfig = @{"workspaceKey"= $workspaceKey}
-    $linPublicConfig = "{ `"workspaceId`": `"$workspaceId`" }"
-    $linPrivateConfig = "{ `"workspaceKey`": `"$workspaceKey`", `"vmResourceId`": `"$($vm.Id)`" }" 
+    $linPublicConfig = @{"workspaceId"= $workspaceId}
+    $linPrivateConfig = @{"workspaceKey"= $workspaceKey; "vmResourceId"= $vm.Id} 
 
 # Check to see if OMS extension is alerady present...
 
