@@ -16,7 +16,13 @@
         },
         "dashboardUri": {
             "type": "string"
-        }
+        },
+        "recoveryServicesVault": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        }        
     },
     "variables": {
     },

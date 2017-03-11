@@ -25,6 +25,9 @@
         },
         "recoveryServicesVault": {
             "type": "string"
+        },
+        "location": {
+            "type": "string"
         }
     },
     "variables": {
@@ -411,6 +414,9 @@
                     },
                     "recoveryServicesVault": {
                         "value": "[parameters('recoveryServicesVault')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
                     }
                 }
             }
