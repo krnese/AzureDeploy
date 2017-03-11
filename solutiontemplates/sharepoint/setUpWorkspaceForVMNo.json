@@ -13,6 +13,9 @@
             "metadata": {
                 "description": "Name of OMS Workspace"
             }
+        },
+        "location": {
+            "type": "string"
         }
     },
     "variables": {},

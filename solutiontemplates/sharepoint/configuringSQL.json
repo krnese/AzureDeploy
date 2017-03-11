@@ -101,6 +101,9 @@
                     },
                     "virtualMachine": {
                         "value": "[parameters('sqlVMName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
                     }
                 }
             }

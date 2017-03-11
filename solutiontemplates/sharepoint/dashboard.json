@@ -7,6 +7,9 @@
         },
         "recoveryServicesVault": {
             "type": "string"
+        },
+        "location": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -15,7 +18,7 @@
             "name": "[concat('ManagedSharePoint', '-', resourceGroup().name)]",
             "type": "Microsoft.Portal/dashboards",
             "apiVersion": "2015-08-01-preview",
-            "location": "westeurope",
+            "location": "[parameters('location')]",
             "tags": {
                 "hidden-title": "[concat('Managed SharePoint', ' - ', resourceGroup().name)]"
             },

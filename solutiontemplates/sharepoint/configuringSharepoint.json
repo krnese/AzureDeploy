@@ -134,6 +134,9 @@
                     },
                     "virtualMachine": {
                         "value": "[parameters('spVMName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
                     }
                 }
             }

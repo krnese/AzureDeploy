@@ -197,6 +197,9 @@
                     },
                     "virtualMachine": {
                         "value": "[parameters('adVMName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
                     }
                 }
             }

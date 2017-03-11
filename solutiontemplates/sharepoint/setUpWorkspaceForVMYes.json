@@ -13,6 +13,12 @@
             "metadata": {
                 "description": "Name of OMS Workspace"
             }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Location for OMS Extension"
+            }
         }
     },
     "variables": {
@@ -25,7 +31,7 @@
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualMachine'), '/OMS')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('location')]",
             "dependsOn": [
             ],
             "properties": {
