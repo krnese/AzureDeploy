@@ -27,7 +27,7 @@
             "value": "!!Passw0rd!!"
         },
         "sppublicIPAddressName": {
-            "value": "spublicIP001"
+            "value": "spublicIP"
         },
         "adVMSize": {
             "value": "Standard_DS1_v2"
@@ -39,7 +39,7 @@
             "value": "Standard_DS3_v2"
         },
         "baseUrl": {
-            "value": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/solutiontemplates/sharepoint"
+            "value": "https://managedsp.blob.core.windows.net/test"
         },
         "enableBackup": {
             "value": "Yes"
@@ -48,10 +48,10 @@
             "value": "Yes"
         },
         "storageAccountNamePrefix": {
-            "value": "krns2p911"
+            "value": "asa2p911"
         },
         "spDNSPrefix": {
-            "value": "krnspddsf"
+            "value": "asasnspddsf"
         }
     }
 }
