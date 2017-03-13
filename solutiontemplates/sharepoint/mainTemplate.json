@@ -699,12 +699,6 @@
                     "settingUpBackUpUrl": {
                         "value": "[variables('settingUpBackUpUrl')]"
                     },
-                    "settingUpWorkspaceVmUrl": {
-                        "value": "[variables('SettingUpWorkspaceVmUrl')]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('omsName')]"
-                    },
                     "recoveryServicesVault": {
                         "value": "[variables('backUpVault')]"
                     },
@@ -801,13 +795,7 @@
                     },
                     "recoveryServicesVault": {
                         "value": "[variables('backUpVault')]"
-                    },
-                    "settingUpWorkspaceVmUrl": {
-                        "value": "[variables('SettingUpWorkspaceVmUrl')]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('omsName')]"
-                    },
+                    },                    
                     "backupPolicy": {
                         "value": "[variables('backUpPolicy')]"
                     }
@@ -961,12 +949,6 @@
                     },
                     "sharePointSetupUserAccountPassword": {
                         "value": "[parameters('sharePointSetupUserAccountPassword')]"
-                    },
-                    "settingUpWorkspaceVmUrl": {
-                        "value": "[variables('SettingUpWorkspaceVmUrl')]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('omsName')]"
                     }
                 }
             }
@@ -1067,12 +1049,6 @@
                     },
                     "sharepointFarmName": {
                         "value": "[parameters('sharepointFarmName')]"
-                    },
-                    "settingUpWorkspaceVmUrl": {
-                        "value": "[variables('SettingUpWorkspaceVmUrl')]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('omsName')]"
                     }
                 }
             }
