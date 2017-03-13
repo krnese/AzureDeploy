@@ -34,12 +34,6 @@
         },
         "sharePointSetupUserAccountPassword": {
             "type": "securestring"
-        },
-        "workspaceName": {
-            "type": "string"
-        },
-        "settingUpWorkspaceVmUrl": {
-            "type": "string"
         }
     },
     "resources": [
@@ -78,32 +72,6 @@
                         "AdminPassword": "[parameters('adminPassword')]",
                         "SqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
                         "SharePointSetupUserAccountPassword": "[parameters('sharePointSetupUserAccountPassword')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "SQLSettingUpWorkspaceVm",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "[concat(resourceId('Microsoft.Compute/virtualMachines', parameters('sqlVMName')),'/extensions/','CreateSQLServer')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[parameters('settingUpWorkspaceVmUrl')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "workspaceName": {
-                        "value": "[parameters('workspaceName')]"
-                    },
-                    "virtualMachine": {
-                        "value": "[parameters('sqlVMName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
                     }
                 }
             }

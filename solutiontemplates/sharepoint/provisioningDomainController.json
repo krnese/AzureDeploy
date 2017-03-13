@@ -46,12 +46,6 @@
         },
         "backupPolicy": {
             "type": "string"
-        },
-        "workspaceName": {
-            "type": "string"
-        },
-        "settingUpWorkspaceVmUrl": {
-            "type": "string"
         }
     },
     "resources": [
@@ -177,33 +171,7 @@
                     }
                 }
             }
-        },
-        {
-            "name": "DCSettingUpWorkspaceVm",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "[concat(resourceId('Microsoft.Compute/virtualMachines', parameters('adVMName')),'/extensions/','InstallDomainController')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[parameters('settingUpWorkspaceVmUrl')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "workspaceName": {
-                        "value": "[parameters('workspaceName')]"
-                    },
-                    "virtualMachine": {
-                        "value": "[parameters('adVMName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
-        }
+        }        
     ],
     "outputs": {}
 }

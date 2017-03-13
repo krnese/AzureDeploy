@@ -58,12 +58,6 @@
         },
         "sharepointFarmName": {
             "type": "string"
-        },
-        "workspaceName": {
-            "type": "string"
-        },
-        "settingUpWorkspaceVmUrl": {
-            "type": "string"
         }
     },
     "resources": [
@@ -111,32 +105,6 @@
                         "SharePointSetupUserAccountPassword": "[parameters('sharePointSetupUserAccountPassword')]",
                         "SharePointFarmAccountPassword": "[parameters('sharePointFarmAccountPassword')]",
                         "SharePointFarmPassphrasePassword": "[parameters('sharePointFarmPassphrasePassword')]"
-                    }
-                }
-            }
-        },
-        {
-            "name": "SPSettingUpWorkspaceVm",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "[concat(resourceId('Microsoft.Compute/virtualMachines', parameters('spVMName')),'/extensions/','ConfigureSPServer')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[parameters('settingUpWorkspaceVmUrl')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "workspaceName": {
-                        "value": "[parameters('workspaceName')]"
-                    },
-                    "virtualMachine": {
-                        "value": "[parameters('spVMName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
                     }
                 }
             }
