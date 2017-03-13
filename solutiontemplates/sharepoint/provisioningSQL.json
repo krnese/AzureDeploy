@@ -49,12 +49,6 @@
         },
         "backupPolicy": {
             "type": "string"
-        },
-        "workspaceName": {
-            "type": "string"
-        },
-        "settingUpWorkspaceVmUrl": {
-            "type": "string"
         }
     },
     "resources": [
