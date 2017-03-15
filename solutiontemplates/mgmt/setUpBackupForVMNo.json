@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachine": {
+            "type": "string",
+            "metadata": {
+                "description": "Array of Azure virtual machines. e.g. [\"vm1\",\"vm2\",\"vm3\"]"
+            }
+        },
+        "recoveryServicesVault": {
+            "type": "string",
+            "defaultValue": "Backup-vault",
+            "metadata": {
+                "description": "Recovery services vault name where the VMs will be backed up to. The default vaule is 'Backup-vault'."
+            }
+        },
+        "backupPolicy": {
+            "type": "string",
+            "defaultValue": "DefaultPolicy",
+            "metadata": {
+                "description": "Backup policy to be used for the VMs. The default vaule is 'DefaultPolicy'."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Location of the Backup Vault"
+            }
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+    ]
+}
