@@ -7,7 +7,7 @@
             "metadata": {
                 "description": "The name of the Sharepoint farm"
             },
-            "defaultValue": "spfarm01"
+            "defaultValue": "onspfarm"
         },
         "location": {
             "type": "string",
@@ -162,7 +162,7 @@
                 "artifactsBaseUrl": "",
                 "description": "URL to acquire other templates"
             },
-            "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/sharepoint-three-vm"
+            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/solutiontemplates/sharepoint"
         },
         "spPublicIPNewOrExisting": {
             "type": "string",
@@ -315,11 +315,13 @@
         "spPrepareModulesURL": "[concat(variables('assetLocation'),'/PrepareSharePointServer.ps1.zip')]",
         "spPreparationFunction": "PrepareSharePointServer.ps1\\PrepareSharePointServer",
         "SettingUpSharepointIPUrl": "[concat(parameters('baseUrl'),'/publicip-',parameters('spPublicIPNewOrExisting'),'.json')]",
-        "SettingUpBackUpVaultUrl": "[concat(parameters('baseUrl'),'/createBackupVault',parameters('enableBackup'),'.json')]",
-        "SettingUpBackUpUrl": "[concat(parameters('baseUrl'),'/setUpBackupForVM',parameters('enableBackup'),'.json')]",
-        "SettingUpWorkspaceUrl": "[concat(parameters('baseUrl'), '/createWorkspace', parameters('enableMonitoring'),'.json')]",
-        "SettingUpWorkspaceVmUrl": "[concat(parameters('baseUrl'), '/setUpWorkspaceForVM', parameters('enableMonitoring'),'.json')]",
-        "SettingUpDashboardUrl": "[concat(parameters('baseUrl'), '/', 'dashboard.json')]",
+        "mgmtUri": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/solutiontemplates/mgmt",
+        "SettingUpBackUpVaultUrl": "[concat(variables('mgmtUri'),'/createBackupVault',parameters('enableBackup'),'.json')]",
+        "SettingUpBackUpUrl": "[concat(variables('mgmtUri'),'/setUpBackupForVM',parameters('enableBackup'),'.json')]",
+        "SettingUpWorkspaceUrl": "[concat(variables('mgmtUri'), '/createWorkspace', parameters('enableMonitoring'),'.json')]",
+        "omsWorkspaceLocation": "[replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(parameters('location'), 'northeurope', 'westeurope'), 'eastus2', 'eastus'), 'westindia', 'australiasoutheast'), 'canadaeast', 'eastus'), 'westus', 'westcentralus'), 'westus2', 'westcentralus'), 'northcentralus', 'westcentralus'), 'southcentralus', 'westcentralus'), 'eastasia', 'southeastasia'), 'japaneast', 'southeastasia'), 'japanwest', 'southeastasia'), 'australiaeast', 'australiasoutheast'), 'southindia', 'southeastasia'), 'centralindia', 'southeastasia'), 'canadacentral', 'eastus'), 'koreacentral', 'southeastasia'), 'koreasouth', 'southeastasia'), 'brazilsouth', 'eastus'), 'ukwest', 'westeurope'), 'uksouth', 'westeurope'), 'centralus', 'westcentralus')]",
+        "SettingUpWorkspaceVmUrl": "[concat(variables('mgmtUri'), '/setUpWorkspaceForVM', parameters('enableMonitoring'),'.json')]",
+        "SettingUpDashboardUrl": "[concat(variables('mgmtUri'), '/', 'dashboard.json')]",
         "storageAccountSetupURL": "[concat(parameters('baseUrl'),'/storageAccount.json')]",
         "omsName": "[concat(parameters('sharepointFarmName'), 'oms')]",
         "creatingPublicIPsUrl": "[concat(parameters('baseUrl'),'/creatingPublicIPs.json')]",
@@ -375,7 +377,7 @@
                         "value": "[variables('omsName')]"
                     },
                     "omsWorkspaceRegion": {
-                        "value": "[parameters('location')]"
+                        "value": "[variables('omsWorkspaceLocation')]"
                     },
                     "dashboardUri": {
                         "value": "[variables('SettingUpDashboardUrl')]"
