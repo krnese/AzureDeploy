@@ -23,7 +23,7 @@
         - AzureRm.Network          
          
         How to add the script? 
-        Add this script as a peterost action in boot up group where you need to associate the VMs with the existing Load Balancer                
+        Add this script as a post action in boot up group where you need to associate the VMs with the existing Load Balancer                
  
     .NOTES 
         AUTHOR: krnese@microsoft.com - AzureCAT
