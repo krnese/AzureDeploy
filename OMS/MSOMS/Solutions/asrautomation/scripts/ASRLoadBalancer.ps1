@@ -23,10 +23,7 @@
         - AzureRm.Network          
          
         How to add the script? 
-        Add this script as a post action in boot up group for which you need a public IP. All the VMs in the group will get a public IP assigned. 
-        If the NSG parameters are specified, all the VM's NICs will get the same NSG attached. 
-         
-        Clean up test failover behavior 
+        Add this script as a peterost action in boot up group where you need to associate the VMs with the existing Load Balancer                
  
     .NOTES 
         AUTHOR: krnese@microsoft.com - AzureCAT
