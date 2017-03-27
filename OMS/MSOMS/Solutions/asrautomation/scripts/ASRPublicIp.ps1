@@ -89,11 +89,11 @@ Try
  {
     foreach ($VM in $VMs)
     {
-        $VMNetworkInterfaceName = $VM.NetworkInterfaceIDs[0].Split('/')[-1]
-        $VMNetworkInterfaceObject = Get-AzureRmNetworkInterface -ResourceGroupName $RGName -Name $VMNetworkInterfaceName
+        $ARMNic = Get-AzureRmResource -ResourceId $VM.NetworkInterfaceIDs[0]
+        $NIC = Get-AzureRmNetworkInterface -Name $ARMNic.Name -ResourceGroupName $ARMNic.ResourceGroupName
         $PIP = New-AzureRmPublicIpAddress -Name $VM.Name -ResourceGroupName $RGName -Location $VM.Location -AllocationMethod Dynamic
-        $VMNetworkInterfaceObject.IpConfigurations[0].PublicIpAddress = $PIP
-        Set-AzureRmNetworkInterface -NetworkInterface $VMNetworkInterfaceObject        
+        $NIC.IpConfigurations[0].PublicIpAddress = $PIP
+        Set-AzureRmNetworkInterface -NetworkInterface $NIC     
         Write-Output ("Added public IP address to the following VM: " + $VM.Name)  
     }
     Write-Output ("Operation completed on the following VM(s): `n" + $VMs.Name)
