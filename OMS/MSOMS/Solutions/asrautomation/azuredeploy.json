@@ -10,13 +10,20 @@
         },
         "automationRegion": {
             "type": "string",
-            "defaultValue": "West Europe",
             "allowedValues": [
-                "West Europe",
-                "East US2"
+                "westeurope",
+                "southeastasia",
+                "eastus2",
+                "southcentralus",
+                "japaneast",
+                "northeurope",
+                "canadacentral",
+                "australiasoutheast",
+                "centralindia",
+                "westcentralus"                
             ],
             "metadata": {
-                "description": "Specify region for your automation account"
+                "description": "Specify the region for your automation account"
             }
         },
         "_artifactsLocation": {
@@ -31,30 +38,6 @@
             "defaultValue": "",
             "metadata": {
                 "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated"
-            }
-        },
-        "storageName": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the storage account for your script repository"
-            }
-        },
-        "storageRgName": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Resource Group containing your storage account"
-            }
-        },
-        "containerName": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the container where the script(s) are located"
-            }
-        },
-        "scriptName": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the name of the script you will add to your automation script"
             }
         }
     },
@@ -72,48 +55,55 @@
                 "AzureSubscriptionId": {
                     "name": "AzureSubscriptionId",
                     "description": "Azure subscription Id"
-                },
-                "storage": {
-                    "name": "StorageName",
-                    "rgName": "StorageRGName",
-                    "containerName": "ContainerName",
-                    "scriptName": "ScriptName",
-                    "description": "Asset for custom script"
                 }
             },
             "runbooks": {
-                "remoteAccess": {
-                    "name": "PublicIP",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/publicip.ps1', parameters('_artifactsLocationSasToken'))]",
+                "asrPublicIp": {
+                    "name": "ASRPublicIP",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/ASRPublicIp.ps1', parameters('_artifactsLocationSasToken'))]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "ASR Runbook to enable public IP on every VM in a Recovery Plan",
                     "Id": ""
                 },
-                "customScript": {
-                    "name": "CustomScript",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/customscript.ps1', parameters('_artifactsLocationSasToken'))]",
+                "asrSQLAlwaysOn": {
+                    "name": "ASRSQLAlwaysOn",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/ASRSQLAlwaysOn.ps1', parameters('_artifactsLocationSasToken'))]",
                     "version": "1.0.0.0",
-                    "type": "PowerShell",
-                    "description": "ASR Runbook to enable Public IP and execute custom script on every VM in a Recovery Plan",
+                    "type": "PowerShellWorkflow",
+                    "description": "ASR Runbook to handle SQL Always On failover",
                     "id": ""
                 },
-                "nsgAdvanced": {
-                    "name": "NSGwithCustomScript",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/nsgwithcustomscript.ps1', parameters('_artifactsLocationSasToken'))]",
+                "asrSingleNsg": {
+                    "name": "ASRSingleNSG",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/ASRSingleNSG.ps1', parameters('_artifactsLocationSasToken'))]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
-                    "description": "ASR Runbook to enable NSG, Public IP and execute custom script on every VM in a Recovery Plan",
+                    "description": "ASR Runbook to enable NSG and Public IP on every VM in a Recovery Plan",
                     "id": ""
                 },
-                "nsg": {
-                    "name": "NSG",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/nsg.ps1', parameters('_artifactsLocationSasToken'))]",
+                "asrSingleLoadBalancer": {
+                    "name": "ASRSingleLoadBalancer",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/ASRSingleLoadBalancer.ps1', parameters('_artifactsLocationSasToken'))]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
-                    "description": "ASR Runbook to enable NSG and Public IP",
+                    "description": "ASR Runbook to enable a single Load Balancer for all the VMs in the recovery plan",
                     "id": ""
-                }
+                },
+                "asrMultipleLoadBalancers": {
+                    "name": "ASRMulitpleLoadBalancers",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/ASRMultipleLoadBalancers.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "version": "1.0.0.0",
+                    "type": "PowerShell",
+                    "description": "ASR Runbook to enable multiple Load Balancers for selected VMs in the recovery plan"
+                },
+                "asrUpdateDns": {
+                    "name": "ASRUpdateDNS",
+                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/ASRUpdateDNS.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "version": "1.0.0.0",
+                    "type": "PowerShellWorkflow",
+                    "description": "ASR Runbook to update DNS for VMs within the recovery plan"
+                }                
             }
         }
     },
@@ -125,7 +115,7 @@
             "location": "[parameters('automationRegion')]",
             "properties": {
                 "sku": {
-                    "name": "Free"
+                    "name": "Basic"
                 }
             },
             "resources": [
@@ -143,59 +133,7 @@
                     }
                 },
                 {
-                    "name": "[variables('assets').aaVariables.storage.containerName]",
-                    "type": "variables",
-                    "apiVersion": "2015-10-31",
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-                    ],
-                    "tags": {},
-                    "properties": {
-                        "description": "[variables('assets').aaVariables.storage.description]",
-                        "value": "[concat('\"',parameters('containerName'),'\"')]"
-                    }
-                },
-                {
-                    "name": "[variables('assets').aaVariables.storage.name]",
-                    "type": "variables",
-                    "apiVersion": "2015-10-31",
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-                    ],
-                    "tags": {},
-                    "properties": {
-                        "description": "[variables('assets').aaVariables.storage.description]",
-                        "value": "[concat('\"',parameters('storageName'),'\"')]"
-                    }
-                },
-                {
-                    "name": "[variables('assets').aaVariables.storage.rgName]",
-                    "type": "variables",
-                    "apiVersion": "2015-10-31",
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-                    ],
-                    "tags": {},
-                    "properties": {
-                        "description": "[variables('assets').aaVariables.storage.description]",
-                        "value": "[concat('\"',parameters('storageRgName'),'\"')]"
-                    }
-                },
-                {
-                    "name": "[variables('assets').aaVariables.storage.scriptName]",
-                    "type": "variables",
-                    "apiVersion": "2015-10-31",
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-                    ],
-                    "tags": {},
-                    "properties": {
-                        "description": "[variables('assets').aaVariables.storage.description]",
-                        "value": "[concat('\"',parameters('scriptName'),'\"')]"
-                    }
-                },
-                {
-                    "name": "[variables('assets').runbooks.remoteAccess.name]",
+                    "name": "[variables('assets').runbooks.asrPublicIp.name]",
                     "type": "runbooks",
                     "apiVersion": "2015-10-31",
                     "location": "[parameters('automationRegion')]",
@@ -203,18 +141,18 @@
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "properties": {
-                        "runbookType": "[variables('assets').runbooks.remoteAccess.type]",
+                        "runbookType": "[variables('assets').runbooks.asrPublicIp.type]",
                         "logProgress": true,
                         "logVerbose": false,
-                        "description": "[variables('assets').runbooks.remoteAccess.description]",
+                        "description": "[variables('assets').runbooks.asrPublicIp.description]",
                         "publishContentLink": {
-                            "uri": "[variables('assets').runbooks.remoteAccess.url]",
-                            "version": "[variables('assets').runbooks.remoteAccess.version]"
+                            "uri": "[variables('assets').runbooks.asrPublicIp.url]",
+                            "version": "[variables('assets').runbooks.asrPublicIp.version]"
                         }
                     }
                 },
                 {
-                    "name": "[variables('assets').runbooks.customScript.name]",
+                    "name": "[variables('assets').runbooks.asrMultipleLoadBalancers.name]",
                     "type": "runbooks",
                     "apiVersion": "2015-10-31",
                     "location": "[parameters('automationRegion')]",
@@ -222,18 +160,18 @@
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "properties": {
-                        "runbookType": "[variables('assets').runbooks.customScript.type]",
+                        "runbookType": "[variables('assets').runbooks.asrMultipleLoadBalancers.type]",
                         "logProgress": true,
                         "logVerbose": false,
-                        "description": "[variables('assets').runbooks.customScript.description]",
+                        "description": "[variables('assets').runbooks.asrMultipleLoadBalancers.description]",
                         "publishContentLink": {
-                            "uri": "[variables('assets').runbooks.customScript.url]",
-                            "version": "[variables('assets').runbooks.customScript.version]"
+                            "uri": "[variables('assets').runbooks.asrMultipleLoadBalancers.url]",
+                            "version": "[variables('assets').runbooks.asrMultipleLoadBalancers.version]"
                         }
                     }
                 },
                 {
-                    "name": "[variables('assets').runbooks.nsgAdvanced.name]",
+                    "name": "[variables('assets').runbooks.asrSingleLoadBalancer.name]",
                     "type": "runbooks",
                     "apiVersion": "2015-10-31",
                     "location": "[parameters('automationRegion')]",
@@ -241,18 +179,18 @@
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "properties": {
-                        "runbookType": "[variables('assets').runbooks.nsgAdvanced.type]",
+                        "runbookType": "[variables('assets').runbooks.asrSingleLoadBalancer.type]",
                         "logProgress": true,
                         "logVerbose": false,
-                        "description": "[variables('assets').runbooks.nsgAdvanced.description]",
+                        "description": "[variables('assets').runbooks.asrSingleLoadBalancer.description]",
                         "publishContentLink": {
-                            "uri": "[variables('assets').runbooks.nsgAdvanced.url]",
-                            "version": "[variables('assets').runbooks.nsgAdvanced.version]"
+                            "uri": "[variables('assets').runbooks.asrSingleLoadBalancer.url]",
+                            "version": "[variables('assets').runbooks.asrSingleLoadBalancer.version]"
                         }
                     }
                 },
                 {
-                    "name": "[variables('assets').runbooks.nsg.name]",
+                    "name": "[variables('assets').runbooks.asrUpdateDns.name]",
                     "type": "runbooks",
                     "apiVersion": "2015-10-31",
                     "location": "[parameters('automationRegion')]",
@@ -260,16 +198,54 @@
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "properties": {
-                        "runbookType": "[variables('assets').runbooks.nsg.type]",
+                        "runbookType": "[variables('assets').runbooks.asrUpdateDns.type]",
                         "logProgress": true,
                         "logVerbose": false,
-                        "description": "[variables('assets').runbooks.nsg.description]",
+                        "description": "[variables('assets').runbooks.asrUpdateDns.description]",
                         "publishContentLink": {
-                            "uri": "[variables('assets').runbooks.nsg.url]",
-                            "version": "[variables('assets').runbooks.nsg.version]"
+                            "uri": "[variables('assets').runbooks.asrUpdateDns.url]",
+                            "version": "[variables('assets').runbooks.asrUpdateDns.version]"
                         }
                     }
-                }                
+                },
+                {
+                    "name": "[variables('assets').runbooks.asrSingleNsg.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "runbookType": "[variables('assets').runbooks.asrSingleNsg.type]",
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "description": "[variables('assets').runbooks.asrSingleNsg.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('assets').runbooks.asrSingleNsg.url]",
+                            "version": "[variables('assets').runbooks.asrSingleNsg.version]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('assets').runbooks.asrSQLAlwaysOn.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "properties": {
+                        "runbookType": "[variables('assets').runbooks.asrSQLAlwaysOn.type]",
+                        "logProgress": true,
+                        "logVerbose": false,
+                        "description": "[variables('assets').runbooks.asrSQLAlwaysOn.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('assets').runbooks.asrSQLAlwaysOn.url]",
+                            "version": "[variables('assets').runbooks.asrSQLAlwaysOn.version]"
+                        }
+                    }
+                }                                                 
             ]
         }
     ],
