@@ -42,7 +42,7 @@
 
 
 
-workflow UpdateDNSforFailedOverVMs
+workflow ASRUpdateDNS
 {
     param ( 
         [parameter(Mandatory=$false)] 
