@@ -42,7 +42,7 @@
 
 
 
-workflow ASRUpdateDNS
+workflow ASR-DNS-UpdateIP
 {
     param ( 
         [parameter(Mandatory=$false)] 

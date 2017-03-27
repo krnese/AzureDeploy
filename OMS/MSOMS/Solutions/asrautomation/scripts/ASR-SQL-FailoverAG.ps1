@@ -41,7 +41,7 @@
 
 
 
-workflow ASRSQLAlwaysOn
+workflow ASR-SQL-FailoverAG
 {
     param ( 
         [parameter(Mandatory=$false)] 
