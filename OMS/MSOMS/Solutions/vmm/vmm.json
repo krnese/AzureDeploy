@@ -11,6 +11,12 @@
         "pricingTier": {
             "type": "string",
             "defaultValue": "Free"
+        },
+        "automationName": {
+            "type": "string"
+        },
+        "automationRegion": {
+            "type": "string"
         }
     },
     "variables": {
@@ -22,6 +28,18 @@
                 "displayName": "VMM Analytics",
                 "description": "Monitor and analyze your VMM jobs",
                 "author": "veharshv@microsoft.com"
+            }
+        },
+        "omsWorkspaceId": "workspaceId",
+        "omsWorkspaceKey": "workspaceKey",
+        "runbooks": {
+            "vmmAnalytics": {
+                "name": "vmmanalytics",
+                "version": "1.0.0.0",
+                "description": "Runbook to automatically ingest VMM Job data and events into OMS Log Analytics",
+                "type": "PowerShell",
+                "Id": "",
+                "uri": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/Solutions/vmm/scripts/vmmanalytics.ps1"
             }
         }        
     },
@@ -547,6 +565,70 @@
                     "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('workspaceName'), variables('omsSolutions').customSolution.name)]"
                 ]
             }
-        }        
+        },
+        {
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiVersion": "2015-10-31",
+            "name": "[parameters('automationName')]",
+            "location": "[parameters('automationRegion')]",
+            "dependsOn": [
+                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+            ],
+            "properties": {
+                "sku": {
+                    "name": "Basic"
+                }
+            },
+            "resources": [
+                {
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "name": "[variables('omsWorkspaceId')]",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationName'))]"
+                    ],
+                    "properties": {
+                        "description": "OMS Workspace Id",
+                        "value": "[concat('\"',reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')),'2015-11-01-preview').customerId,'\"')]"
+                    }
+                },
+                {
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "name": "[variables('omsWorkspaceKey')]",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationName'))]"
+                    ],
+                    "properties": {
+                        "description": "OMS Workspace key",
+                        "value": "[concat('\"',listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-11-01-preview').primarySharedKey,'\"')]"
+                    }
+                },
+                {
+                    "name": "[variables('runbooks').vmmAnalytics.name]",
+                    "type": "runbooks",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationName'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationName'), '/variables/', variables('omsWorkspaceId'))]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationName'), '/variables/', variables('omsWorkspaceKey'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "runbookType": "[variables('runbooks').vmmAnalytics.type]",
+                        "logProgress": "false",
+                        "logVerbose": "false",
+                        "description": "[variables('runbooks').vmmAnalytics.description]",
+                        "publishContentLink": {
+                            "uri": "[variables('runbooks').vmmAnalytics.uri]",
+                            "version": "[variables('runbooks').vmmAnalytics.version]"
+                        }
+                    }
+                }                
+            ]
+        }
     ]
 }
