@@ -100,7 +100,7 @@
       }
     },
     "recipients": {
-      "type": "string",
+      "type": "array",
       "metadata": {
         "description": "Specify the e-mail address of the operator that should receive the alert notification"
       }
@@ -154,9 +154,7 @@
         "Description": "[parameters('alertDescription')]",
         "Severity": "[parameters('alertSeverity')]",
         "EmailNotification": {
-          "Recipients": [
-            "[parameters('recipients')]"
-          ],
+          "Recipients": "[parameters('recipients')]",          
           "subject": "OMS Alert",
           "Attachment": "None"
         },
