@@ -1,16 +1,7 @@
-﻿
-############# List of VMM servers
-$vmmServers = ""
-############# Sync Frequency in minutes
-$syncFrequencyinMinutes = 60
-#############
-$lastRunTimestamp = ### Pick this as a paramter, and define a default value of input value is null (like in the first run of this script)
-
+﻿$vmmServers = (Get-AutomationVariable -Name 'vmmServers').Split(",")
+$lastRunTimestamp = Get-AutomationVariable -Name 'lastRunTime'
 $currentTimestamp = (Get-Date).ToUniversalTime()
-#Enter your OMS work space details here
-######Update customer Id to your Operational Insights workspace ID (Settings -> Connected Sources)
 $workSpaceId= Get-AutomationVariable -Name 'workspaceId'
-######For shared key use either the primary or seconday Connected Sources client authentication key
 $sharedKey = Get-AutomationVariable -Name 'workspaceKey'
 
 
@@ -132,6 +123,6 @@ foreach ($server in $vmmServers)
         Post-OMSData -customerId $workSpaceId -sharedKey $sharedKey -body ([System.Text.Encoding]::UTF8.GetBytes($vmmJobsDataForOMS))
     }
 
-    ## Set the next schedule for this runbook based on the frequence, and pass the $currentTimestamp as the last run timestamp parameter.
     
+    Set-AutomationVariable -Name 'lastRunTime' -Value $currentTimestamp
 } 

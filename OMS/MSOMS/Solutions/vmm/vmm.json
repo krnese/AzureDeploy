@@ -17,6 +17,9 @@
         },
         "automationRegion": {
             "type": "string"
+        },
+        "vmmServers": {
+            "type": "string"
         }
     },
     "variables": {
@@ -32,6 +35,8 @@
         },
         "omsWorkspaceId": "workspaceId",
         "omsWorkspaceKey": "workspaceKey",
+        "vmmServersVariable": "vmmServers",
+        "lastRunTimeVariable": "lastRunTime",
         "runbooks": {
             "vmmAnalytics": {
                 "name": "vmmanalytics",
@@ -593,6 +598,32 @@
                         "value": "[concat('\"',reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')),'2015-11-01-preview').customerId,'\"')]"
                     }
                 },
+                {
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "name": "[variables('lastRunTimeVariable')]",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationName'))]"
+                    ],
+                    "properties": {
+                        "description": "LastRunTime variable",
+                        "value": ""
+                    }
+                },                
+                {
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "name": "[variables('vmmServersVariable')]",
+                    "location": "[parameters('automationRegion')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('automationName'))]"
+                    ],
+                    "properties": {
+                        "description": "VMMServers",
+                        "value": "[concat('\"',parameters('vmmServers'),'\"')]"
+                    }
+                },                
                 {
                     "type": "variables",
                     "apiVersion": "2015-10-31",
