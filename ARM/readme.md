@@ -112,12 +112,12 @@ Learn how to use and implement Resource Locks for your production workload
 
 * [**LAB 8 - Azure Managed Appliactions**](./lab-8.md)
 
-Learn how to build and publish an Azure Managed Applications to the Service Catalog, and manage the life-cycle using Resource Manager templates.
+Learn how to build and publish an Azure Managed Applications to the Service Catalog, include management services for automated actions and healing, and manage the life-cycle of the Managed Applications using Resource Manager templates.
 
-* [**LAB 8 - CI/CD with Resource Manager**](./lab-8.md) (Coming soon)
+* [**LAB 9 - CI/CD with Resource Manager**](./lab-9.md) (Coming soon)
 
 Code, test, build & release. You will learn how to configure Git and VSO to set up continuous integration/continuous deployment for your apps, using ARM templates
 
-* [**LAB 9 - Role-Based Access Control**](./lab-8.md) (Coming soon)
+* [**LAB 10 - Role-Based Access Control**](./lab-10.md) (Coming soon)
 
 Learn about the built-in RBAC roles, and how to create and use customized RBAC roles on your own
