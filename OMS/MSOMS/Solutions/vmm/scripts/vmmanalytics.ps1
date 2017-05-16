@@ -1,6 +1,6 @@
-﻿$vmmServers = (Get-AutomationVariable -Name 'vmmServers').Split(",")
-$lastRunTimestamp = Get-AutomationVariable -Name 'lastRunTime'
-$currentTimestamp = (Get-Date).ToUniversalTime()
+$vmmServers = (Get-AutomationVariable -Name 'vmmServers').Split(",")
+$lastRunTimestamp = Get-Date (Get-AutomationVariable -Name 'lastRunTime')
+$currentTimestamp = Get-Date
 $workSpaceId= Get-AutomationVariable -Name 'workspaceId'
 $sharedKey = Get-AutomationVariable -Name 'workspaceKey'
 
@@ -59,57 +59,37 @@ foreach ($server in $vmmServers)
     write-output ('Getting jobs data from VMM Server '+ $server)
 
     $vmmJobsDataForOMS = Invoke-Command -ComputerName $server -ScriptBlock {
-        $jobsData = Get-SCJob -All -VMMServer $args[0] | where {(($_.StartTime.ToUniversalTime()) -gt ($args[1])) -and (($_.StartTime.ToUniversalTime()) -le ($args[2]))}
+
+        $server_r = $args[0]
+        $lastRunTimestamp_r = $args[1]
+        $currentTimestamp_r = $args[2]
+
+        $jobsData = Get-SCJob -All | where {$_.Status -ne 'Running' -and $_.EndTime -gt $lastRunTimestamp_r -and $_.EndTime -le $currentTimestamp_r}
+      
         $vmmJobsDataForOMS = @();
-
-
         foreach ($job in $jobsData) {
 
-            if($job.EndTime -ne "") {
-                $vmmJobsDataForOMS += New-Object PSObject -Property @{
-                JobName = $job.CmdletName.ToString();
-                Name = $job.Name.ToString();
+            $vmmJobsDataForOMS += New-Object PSObject -Property @{
+                JobName = $job.CmdletName;
+                Name = $job.Name;
                 StartTime = $job.StartTime.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
                 EndTime = $job.EndTime.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
                 Duration = ($job.EndTime-$job.StartTime).TotalSeconds;     
                 Progress = $job.Progress.ToString();
-                Status = $job.Status.ToString();
-                ErrorInfo = $job.ErrorInfo.ToString();
-                Problem = $job.ErrorInfo.Problem.ToString();
-                CloudProblem = $job.ErrorInfo.CloudProblem.ToString();
-                RecommendedAction = $job.ErrorInfo.RecommendedAction.ToString();
-                ResultObjectID = $job.ResultObjectID.ToString();
-                TargetObjectID = $job.TargetObjectID.ToString();
-                TargetObjectType = $job.TargetObjectType.ToString();
+                Status = $job.Status;
+                ErrorInfo = $job.ErrorInfo;
+                Problem = $job.ErrorInfo.Problem;
+                CloudProblem = $job.ErrorInfo.CloudProblem;
+                RecommendedAction = $job.ErrorInfo.RecommendedAction;
+                ResultObjectID = $job.ResultObjectID;
+                TargetObjectID = $job.TargetObjectID;
+                TargetObjectType = $job.TargetObjectType;
                 ID = $job.ID.ToString();
-                ServerConnection = $job.ServerConnection.ToString();
-                IsRestartable = $job.IsRestartable;
-                IsCompleted = $job.IsCompleted;
-                VMMServer = $args[0];}
-                
-            } else {
-                $vmmJobsDataForOMS += New-Object PSObject -Property @{
-                JobName = $job.CmdletName.ToString();
-                Name = $job.Name.ToString();
-                StartTime = $job.StartTime.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
-                EndTime = "";
-                Duration = "";     
-                Progress = $job.Progress.ToString();
-                Status = $job.Status.ToString();
-                ErrorInfo = $job.ErrorInfo.ToString();
-                Problem = $job.ErrorInfo.Problem.ToString();
-                CloudProblem = $job.ErrorInfo.CloudProblem.ToString();
-                RecommendedAction = $job.ErrorInfo.RecommendedAction.ToString();
-                ResultObjectID = $job.ResultObjectID.ToString();
-                TargetObjectID = $job.TargetObjectID.ToString();
-                TargetObjectType = $job.TargetObjectType.ToString();
-                ID = $job.ID.ToString();
-                ServerConnection = $job.ServerConnection.ToString();
-                IsRestartable = $job.IsRestartable;
-                IsCompleted = $job.IsCompleted;
-                VMMServer = $args[0];}
-            
-            }
+                ServerConnection = $job.ServerConnection;
+                IsRestartable = $job.IsRestartable
+                IsCompleted = $job.IsCompleted
+                VMMServer = $server_r;
+                }
         }
            
            $vmmJobsDataForOMS = $vmmJobsDataForOMS | ConvertTo-Json;
@@ -118,11 +98,12 @@ foreach ($server in $vmmServers)
            
         } -Args $server, $lastRunTimestamp, $currentTimestamp
     
-    if($vmmJobsDataForOMS) {
+    write-output ('Pushing job records to OMS for VMM server ' + $server)
 
+    if($vmmJobsDataForOMS) {
         Post-OMSData -customerId $workSpaceId -sharedKey $sharedKey -body ([System.Text.Encoding]::UTF8.GetBytes($vmmJobsDataForOMS))
     }
+}
 
-    
-    Set-AutomationVariable -Name 'lastRunTime' -Value $currentTimestamp
-} 
+write-output ('Setting lastRunTimestamp varaible as UTC ' + $currentTimestamp.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"));
+Set-AutomationVariable -Name 'lastRunTime' -Value $currentTimestamp 
