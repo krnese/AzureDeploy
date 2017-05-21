@@ -12,9 +12,9 @@
 	    }
 	}
 
-####Kristian Nese
+#### Kristian Nese
 
-#####Senior Program Manager, AzureCAT
+##### Senior Program Manager, AzureCAT
 
 Twitter: [KristianNese](http://twitter.com/KristianNese)
 
