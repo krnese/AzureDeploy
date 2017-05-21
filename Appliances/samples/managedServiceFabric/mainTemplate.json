@@ -1,0 +1,112 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Name of your cluster - Between 3 and 23 characters. Letters and numbers only"
+            }
+        },
+        "computeLocation": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Select the location for your SF resources"
+            }
+        },
+        "adminUserName": {
+            "type": "string",
+            "defaultValue": "azureadmin",
+            "metadata": {
+                "description": "Remote desktop user Id"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Remote desktop user password. Must be a strong password"
+            }
+        },
+        "dnsName": {
+            "type": "string",
+            "defaultvalue": "",
+            "metadata": {
+                "description": "DNS name for your Service Fabric Cluster endpoint"
+            }
+        },
+        "overProvision": {
+            "type": "string",
+            "defaultValue": "false",
+            "metadata": {
+                "description": "true or false"
+            }
+        },
+        "vmNodeType0Name": {
+            "type": "string",
+            "defaultValue": "catsf",
+            "maxLength": 9,
+            "metadata": {
+                "description": "Specify type name"
+            }
+        },
+        "enablePremiumManagement": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Enable premium management of your Service Fabric Cluster"
+            }
+        },
+        "sfpublicIPAddressName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Solutions/appliances",
+            "kind": "ServiceCatalog",
+            "name": "[parameters('dnsName')]",
+            "apiVersion": "2016-09-01-preview",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "applianceDefinitionId": "/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c/resourceGroups/KNApplianceDef/providers/Microsoft.Solutions/applianceDefinitions/serviceFabricDef",
+                "ManagedResourceGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, parameters('dnsName'), '-', uniqueString(concat(resourceGroup().name, parameters('dnsName'))))]",
+                "Parameters": {
+                    "enablePremiumManagement": {
+                        "value": "[parameters('enablePremiumManagement')]"
+                    },
+                    "sfpublicIPAddressName": {
+                        "value": "[parameters('sfpublicIPAddressName')]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "dnsName": {
+                        "value": "[parameters('dnsName')]"
+                    },
+                    "clusterName": {
+                        "value": "[parameters('clusterName')]"
+                    },
+                    "computeLocation": {
+                        "value": "[parameters('computeLocation')]"
+                    },
+                    "overProvision": {
+                        "value": "[parameters('overProvision')]"
+                    },
+                    "vmNodeType0Name": {
+                        "value": "[parameters('vmNodeType0Name')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
