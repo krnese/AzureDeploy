@@ -1,6 +1,7 @@
 # Azure Managed Application
 ## Service Fabric Cluster, with option for Premium Management with OMS
 
+### Getting started
 
 First, download all the files for this sample, to a folder on your machine.
 
