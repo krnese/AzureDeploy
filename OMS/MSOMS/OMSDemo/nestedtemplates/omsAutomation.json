@@ -249,7 +249,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').azureRMOperationalInsights.url]"
+                "uri": "[variables('psModules').azureRmOperationalInsights.url]"
               }
             }
           },
@@ -264,7 +264,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').AzureRMResources.url]"
+                "uri": "[variables('psModules').azureRmResources.url]"
               }
             }
           },
@@ -280,7 +280,7 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').azureRMAutomation.url]"
+                "uri": "[variables('psModules').azureRmAutomation.url]"
               }
             }
           },
@@ -342,12 +342,12 @@
             ],
             "properties": {
               "contentLink": {
-                "uri": "[variables('psModules').AzureRmSiteRecovery.url]"
+                "uri": "[variables('psModules').azureRmSiteRecovery.url]"
               }
             }
           },
           {
-            "name": "[variables('psModules').azureRmbackup.name]",
+            "name": "[variables('psModules').azureRmBackup.name]",
             "type": "Modules",
             "apiVersion": "2015-10-31",
             "tags": { },

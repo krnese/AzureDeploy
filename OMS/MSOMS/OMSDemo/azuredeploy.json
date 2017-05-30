@@ -153,6 +153,9 @@
         },
         "pwd": {
             "type": "securestring"
+        },
+        "vmResourceGroup": {
+            "type": "string"
         }
     },
     "variables": {
@@ -254,6 +257,10 @@
             "apiVersion": "2017-05-10",
             "name": "deployVMs",
             "resourceGroup": "[parameters('vmResourceGroup')]",
+            "dependsOn": [
+              "omsWorkspace",
+              "omsRecoveryServices"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -282,7 +289,7 @@
                     "omsRecoveryVaultName": {
                         "value": "[parameters('omsRecoveryVaultName')]"
                     },
-                    "omsRecoveryVaulRegion": {
+                    "omsRecoveryVaultRegion": {
                         "value": "[parameters('omsRecoveryVaultRegion')]"
                     },
                     "omsResourceGroup": {
