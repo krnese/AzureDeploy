@@ -174,7 +174,8 @@
             "omsWorkspace": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsWorkspace.json', parameters('_artifactsLocationSasToken'))]",
             "managedVMs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/managedVms.json', parameters('_artifactsLocationSasToken'))]",
             "asrRunbooks": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/asrRunbooks.json', parameters('_artifactsLocationSasToken'))]",
-            "dscConfigs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/dscConfigs.json', parameters('_artifactsLocationSasToken'))]"
+            "dscConfigs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/dscConfigs.json', parameters('_artifactsLocationSasToken'))]",
+            "mgmtDashboards": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/mgmtDashboards.json', parameters('_artifactsLocationSasToken'))]"
         }
     },
     "resources": [
@@ -369,6 +370,33 @@
                     }
                 }
             }
+        },
+        {
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2017-05-10",
+          "name": "mgmtDashboards",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[variables('nestedTemplates').mgmtDashboards)]",
+              "contentVersion": "1.0.0.0"              
+            },
+            "parameters": {
+              "omsWorkspaceName": {
+                "value": "[parameters('omsWorkspaceName')]"
+              },
+              "omsRecoveryVaultName": {
+                "value": "[parameters('omsRecoveryVaultName')]"
+              },
+              "omsAutomationAccountName": {
+                "value": "[parameters('omsAutomationAccountName')]"
+              },
+              "vmResourceGroup": {
+                "value": "[parameters('vmResourceGroup')]"
+              }
+            }
+          }
         }
     ],
     "outputs": {}
