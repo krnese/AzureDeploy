@@ -157,7 +157,7 @@
         "vmResourceGroup": {
             "type": "string"
         },
-        "DSCJobGuid1": {
+        "DSCJobGuid": {
           "type": "string"
         },
         "DSCJobGuid2": {
@@ -309,8 +309,8 @@
               "omsWorkspaceName": {
                 "value": "[parameters('omsWorkspaceName')]"
               },
-              "DSCJobGuid1": {
-                "value": "[parameters('DSCJobGuid1')]"
+              "DSCJobGuid": {
+                "value": "[parameters('DSCJobGuid')]"
               },
               "DSCJobGuid2": {
                 "value": "[parameters('DSCJobGuid2')]"
