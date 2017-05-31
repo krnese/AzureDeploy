@@ -21,7 +21,7 @@
             "type": "Microsoft.Portal/dashboards",
             "apiVersion": "2015-08-01-preview",
             "location": "[resourceGroup().location]",
-            "name": "[concat('AzureMgmt', uniqueString('-', 'preview'))]",
+            "name": "[concat('AzureMgmt', uniqueString('-', deployment().name))]",
             "properties": {
                 "lenses": {
                     "0": {

@@ -375,11 +375,15 @@
           "type": "Microsoft.Resources/deployments",
           "apiVersion": "2017-05-10",
           "name": "mgmtDashboards",
-          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "omsAutomation",
+            "omsWorkspace",
+            "omsRecoveryServices"
+          ],
           "properties": {
             "mode": "Incremental",
             "templateLink": {
-              "uri": "[variables('nestedTemplates').mgmtDashboards)]",
+              "uri": "[variables('nestedTemplates').mgmtDashboards]",
               "contentVersion": "1.0.0.0"              
             },
             "parameters": {
