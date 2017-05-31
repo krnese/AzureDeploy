@@ -156,6 +156,15 @@
         },
         "vmResourceGroup": {
             "type": "string"
+        },
+        "DSCJobGuid1": {
+          "type": "string"
+        },
+        "DSCJobGuid2": {
+          "type": "string"
+        },
+        "DSCJobGuid3": {
+          "type": "string"
         }
     },
     "variables": {
@@ -164,7 +173,8 @@
             "omsAutomation": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsAutomation.json', parameters('_artifactsLocationSasToken'))]",
             "omsWorkspace": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsWorkspace.json', parameters('_artifactsLocationSasToken'))]",
             "managedVMs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/managedVms.json', parameters('_artifactsLocationSasToken'))]",
-            "asrRunbooks": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/asrRunbooks.json', parameters('_artifactsLocationSasToken'))]"
+            "asrRunbooks": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/asrRunbooks.json', parameters('_artifactsLocationSasToken'))]",
+            "dscConfigs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/dscConfigs.json', parameters('_artifactsLocationSasToken'))]"
         }
     },
     "resources": [
@@ -276,6 +286,41 @@
             }
           }          
         },
+        {
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2017-05-10",
+          "name": "dscConfigs",
+          "dependsOn": [
+            "omsAutomation"
+          ],
+          "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[variables('nestedTemplates').dscConfigs]",
+              "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+              "omsAutomationAccountName": {
+                "value": "[parameters('omsAutomationAccountName')]"
+              },
+              "omsAutomationRegion": {
+                "value": "[parameters('omsAutomationRegion')]"
+              },
+              "omsWorkspaceName": {
+                "value": "[parameters('omsWorkspaceName')]"
+              },
+              "DSCJobGuid1": {
+                "value": "[parameters('DSCJobGuid1')]"
+              },
+              "DSCJobGuid2": {
+                "value": "[parameters('DSCJobGuid2')]"
+              },
+              "DSCJobGuid3": {
+                "value": "[parameters('DSCJobGuid3')]"
+              }
+            }
+          }          
+        },        
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",

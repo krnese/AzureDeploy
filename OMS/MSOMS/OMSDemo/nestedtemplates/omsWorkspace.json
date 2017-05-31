@@ -56,7 +56,23 @@
                 {
                     "name": "[concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')')]",
                     "marketplaceName": "SQLAssessment"
-                }
+                },
+                {
+                    "name": "[concat('AzureSQLAnalytics', '(', parameters('omsWorkspaceName'), ')')]",
+                    "marketplaceName": "AzureSQLAnalytics"
+                },
+                {
+                    "name": "[concat('AlertManagement', '(', parameters('omsWorkspaceName'), ')')]",
+                    "marketplaceName": "AlertManagement"
+                },
+                {
+                    "name": "[concat('AntiMalware', '(', parameters('omsWorkspaceName'), ')')]",
+                    "marketplaceName": "AntiMalware"
+                },
+                {
+                    "name": "[concat('AzureNSGAnalytics', '(', parameters('omsWorkspaceName'), ')')]",
+                    "marketplaceName": "AzureNSGAnalytics"
+                }                                                
             ]
         }
     },
