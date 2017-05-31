@@ -163,13 +163,14 @@
             "omsRecoveryServices": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsRecoveryServices.json', parameters('_artifactsLocationSasToken'))]",
             "omsAutomation": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsAutomation.json', parameters('_artifactsLocationSasToken'))]",
             "omsWorkspace": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsWorkspace.json', parameters('_artifactsLocationSasToken'))]",
-            "managedVMs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/managedVms.json', parameters('_artifactsLocationSasToken'))]"
+            "managedVMs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/managedVms.json', parameters('_artifactsLocationSasToken'))]",
+            "asrRunbooks": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/asrRunbooks.json', parameters('_artifactsLocationSasToken'))]"
         }
     },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
+            "apiVersion": "2017-05-10",
             "name": "omsWorkspace",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/', 'omsRecoveryServices')]"
@@ -192,7 +193,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
+            "apiVersion": "2017-05-10",
             "name": "omsRecoveryServices",
             "properties": {
                 "mode": "Incremental",
@@ -212,7 +213,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-02-01",
+            "apiVersion": "2017-05-10",
             "name": "omsAutomation",
             "dependsOn": [
                 "[concat('Microsoft.Resources/deployments/', 'omsRecoveryServices')]",
@@ -251,6 +252,29 @@
                     }
                 }
             }
+        },
+        {
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2017-05-10",
+          "name": "asrRunbooks",
+          "dependsOn": [
+            "omsAutomation"
+          ],
+          "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[variables('nestedTemplates').asrRunbooks]",
+              "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+              "automationAccountName": {
+                "value": "[parameters('omsAutomationAccountName')]"
+              },
+              "automationRegion": {
+                "value": "[parameters('omsAutomationRegion')]"
+              }
+            }
+          }          
         },
         {
             "type": "Microsoft.Resources/deployments",
