@@ -32,7 +32,7 @@ The main template will deploy resources into two different resource groups, and 
 	
 	New-AzureRmResourceGroupDeployment -Name myDemo `
 	                                   -ResourceGroupName $MgmtRg.ResourceGroupName `
-	                                   -TemplateFile c:\azuredeploy\oms\msoms\omsdemo\azuredeploy.json `
+	                                   -TemplateUri https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/OMSDemo/azuredeploy.json `
 	                                   -vmResourceGroup $WorkloadRg.ResourceGroupName `
 	                                   -omsRecoveryVaultName $OMSRecoveryVaultName `
 	                                   -omsRecoveryVaultRegion $OMSRecoveryVaultRegion `
