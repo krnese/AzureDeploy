@@ -13,7 +13,7 @@
     "outputs": {
         "knTemplate": {
             "type": "string",
-            "value": "[variables('link')]"
+            "value": "[concat(variables('link'))]"
         }
     }
 }
