@@ -9,7 +9,7 @@
     ],
     "outputs": {
         "knTemplate": {
-            "type": "string",
+            "type": "object",
             "value": "[uri(deployment().properties.templateLink.uri, '/nested/test.json')]"
         }
     }
