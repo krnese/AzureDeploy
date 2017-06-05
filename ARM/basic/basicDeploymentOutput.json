@@ -5,7 +5,7 @@
         
     },
     "variables": {
-        "link": "[uri(deployment().properties.TemplateLink.uri, '/kntest/json.json')]"
+        "link": "[uri(deployment().properties.templateLink.uri, '/kntest/json.json')]"
     },
     "resources": [
         
@@ -13,7 +13,7 @@
     "outputs": {
         "knTemplate": {
             "type": "string",
-            "value": "[concat(variables('link'))]"
+            "value": "[variables('link')]"
         }
     }
 }
