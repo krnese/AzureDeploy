@@ -4,13 +4,16 @@
     "parameters": {
         
     },
+    "variables": {
+        "link": "[uri(deployment().properties.TemplateLink.uri, '/kntest/json.json')]"
+    },
     "resources": [
         
     ],
     "outputs": {
         "knTemplate": {
             "type": "object",
-            "value": "[uri(deployment().properties.templateLink.uri, '/nested/test.json')]"
+            "value": "[variables('link')]"
         }
     }
 }
