@@ -12,7 +12,7 @@
     ],
     "outputs": {
         "knTemplate": {
-            "type": "object",
+            "type": "string",
             "value": "[variables('link')]"
         }
     }
