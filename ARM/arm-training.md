@@ -1,20 +1,13 @@
-# Azure Resource Manager - Inside-Out
+# Overview
 >Last updated: 4/25/2017
 >
 >Author: krnese
->
->This material for **"Azure Resource Manager - Inside-Out"** is developed by Azure CAT.
->
->![alt text](media/azurecat.png "Azure CAT")
 
->For questions or feedback, contact **krnese@microsoft.com**
-
-
-### Overview
+### Azure Resource Manager - Inside-Out
 
 Throughout this hackathon, you will work through several scenarios and examples, to get a good understanding of how you can configure, deploy and manage your Azure resources at scale, with Azure Resource Manager.
 
-We will start to cover the basics - just to get you started and level set on what we will accomplish. As you proceed through the different labs, things will indeed get a bit more complicated and hectic, but be assured that you will learn a lot and have fun!
+We will start to cover the basics - just to get you started and level set on what we should accomplish. As you proceed through the different labs, things will indeed get a bit more complicated and hectic, but be assured that you will learn a lot and have fun!
 
 We believe that by having an approach where we go through known, common scenarios to get the right context, it will simplify the learning, and make it more interesting. Therefor you will be presented with a high-level scenario in every lab, to better understand the "what" and "why", and we will guide you through the "how".
 
@@ -78,46 +71,6 @@ We have some recommended reading we suggest you familiarize yourself with, prior
 
 [Continuous integration in VSO using Azure Resource Manager](https://docs.microsoft.com/en-us/azure/vs-azure-tools-resource-groups-ci-in-vsts)
 
-### Content & Labs
+## Content & Labs
 
-Use the following labs to advance your ARM skills throughout this hackathon
-
-* [**LAB 1 - Getting Started**](./lab-1.md)
-
-Throughout this lab, you will familiarize yourself with the Azure portal and PowerShell, to work with Resource Groups
-
-* [**LAB 2 - Exploring Resource Manager Templates**](./lab-2.md)
-
-In this lab, you will learn the basics of an ARM template, and work with some of the most frequently used functions
-
-* [**LAB 3 - Advanced Resource Manager Templates**](./lab-3.md)
-
-In this lab, you will work on some sample templates that deploys various workloads, spanning multiple services across different regions, while exploring many more functions
-
-* [**LAB 4 - Nested Resource Manager Templates**](./lab-4.md)
-
-In this lab, you will explore nested templates, and how they are used in real-world scenarios to handle conditions and to build out an entire infrastructure together with your apps, all based on ARM templates
-
-* [**LAB 5 - Troubleshooting**](./lab-5.md)
-
-In this lab, you will learn how to troubleshoot templates and deployments, how to improve your templates, and understand how to leverage the **outputs** section
-
-* [**LAB 6 - Resource Policies**](./lab-6.md)
-
-In this lab, you will explore how to govern your subscriptions, resource groups and resources with Resource Policies
-
-* [**LAB 7 - Resource Locks**](./lab-7.md)
-
-Learn how to use and implement Resource Locks for your production workload
-
-* [**LAB 8 - Azure Managed Appliactions**](./lab-8.md)
-
-Learn how to build and publish an Azure Managed Applications to the Service Catalog, include management services for automated actions and healing, and manage the life-cycle of the Managed Applications using Resource Manager templates.
-
-* [**LAB 9 - CI/CD with Resource Manager**](./lab-9.md) (Coming soon)
-
-Code, test, build & release. You will learn how to configure Git and VSO to set up continuous integration/continuous deployment for your apps, using ARM templates
-
-* [**LAB 10 - Role-Based Access Control**](./lab-10.md) (Coming soon)
-
-Learn about the built-in RBAC roles, and how to create and use customized RBAC roles on your own
+[Go to this section to access the hands-on labs](./lab-overview)
