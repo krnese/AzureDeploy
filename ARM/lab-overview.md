@@ -7,11 +7,11 @@
 
 Use the following labs to advance your ARM skills throughout this hackathon
 
-* [**LAB 1 - Getting Started**](./lab-1.md)
+* [**LAB 1 - Getting Started**](./ARM/lab-1.md)
 
 Throughout this lab, you will familiarize yourself with the Azure portal and PowerShell, to work with Resource Groups
 
-* [**LAB 2 - Exploring Resource Manager Templates**](./lab-2.md)
+* [**LAB 2 - Exploring Resource Manager Templates**](./ARM/lab-2.md)
 
 In this lab, you will learn the basics of an ARM template, and work with some of the most frequently used functions
 
