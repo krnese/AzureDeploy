@@ -31,7 +31,7 @@ In this lab, you will learn how to troubleshoot templates and deployments, how t
 
 In this lab, you will explore how to govern your subscriptions, resource groups and resources with Resource Policies
 
-* [**LAB 7 - Resource Locks**](./lab-7.md)
+* [**LAB 7 - Resource Locks**](./lab-7.md) (Coming soon)
 
 Learn how to use and implement Resource Locks for your production workload
 

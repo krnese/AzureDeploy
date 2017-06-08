@@ -55,8 +55,6 @@ We can promise you the following:
 
 We have some recommended reading we suggest you familiarize yourself with, prior to attending this hackathon.
 
-[Azure Resource Manager overview](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview)
-
 [Azure Resource Manager templates - structure and syntax](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-authoring-templates)
 
 [Azure Resource Manager templates - best practices](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-template-best-practices)
@@ -71,6 +69,6 @@ We have some recommended reading we suggest you familiarize yourself with, prior
 
 [Continuous integration in VSO using Azure Resource Manager](https://docs.microsoft.com/en-us/azure/vs-azure-tools-resource-groups-ci-in-vsts)
 
-## Content & Labs
+### Content & Labs
 
 [Go to this section to access the hands-on labs](./lab-overview)
