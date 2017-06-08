@@ -25,4 +25,4 @@ The instructor should also be capable of answering **any** question you might ha
 
 ### Hands-on labs
 
-[Visit the hands-on labs](./lab-overview)
+[Visit the hands-on labs](./lab-overview.md)
