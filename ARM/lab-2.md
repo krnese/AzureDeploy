@@ -34,31 +34,31 @@ Post deployment, the devs want to know the FQDN for the primary endpoint of the 
 1. Start by creating a resource manager template that will create a storage account. Open your preferred JSON editor (Visual Studio or Visual Studio Code), and create a template similar to the example below
 
 		{
-    	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    	"contentVersion": "1.0.0.0",
-    	"resources": [
-        	{
-        	    "apiVersion": "2015-06-15",
-        	    "type": "Microsoft.Storage/storageAccounts",
-        	    "name": "myfirststorage01",
-        	    "location": "East US",
-        	    "tags": {
-        	    },
-        	    "properties":{
-        	        "accountType": "Standard_LRS"
-        	    }
-        	}
-    	],
-    	"outputs": {
-    		}
+		    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+		    "contentVersion": "1.0.0.0",
+		    "parameters": {},
+		    "resources": [
+		        {
+		            "type": "Microsoft.Storage/storageAccounts",
+		            "name": "storage01",
+		            "apiVersion": "2016-01-01",
+		            "location": "[resourceGroup().location]",
+		            "sku": {
+		                "name": "Standard_LRS"
+		            },
+		            "kind": "Storage",
+		            "properties": {}
+		        }
+		    ],
+		    "outputs": {}
 		}
 
 2. Save the template to a folder on your machine and try to do a deployment using PowerShell with the following cmdlet
 
-		New-AzureRmResourceGroupDeployment -Name storageTest `
-										   -ResourceGroupname <name of your existing resource group> `
-										   -TemplateFile <directory where you saved your .json file> `
-										   -Verbose
+			New-AzureRmResourceGroupDeployment -Name storageTest `
+										  	-ResourceGroupname <name of your existing resource group> `
+										   	-TemplateFile <directory where you saved your .json file> `
+										   	-Verbose
 
 Did the template succeed? If no, why not? What was the error?
 
@@ -67,32 +67,31 @@ Did the template succeed? If no, why not? What was the error?
 3. The template was designed to be static with hard coded values for each property. A storage account in Azure need to have a unique name, which caused the deployment to fail. To mitigate this, we will add two parameters to the template, so the user can determine the storage account name and the location of it. Add two parameters to the template as shown below, and reflect these parameters in the resource section
 
 		{
-	    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	    "contentVersion": "1.0.0.0",
-	    "parameters": {
-	        "storageName": {
-	            "type": "string"            
-	        },
-	        "location": {
-	            "type": "string"
-	        }
-	    },
-	    "resources": [
-	        {
-	            "apiVersion": "2015-06-15",
-	            "type": "Microsoft.Storage/storageAccounts",
-	            "name": "[parameters('storageName')]",
-	            "location": "[parameters('location')]",
-	            "tags": {
-	            },
-	            "properties":{
-	                "accountType": "Standard_LRS"
-	            }
-	        }
-	     ],
-	    "outputs": {	        
-	    	}
-	    }
+		    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+		    "contentVersion": "1.0.0.0",
+		    "parameters": {
+		        "storageName": {
+		            "type": "string"
+		        },
+		        "location": {
+		            "type": "string"
+		        }
+		    },
+		    "resources": [
+		        {
+		            "type": "Microsoft.Storage/storageAccounts",
+		            "name": "[parameters('storageName')]",
+		            "apiVersion": "2016-01-01",
+		            "location": "[parameters('location')]",
+		            "sku": {
+		                "name": "Standard_LRS"
+		            },
+		            "kind": "Storage",
+		            "properties": {}
+		        }
+		    ],
+		    "outputs": {}
+		}
 
 4. Save the template to a folder on your machine, and try to do a new deployment using PowerShell
 
@@ -113,7 +112,7 @@ To guarantee a level of uniqueness, we will add the following variable to the te
 Follow the example below to add a uniqueString to the variables section, and remove the parameter for storageName
 
 		{
-		    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+		    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 		    "contentVersion": "1.0.0.0",
 		    "parameters": {
 		        "location": {
@@ -125,19 +124,18 @@ Follow the example below to add a uniqueString to the variables section, and rem
 		    },
 		    "resources": [
 		        {
-		            "apiVersion": "2015-06-15",
 		            "type": "Microsoft.Storage/storageAccounts",
 		            "name": "[variables('storageName')]",
+		            "apiVersion": "2016-01-01",
 		            "location": "[parameters('location')]",
-		            "tags": {
+		            "sku": {
+		                "name": "Standard_LRS"
 		            },
-		            "properties":{
-		                "accountType": "Standard_LRS"
-		            }
+		            "kind": "Storage",
+		            "properties": {}
 		        }
 		    ],
-		    "outputs": {		        
-		    }
+		    "outputs": {}
 		}
 
 6. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
@@ -154,33 +152,32 @@ Did the deployment fail? If yes, what was the error?
 
 Modify your template to be similar to the example below
 
-	{
-	    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	    "contentVersion": "1.0.0.0",
-	    "parameters": {
-	        "location": {
-	            "type": "string"
-	        }
-	    },
-	    "variables": {
-	        "storageName": "[toLower(uniqueString(deployment().name))]"
-	    },
-	    "resources": [
-	        {
-	            "apiVersion": "2015-06-15",
-	            "type": "Microsoft.Storage/storageAccounts",
-	            "name": "[variables('storageName')]",
-	            "location": "[parameters('location')]",
-	            "tags": {
-	            },
-	            "properties":{
-	                "accountType": "Standard_LRS"
-	            }
-	        }
-	    ],
-	    "outputs": {        
-	    }
-	}
+		{
+		    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+		    "contentVersion": "1.0.0.0",
+		    "parameters": {
+		        "location": {
+		            "type": "string"
+		        }
+		    },
+		    "variables": {
+		        "storageName": "[toLower(uniqueString(deployment().name))]"
+		    },
+		    "resources": [
+		        {
+		            "type": "Microsoft.Storage/storageAccounts",
+		            "name": "[variables('storageName')]",
+		            "apiVersion": "2016-01-01",
+		            "location": "[parameters('location')]",
+		            "sku": {
+		                "name": "Standard_LRS"
+		            },
+		            "kind": "Storage",
+		            "properties": {}
+		        }
+		    ],
+		    "outputs": {}
+		}
 
 8. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
 
@@ -195,41 +192,37 @@ Modify your template to be similar to the example below
 
 1. Templates can also provide outputs, which can be useful in case you need to retrieve information from resources in other resource groups, or from resources in the deployment itself. We will here use the **reference** function to retrieve a particular value from the storage account in the output section. Also, we are using **startsWith** function to verify if the storage account name starts with storage. Create a template similar to the example below, and note the output section. This will show the fqdn of the primary endpoint of the storage account that is created
 
-		{
-		    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-		    "contentVersion": "1.0.0.0",
-		    "parameters": {
-		        "location": {
-		            "type": "string"
-		        }
-		    },
-		    "variables": {
-		        "storageName": "[concat('storage', uniqueString('storage'))]"
-		    },
-		    "resources": [
-		        {
-		            "apiVersion": "2015-06-15",
-		            "type": "Microsoft.Storage/storageAccounts",
-		            "name": "[variables('storageName')]",
-		            "location": "[parameters('location')]",
-		            "tags": {
-		            },
-		            "properties":{
-		                "accountType": "Standard_LRS"
-		            }
-		        }
-		    ],
-		    "outputs": {
-		        "fqdn": {
-		            "type": "string",
-		            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName')), '2015-05-01-preview').primaryEndpoints.blob]"
-		        },
-		        "containsStorage": {
-		            "type": "bool",
-		            "value": "[startsWith(variables('storageName'), 'storage')]"
-		        }
-		    }
-		}
+			{
+			    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+			    "contentVersion": "1.0.0.0",
+			    "parameters": {
+			        "location": {
+			            "type": "string"
+			        }
+			    },
+			    "variables": {
+			        "storageName": "[toLower(uniqueString(deployment().name))]"
+			    },
+			    "resources": [
+			        {
+			            "type": "Microsoft.Storage/storageAccounts",
+			            "name": "[variables('storageName')]",
+			            "apiVersion": "2016-01-01",
+			            "location": "[parameters('location')]",
+			            "sku": {
+			                "name": "Standard_LRS"
+			            },
+			            "kind": "Storage",
+			            "properties": {}
+			        }
+			    ],
+			    "outputs": {
+			        "storageEndpoint": {
+			            "type": "string",
+			            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName')), '2016-01-01').primaryEndpoints.blob"
+			        }
+			    }
+			}
 
 2. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
 
@@ -260,12 +253,12 @@ Verify that the template successfully deploys. If you didn't change the deployme
 		DeploymentDebugLogLevel : 
 
 
-#### Deploy multiple resources using copyIndex()
+#### Deploy multiple resources in *parallel* using copyIndex()
 
 1. You can deploy the same resource type multiple times by using the numeric **copyIndex** function. For the resource you want to create multiple times, you must define a **copy** object that specifies the number of times to iterate. Create a new template similar to the example below
 
 		{
-		    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+		    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 		    "contentVersion": "1.0.0.0",
 		    "parameters": {
 		        "location": {
@@ -276,22 +269,23 @@ Verify that the template successfully deploys. If you didn't change the deployme
 		        }
 		    },
 		    "variables": {
-		        "storageName": "[toLower(concat(parameters('count'), deployment().name, uniqueString('s')))]"
+		        "storageName": "[toLower(uniqueString(deployment().name))]"
 		    },
 		    "resources": [
 		        {
-		            "apiVersion": "2015-06-15",
 		            "type": "Microsoft.Storage/storageAccounts",
 		            "name": "[concat(variables('storageName'), copyIndex())]",
+		            "apiVersion": "2016-01-01",
 		            "location": "[parameters('location')]",
-		            "tags": {},
 		            "copy": {
-		                "name": "blobCopy",
+		                "name": "storageCopy",
 		                "count": "[parameters('count')]"
 		            },
-		            "properties": {
-		                "accountType": "Standard_LRS"
-		            }
+		            "sku": {
+		                "name": "Standard_LRS"
+		            },
+		            "kind": "Storage",
+		            "properties": {}
 		        }
 		    ],
 		    "outputs": {
@@ -304,6 +298,58 @@ Verify that the template successfully deploys. If you didn't change the deployme
 		                                   -ResourceGroupName <name of your existing resource group> `
 		                                   -TemplateFile <path to your json file> `
 		                                   -location <your preferred location> `
+										   -count 2 `
+		                                   -Verbose
+
+#### Deploy multiple resources in *serial* using copyIndex()
+
+1. You just explored how to create multiple resources in parallel using **copyIndex** function. If you want to create multiple resources in serial, you must specify the *mode* (which is default to parallel), and the *batchSize* - which tells the amount of copies per batch.
+Make the required changes to your template, to incorporate the changes.
+
+			{
+			    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+			    "contentVersion": "1.0.0.0",
+			    "parameters": {
+			        "location": {
+			            "type": "string"
+			        },
+			        "count": {
+			            "type": "int"
+			        }
+			    },
+			    "variables": {
+			        "storageName": "[toLower(uniqueString(deployment().name))]"
+			    },
+			    "resources": [
+			        {
+			            "type": "Microsoft.Storage/storageAccounts",
+			            "name": "[concat(variables('storageName'), copyIndex())]",
+			            "apiVersion": "2016-01-01",
+			            "location": "[parameters('location')]",
+			            "copy": {
+			                "name": "storageCopy",
+			                "count": "[parameters('count')]",
+			                "batchSize": 2,
+			                "mode": "Serial"
+			            },
+			            "sku": {
+			                "name": "Standard_LRS"
+			            },
+			            "kind": "Storage",
+			            "properties": {}
+			        }
+			    ],
+			    "outputs": {
+			    }
+			}
+
+2. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
+
+		New-AzureRmResourceGroupDeployment -Name storageTest `
+		                                   -ResourceGroupName <name of your existing resource group> `
+		                                   -TemplateFile <path to your json file> `
+		                                   -location <your preferred location> `
+										   -count 4 `
 		                                   -Verbose
 
 #### Resolving template issues
