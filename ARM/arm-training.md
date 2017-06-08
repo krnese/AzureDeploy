@@ -73,4 +73,4 @@ We have some recommended reading we suggest you familiarize yourself with, prior
 
 ## Content & Labs
 
-[Go to this section to access the hands-on labs](./lab-overview)
+[Go to this section to access the hands-on labs](./ARM/lab-overview)
