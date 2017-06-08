@@ -1,0 +1,43 @@
+{
+  "handler": "Microsoft.Compute.MultiVm",
+  "version": "0.1.2-preview",
+  "parameters": {
+    "basics": [
+      {
+        "name": "sharePointFarmName",
+        "type": "Microsoft.Common.TextBox",
+        "label": "SharePoint farm name",
+        "defaultValue": "spfarm",
+        "constraints": {
+          "required": true,
+          "regex": "^[a-z0-9A-Z]{1,10}$",
+          "validationMessage": "Only letters and numbers are allowed, and the value must be 1-10 characters long."
+        }
+      }
+    ],
+    "steps": [
+          {
+            "name": "storageAccounts",
+            "type": "Microsoft.Storage.MultiStorageAccountCombo",
+            "label": {
+                "name": "Storage account name",
+                "type": "Storage account type"
+            },
+            "defaultValue": {
+                "type": "Premium_LRS"
+            },
+            "count": 2,
+            "constraints": {
+                "allowedTypes":[
+                    "Premium_LRS",
+                    "Standard_LRS",
+                    "Standard_GRS"
+                ]
+            }
+          }                    
+        ],
+    "outputs": {
+      "storageAccountName": "[steps('infrastructureConfig').storageAccounts.name]"      
+    }
+  }
+}

@@ -1,64 +1,37 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "adminUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "User name for the Virtual Machine."
-      }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Password for the Virtual Machine."
-      }
-    },
-    "dnsLabelPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
-      }
-    },
-    "ubuntuOSVersion": {
-      "type": "string",
-      "defaultValue": "16.04.0-LTS",
-      "allowedValues": [
-        "12.04.5-LTS",
-        "14.04.5-LTS",
-        "15.10",
-        "16.04.0-LTS"
-      ],
-      "metadata": {
-        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
-      }
-    }
-  },
-  "variables": {
-  },
-  "resources": [
-     {
-      "type": "Microsoft.Solutions/appliances",
-      "kind": "ServiceCatalog",
-      "name": "[parameters('dnsLabelPrefix')]",
-      "apiVersion": "2016-09-01-preview",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "applianceDefinitionId": "/subscriptions/d1231ed5-5c92-4509-9a21-b8ae8172b186/resourceGroups/CATApplianceDef/providers/Microsoft.Solutions/applianceDefinitions/catDef",
-        "ManagedResourceGroupId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, parameters('dnsLabelPrefix'), '-', uniqueString(concat(resourceGroup().name, parameters('dnsLabelPrefix'))))]",
-        "Parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "dnsLabelPrefix": {
-            "value": "[parameters('dnsLabelPrefix')]"
-          }
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the name of the storage account"
+            }
         }
-      }
-    }
-  ],
-  "outputs": {}
+    },
+    "variables": {
+        "managedResourceGroup": "[concat(resourceGroup().id,uniquestring(resourceGroup().id))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Solutions/appliances",
+            "apiVersion": "2016-09-01-preview",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "plan": {
+                "name": "Name of your Managed App",
+                "publisher": "Your publisher name",
+                "product": "Your product name",
+                "version": "you version number, in a 'x.x.x.x' format"
+            },
+            "properties": {
+                "managedResourceGroupId": "[variables('managedResourceGroup')]",
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    }
+                }
+            }
+        }
+    ]
 }

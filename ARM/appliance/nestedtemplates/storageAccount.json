@@ -19,5 +19,10 @@
             "properties": {}
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "storageEndpoint": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob]"
+        }
+    }
 }

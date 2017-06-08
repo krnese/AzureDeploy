@@ -6,6 +6,9 @@
             "type": "string"
         }
     },
+    "variables": {
+        "nestedTemplateUri": "[uri(deployment().properties.templateLink.uri, '/nestedtemplates/storageAccount.json')]"
+    },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
@@ -15,7 +18,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[uri(deployment().properties.templateLink.uri, '/nested/storageAccount.json')]"
+                    "uri": "[variables('nestedTemplateUri')]"
                 },
                 "parameters": {
                     "storageAccountName": {
@@ -28,7 +31,7 @@
     "outputs": {
         "storageEndpoint": {
             "type": "string",
-            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob]"
+            "value": "[reference('nestedDeployment').outputs.storageEndpoint.value]"
         }
     }
 }
