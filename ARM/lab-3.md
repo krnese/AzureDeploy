@@ -690,7 +690,7 @@ Next, you will expand and modify the existing variables section, to add support 
 
 To support *conditions*, we need to modify the virtualMachines resource. By adding *"[equals(parameters'platform'), 'Windows')]"*, Resource Manager will check if the condition is met during runtime, and either deploy if equals = true, or ignore if equals = false. Modify the resource to support this:
 
-			{
+		{
 	            "condition": "[equals(parameters('platform'), 'Windows')]",
 	            "type": "Microsoft.Compute/virtualMachines",
 	            "apiVersion": "2017-03-30",
@@ -737,7 +737,7 @@ To support *conditions*, we need to modify the virtualMachines resource. By addi
 
 Next, we need to the same to support Linux workload, having the same logic using the "platform" parameter to make the decision:
 
-			{
+		{
 	            "condition": "[equals(parameters('platform'), 'Linux')]",
 	            "type": "Microsoft.Compute/virtualMachines",
 	            "apiVersion": "2017-03-30",
@@ -789,7 +789,7 @@ Please note that the same logic for conditions need to be applied here, where th
 
 For Windows, add the following *extensions* resource type:
 
-        {
+       {
             "condition": "[equals(parameters('platform'), 'Windows')]",
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines/extensions",
@@ -815,7 +815,7 @@ For Windows, add the following *extensions* resource type:
 
 For Linux, add the following *extensions* resource type:
 
-        {
+       {
             "condition": "[equals(parameters('platform'), 'Linux')]",
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines/extensions",
