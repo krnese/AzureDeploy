@@ -21,7 +21,7 @@ The instructor should also be capable of answering **any** question you might ha
 
 ### Content
 
-[Explore the overview of the content](./arm-training.md)
+[Explore the content](./arm-training.md)
 
 ### Hands-on labs
 
