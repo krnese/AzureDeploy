@@ -154,7 +154,7 @@ Save the file to disk and deploy it into a new resource group using PowerShell, 
 										   -omsWorkspaceRegion <select preferred region> `
 		                                   -Verbose
 
-#####Note:
+##### Note:
 In the previous example, we created a Log Analytics workspace, added a few datasources, and then we added two solutions (*Updates and Security*). We had to create a resource per each solution in this case. Assuming you would expand the template in the future, to include additional solutions, the template could potentially grow very large and become hard to maintain.
 In the next example, you will learn a better approach, using **copyIndex** together with **lenght** to *iterate* through an array you define using a **complex variable** in the variables section, using only a single resource.
 
@@ -841,6 +841,19 @@ For Linux, add the following *extensions* resource type:
 
 Pay attention to the *settings* and *protectedSettings* for the extensions. We're using *reference* to return an object representing a resource runtime state, which helps us to retrieve the workspace Id for Log Analytics. Further, we are using *listKeys* which will return the workspace Key. This makes it easier to onboard, as we don't have to ask for these values using parameters, but simply rather ask for the name and resource group.
 To help identifying the virtual machine within Log Analytics, we are also using *resourceId*, which will return the unique identifier of an Azure resource.
+
+##### Provide the FQDN using Outputs
+
+Since your developers will interact with the VMs immediatly post deployment, you want to use the *outputs* section to reference the value of FQDN.
+
+Add the following to your template:
+
+    "outputs": {
+        "vmEndpoint": {
+            "type": "string",
+            "value": "[reference(concat(parameters('vmNameSuffix'), 'IP')).dnsSettings.fqdn]"
+        }
+    }
 
 ##### Deploy
 
