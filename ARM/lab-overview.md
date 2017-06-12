@@ -7,7 +7,7 @@
 
 Use the following labs to advance your ARM skills throughout this hackathon
 
-* [**LAB 1 - Getting Started**](./lab-1.md)
+* [**LAB 1 - Imperative vs. Declarative**](./lab-1.md)
 
 In this lab, you explore the difference between imperative vs declarative, to better understand the power and capabilities of Resource Manager and templates
 
