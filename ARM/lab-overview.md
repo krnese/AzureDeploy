@@ -9,15 +9,15 @@ Use the following labs to advance your ARM skills throughout this hackathon
 
 * [**LAB 1 - Imperative vs. Declarative**](./lab-1.md)
 
-In this lab, you explore the difference between imperative vs declarative, to better understand the power and capabilities of Resource Manager and templates
+Explore the difference between imperative vs declarative, to better understand the power and capabilities of Resource Manager and templates
 
 * [**LAB 2 - Exploring Resource Manager Templates**](./lab-2.md)
 
-In this lab, you will learn the basics of an ARM template, and work with some of the most frequently used functions
+Learn the basics of an ARM template, and work with some of the most frequently used functions
 
 * [**LAB 3 - Advanced Resource Manager Templates**](./lab-3.md)
 
-In this lab, you will work on some sample templates that deploys various workloads, spanning multiple services across different regions, while exploring many more functions
+You will work on some sample templates that deploys various workloads, spanning multiple services across different regions, while exploring many more functions
 
 * [**LAB 4 - Nested Resource Manager Templates**](./lab-4.md)
 
@@ -25,11 +25,11 @@ In this lab, you will explore nested templates, and how they are used in real-wo
 
 * [**LAB 5 - Troubleshooting**](./lab-5.md)
 
-In this lab, you will learn how to troubleshoot templates and deployments, how to improve your templates, and understand how to leverage the **outputs** section
+Learn how to troubleshoot templates and deployments, how to improve your templates, and understand how to leverage the **outputs** section
 
 * [**LAB 6 - Resource Policies**](./lab-6.md)
 
-In this lab, you will explore how to govern your subscriptions, resource groups and resources with Resource Policies
+Explore how to govern your subscriptions, resource groups and resources with Resource Policies
 
 * [**LAB 7 - Resource Locks**](./lab-7.md) (Coming soon)
 
