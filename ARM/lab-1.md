@@ -286,4 +286,10 @@ From your PowerShell session, run the following snippet where you change the var
 	                                   -userName $userName `
 	                                   -Verbose
 
-Once deployed, please re-run the PowerShell snippet for perform the deployment again. What happens?
+Once deployed, please re-run the PowerShell snippet to perform the deployment again. What happens?
+
+#### Proceeding to Lab 2 
+
+You have now completed the first lab, exploring what it means to deal with immutable resources in Azure using Resource Manager templates. In the next lab, you will explore more of the basics when creating your first Resource Manager template.
+
+[Lab 2 - Exploring Resource Manager Templates](./lab-2.md)
