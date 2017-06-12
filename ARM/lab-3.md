@@ -688,7 +688,7 @@ Next, you will expand and modify the existing variables section, to add support 
 
 ##### Add conditions
 
-To support *conditions*, we need to modify the virtualMachines resource. By adding *"[equals(parameters'platform'), 'Windows')]", Resource Manager will check if the condition is met during runtime, and either deploy if equals = true, or ignore if equals = false. Modify the resource to support this:
+To support *conditions*, we need to modify the virtualMachines resource. By adding *"[equals(parameters'platform'), 'Windows')]"*, Resource Manager will check if the condition is met during runtime, and either deploy if equals = true, or ignore if equals = false. Modify the resource to support this:
 
 			{
 	            "condition": "[equals(parameters('platform'), 'Windows')]",
