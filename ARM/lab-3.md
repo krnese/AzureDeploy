@@ -4,7 +4,7 @@
 
 >Author: krnese
 
-## Azure Resource Manager Inside-Out
+### Azure Resource Manager - backwards and forwards
 
 >For questions or feedback, contact **krnese@microsoft.com**
 
@@ -896,4 +896,6 @@ Next, deploy *Linux* workload to a new resource group
 	                                   -vNetResourceGroupName <existingvNetRgName> `
 	                                   -vNetSubnetName <existingvNetSubnetName> `
 	                                   -Verbose
+
+
 
