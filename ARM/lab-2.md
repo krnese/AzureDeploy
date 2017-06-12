@@ -20,14 +20,13 @@ To complete these labs, you need to ensure you have access to the following tool
 
 ### Objectives
 
-In this lab, you will learn the basics of Resource Manager templates, and create a reusable template.
-You will learn and explore more about the capabilities of ARM templates, how they work, the declarative approach, and that the Azure resources are idempotent.
+In this lab, you will learn the basics of Resource Manager templates, and create a reusable template while exploring some of the common template techniques and functions.
 
 **Scenario**
 
 Your organization is pivoting over to the DevOps era, and are fairly new to Azure. 
 Your company will start to leverage storage accounts in Azure for their applications, hence you need to create a reusable Resource Manager template. You want to ensure that they can successfully deploy this template every time.
-Post deployment, the devs want to know the FQDN for the primary endpoint of the storage account, to be used by their web application.  
+Post deployment, the devs want to know the FQDN for the primary endpoint of the storage account, to be used by their web application, and they don't want to use the Azure portal to retrieve this information.  
 
 #### Creating a resource manager template for storage accounts
 
@@ -55,16 +54,16 @@ Post deployment, the devs want to know the FQDN for the primary endpoint of the 
 
 2. Save the template to a folder on your machine and try to do a deployment using PowerShell with the following cmdlet
 
-			New-AzureRmResourceGroupDeployment -Name storageTest `
-										  	-ResourceGroupname <name of your existing resource group> `
-										   	-TemplateFile <directory where you saved your .json file> `
-										   	-Verbose
+		New-AzureRmResourceGroupDeployment -Name storageTest `
+		                                   -ResourceGroupName <nameOfYourRg> `
+		                                   -TemplateFile <locationOfYourTemplateFile> `
+		                                   -Verbose
 
 Did the template succeed? If no, why not? What was the error?
 
 #### Adding parameters
 
-3. The template was designed to be static with hard coded values for each property. A storage account in Azure need to have a unique name, which caused the deployment to fail. To mitigate this, we will add two parameters to the template, so the user can determine the storage account name and the location of it. Add two parameters to the template as shown below, and reflect these parameters in the resource section
+3. The template was designed to be static with hard coded values for each property. A storage account in Azure needs name uniqueness. Whenever that's not the case, a deployment of such resource will fail. To resolve this, we will add two parameters to the template, so the user can select the storage account name and the location of it. Add two parameters to the template as shown below, and reflect these parameters in the resource section
 
 		{
 		    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -96,18 +95,18 @@ Did the template succeed? If no, why not? What was the error?
 4. Save the template to a folder on your machine, and try to do a new deployment using PowerShell
 
 		New-AzureRmResourceGroupDeployment -Name storageTest `
-                                  		   -ResourceGroupname <name of your existing resource group> `
-                                   		   -TemplateFile <directory where you saved your .json file> `
-										   -storageName <a name for your storage account>
-										   -location <your preferred location>
-                                           -Verbose
+		                                   -ResourceGroupName <nameOfYourRg> `
+		                                   -TemplateFile <locationOfYourTemplateFile> `
+		                                   -storageName <nameOfStorage> `
+		                                   -location <azureRegion> `
+		                                   -Verbose
 
 Did the deployment succeed? If not, what was the error?
 
 #### Adding variables
 
 5. Since storage account names need to be unique, it is risky to 'guess' a name for your deployment and risk that the entire deployment will fail just because of that.
-This is where we can take advantage of variables in the ARM template, which represent values that will help to simplify the language and expressions used in the template, and also contains values and settings we don't want to expose to the user who need to deploy this template.
+This is where we can take advantage of variables in the ARM template, which will help to simplify the language and expressions used in the template, and also contains values and settings we don't want to expose to the user who need to deploy this template.
 To guarantee a level of uniqueness, we will add the following variable to the template and use the **uniqueString** function (string function that creates a deterministic hash string based on the values provided as parameters) to generate - a unique name for the storage account.
 Follow the example below to add a uniqueString to the variables section, and remove the parameter for storageName
 
@@ -141,14 +140,14 @@ Follow the example below to add a uniqueString to the variables section, and rem
 6. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
 
 		New-AzureRmResourceGroupDeployment -Name storageTest `
-		                                   -ResourceGroupName <name of your existing resource group> `
-		                                   -TemplateFile <path to your json file> `
-		                                   -location <your preferred location> `
+		                                   -ResourceGroupName <nameOfYourRg> `
+		                                   -TemplateFile <locationOfYourTemplateFile> `
+		                                   -location <azureRegion> `
 		                                   -Verbose
 
 Did the deployment fail? If yes, what was the error?
 
-7. To ensure that the storage account will be unique within the deployment, we will use **uniqueString** in conjunction with **deployment().name** - which will generate a unique string based on the name of the deployment. In addition, we will ensure that the string is in lower case by using the **toLower** function.
+7. To ensure that the storage account will be unique within the deployment, we will now use **uniqueString** in conjunction with **deployment().name** - which will generate a unique string based on the name of the deployment. In addition, we will ensure that the string is in lower case by using the **toLower** function.
 
 Modify your template to be similar to the example below
 
@@ -182,15 +181,15 @@ Modify your template to be similar to the example below
 8. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
 
 		New-AzureRmResourceGroupDeployment -Name storageTest `
-		                                   -ResourceGroupName <name of your existing resource group> `
-		                                   -TemplateFile <path to your json file> `
-		                                   -location <your preferred location> `
+		                                   -ResourceGroupName <nameOfYourRg> `
+		                                   -TemplateFile <locationOfYourTemplateFile> `
+		                                   -location <azureRegion> `
 		                                   -Verbose
  
 
 #### Adding Outputs
 
-1. Templates can also provide outputs, which can be useful in case you need to retrieve information from resources in other resource groups, or from resources in the deployment itself. We will here use the **reference** function to retrieve a particular value from the storage account in the output section. Also, we are using **startsWith** function to verify if the storage account name starts with storage. Create a template similar to the example below, and note the output section. This will show the fqdn of the primary endpoint of the storage account that is created
+1. Templates can also provide outputs, which can be useful in case you need to retrieve information from resources in other resource groups, or from resources in the deployment itself. We will use the **reference** function to retrieve a particular value from a storage account property in the output section.
 
 			{
 			    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
@@ -227,12 +226,12 @@ Modify your template to be similar to the example below
 2. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
 
 		New-AzureRmResourceGroupDeployment -Name storageTest `
-		                                   -ResourceGroupName <name of your existing resource group> `
-		                                   -TemplateFile <path to your json file> `
-		                                   -location <your preferred location> `
+		                                   -ResourceGroupName <nameOfYourRg> `
+		                                   -TemplateFile <locationOfYourTemplateFile> `
+		                                   -location <azureRegion> `
 		                                   -Verbose
 
-Verify that the template successfully deploys. If you didn't change the deployment name, you should not end up with another storage account since ARM and the resources are idempotent. Verify that you got the expected output.
+Verify that the template successfully deploys. If you didn't change the deployment name, you should not end up with another storage account since ARM is declarative and the Azure resources are idempotent. Verify that you got the expected output.
 
 		DeploymentName          : storageTest
 		ResourceGroupName       : ARMExample
@@ -295,10 +294,10 @@ Verify that the template successfully deploys. If you didn't change the deployme
 2. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
 
 		New-AzureRmResourceGroupDeployment -Name storageTest `
-		                                   -ResourceGroupName <name of your existing resource group> `
-		                                   -TemplateFile <path to your json file> `
-		                                   -location <your preferred location> `
-										   -count 2 `
+		                                   -ResourceGroupName <nameOfYourRg> `
+		                                   -TemplateFile <locationOfYourTemplateFile> `
+		                                   -location <azureRegion> `
+		                                   -count 2 `
 		                                   -Verbose
 
 #### Deploy multiple resources in *serial* using copyIndex()
@@ -346,11 +345,12 @@ Make the required changes to your template, to incorporate the changes.
 2. Save the template to a directory on your machine, and do a new deployment using PowerShell similar to this:
 
 		New-AzureRmResourceGroupDeployment -Name storageTest `
-		                                   -ResourceGroupName <name of your existing resource group> `
-		                                   -TemplateFile <path to your json file> `
-		                                   -location <your preferred location> `
-										   -count 4 `
+		                                   -ResourceGroupName <nameOfYourRg> `
+		                                   -TemplateFile <locationOfYourTemplateFile> `
+		                                   -location <azureRegion> `
+		                                   -count 4 `
 		                                   -Verbose
+
 
 #### Resolving template issues
 
@@ -372,7 +372,7 @@ Based on the techniques you have used and learned so far, try to deploy the temp
 		    },
 		    "resources": [
 		        {
-		            "apiVersion": "2017-01-15",
+		            "apiVersion": "2018-01-15",
 		            "type": "Microsoft.Storage/storageAccounts",
 		            "name": "[parameters('storageName')]",
 		            "location": "[parameters('location')]",
@@ -396,7 +396,9 @@ Based on the techniques you have used and learned so far, try to deploy the temp
 		                                   -Verbose `
 										   -DeploymentDebugLogLevel All
 
-How did you troubleshoot this template? Were you able to successfully deploy it?
+* How did you troubleshoot this template? 
+* Were you able to successfully deploy it?
+
 Share the resolution you implemented.
 
 #### Finalize the Resource Manager template
@@ -443,7 +445,7 @@ You are about to finalize the template, and share it with your devs. However, be
 		            "tags": {
 		                "applicationEnvironment": "[parameters('applicationEnvironment')]"
 		            },
-		            "properties":{
+		            "properties": {
 		                "accountType": "Standard_LRS"
 		            }
 		        }
@@ -451,7 +453,7 @@ You are about to finalize the template, and share it with your devs. However, be
 		    "outputs": {
 		        "fqdn": {
 		            "type": "string",
-		            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName')), '2015-05-01-preview').primaryEndpoints.blob]"
+		            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName')), '2015-06-15').primaryEndpoints.blob]"
 		        },
 		        "applicationEnvironment": {
 		            "type": "string",
@@ -461,3 +463,10 @@ You are about to finalize the template, and share it with your devs. However, be
 		}
 
 2. Notice what's been added. Can you limit the regions in the template to only allow *eastus* and *westeurope*? Once done, please share the template with the person next to you. If this person is able to deploy it successfully, you have completed this lab :-)
+
+
+#### Proceeding to Lab 3 
+
+You have now completed the second lab, which aimed to cover the basics of Resource Manager templates. Moving forward to lab 3, you will explore more of the advanced techniques, using more complex workloads, and functions.
+
+[Lab 3 - Advanced Resource Manager Templates](./lab-3.md)
