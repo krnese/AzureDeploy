@@ -3,7 +3,7 @@
 >
 >Author: krnese
 
-### Azure Resource Manager - backwards and forwards
+### Azure Resource Manager - Demystified
 
 Use the following labs to advance your ARM skills throughout this hackathon
 
@@ -27,7 +27,7 @@ In this lab, you will explore nested templates, and how they are used in real-wo
 
 Learn how to troubleshoot templates and deployments, how to improve your templates, and understand how to leverage the **outputs** section
 
-* [**LAB 6 - Resource Policies**](./lab-6.md)
+* [**LAB 6 - Resource Policies**](./lab-6.md) (Coming soon)
 
 Explore how to govern your subscriptions, resource groups and resources with Resource Policies
 

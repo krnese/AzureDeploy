@@ -5,14 +5,6 @@
 
 ### Azure Resource Manager - Demystified
 
-Throughout this hackathon, you will work through several scenarios and examples, to get a good understanding of how you can configure, deploy and manage your Azure resources at scale, with Azure Resource Manager.
-
-We will start to cover the basics - just to get you started and level set on what we should accomplish. As you proceed through the different labs, things will indeed get a bit more complicated and hectic, but be assured that you will learn a lot and have fun!
-
-We believe that by having an approach where we go through known, common scenarios to get the right context, it will simplify the learning, and make it more interesting. Therefor you will be presented with a high-level scenario in every lab, to better understand the "what" and "why", and we will guide you through the "how".
-
-The instructor should also be capable of answering **any** question you might have **:-)**
-
 ### Agenda
 
 This is an instructor led hackathon, where the trainer will present and demo on Azure Resource Manager.
@@ -21,24 +13,20 @@ This is an instructor led hackathon, where the trainer will present and demo on 
 
 ·  **Authoring**
 
-Learn how to author your Azure Resource Manager templates to be capable of creating, deploying and managing any of your cloud resources, following best-practices
-
-·  **Deployment**
-
-Learn how to do deployments to Azure using different tools, techniques and possible integrations
+Learn how to author Resource Manager templates to be capable of creating, deploying and managing any of your cloud resources, following best-practices
 
 ·  **Management**
 
-Management of cloud resources is key, and can be handled through Azure Resource Manager as well. Learn best practices for the different cloud resources, using ARM with Role-based access control, tags, resource locks and policy. We will also cover how to easily scale and plug into Azure management services, such as Log Analytics, Automation, Backup & Site Recovery
+Resource Manager is the front-door to every Azure service, which puts it in a unique position with regards to management. Learn best practices for authoring and deployment of templates, and go beyond deployment to use Resource Manager to manage your resources; using RBAC, tags, resource locks and polices. We will also cover how to easily scale and plug IaaS and PaaS services into Azure management services, such as Log Analytics, Automation, Backup & Site Recovery, and more!
+Last but not least, you will learn how to create an Azure Managed Application, and use templates for life-cycle management.
 
 ·  **Troubleshooting**
 
-Sometimes you need to dive deeper into the operations to troubleshoot what’s going on. Learn about the techniques, where to find what, how to use the information and resolve the issues
+Every now and then, you need to dive a bit deeper in order to troubleshoot, to really understand what is going on. Learn about the techniques, where to find what, how to use the information and resolve the issues.
 
-·  **IaaS+**
+·  **Infrastructure as Code**
 
-Moving away from the ‘traditional way’ of doing Infrastructure, we are now using Azure Resource Manager to extend the capabilities, giving us the ideal platform for performing this end-to-end, all from the deployment to post-deployment tasks.
-
+The days where you had to log-on to your servers to perform some post-deployment tasks, are long gone with Resource Manager. We'll move away from the 'traditional way' of doing infrastructure, and trust Resource Manager to extend the capabilities, and harness the Azure platform while performing every configuration end-to-end.
 This section will also focus on the key resource providers in Azure, such as Compute, Storage and Networking
 
 We can promise you the following:
@@ -69,6 +57,6 @@ We have some recommended reading we suggest you familiarize yourself with, prior
 
 [Continuous integration in VSO using Azure Resource Manager](https://docs.microsoft.com/en-us/azure/vs-azure-tools-resource-groups-ci-in-vsts)
 
-### Content & Labs
+### Hands-on labs
 
 [Go to this section to access the hands-on labs](./lab-overview.md)
