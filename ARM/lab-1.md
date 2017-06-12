@@ -4,7 +4,7 @@
 
 >Author: krnese
 
-### Azure Resource Manager - backwards and forwards
+### Azure Resource Manager - Demystified
 
 ### Before you begin
 

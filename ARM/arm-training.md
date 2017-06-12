@@ -3,7 +3,7 @@
 >
 >Author: krnese
 
-### Azure Resource Manager - Inside-Out
+### Azure Resource Manager - Demystified
 
 Throughout this hackathon, you will work through several scenarios and examples, to get a good understanding of how you can configure, deploy and manage your Azure resources at scale, with Azure Resource Manager.
 

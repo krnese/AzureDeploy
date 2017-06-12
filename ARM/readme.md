@@ -1,9 +1,9 @@
-# Azure Resource Manager - backwards and forwards
+# Azure Resource Manager - Demystified
 >Last updated: 4/25/2017
 >
 >Author: krnese
 >
->This material for **"Azure Resource Manager - backwards and forwards"** is developed by Azure CAT.
+>This material for **"Azure Resource Manager - Demystified"** is developed by Azure CAT.
 >
 >![alt text](media/azurecat.png "Azure CAT")
 
@@ -17,7 +17,7 @@ We will start to cover the basics - just to get you started and level set on wha
 
 We believe that by having an approach where we go through known, common scenarios to get the right context, it will simplify the learning, and make it more interesting. Therefor you will be presented with a high-level scenario in every lab, to better understand the "what" and "why", and we will guide you through the "how".
 
-The instructor should also be capable of answering **any** question you might have. In fact, he/she should know Azure Resource Manager **backwards and forwards** **:-)**
+The instructor should also be capable of answering **any** question you might have **:-)**
 
 ### Content
 
