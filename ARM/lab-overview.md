@@ -9,7 +9,7 @@ Use the following labs to advance your ARM skills throughout this hackathon
 
 * [**LAB 1 - Getting Started**](./lab-1.md)
 
-Throughout this lab, you will familiarize yourself with the Azure portal and PowerShell, to work with Resource Groups
+In this lab, you explore the difference between imperative vs declarative, to better understand the power and capabilities of Resource Manager and templates
 
 * [**LAB 2 - Exploring Resource Manager Templates**](./lab-2.md)
 
