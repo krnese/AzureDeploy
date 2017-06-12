@@ -1,4 +1,4 @@
-# Lab 1 Imperative vs. Declarative
+# Lab 1 - Imperative vs. Declarative
 
 >Last updated: 6/12/2017
 
