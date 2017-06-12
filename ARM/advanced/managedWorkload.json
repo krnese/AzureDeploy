@@ -1,0 +1,372 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "instanceCount": {
+            "type": "int",
+            "defaultValue": "2",
+            "maxValue": 10,
+            "metadata": {
+                "description": "Specify the number of VMs to create"
+            }
+        },
+        "vmNameSuffix": {
+            "type": "string",
+            "defaultValue": "VM",
+            "metadata": {
+                "description": "Assing a suffix for the VMs you will create"
+            }
+        },
+        "platform": {
+            "type": "string",
+            "defaultValue": "Windows",
+            "allowedValues": [
+                "Windows",
+                "Linux"
+            ],
+            "metadata": {
+                "description": "Select the OS type to deploy"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D1",
+            "allowedValues": [
+                "Standard_A1",
+                "Standard_A2",
+                "Standard_A3",
+                "Standard_A4",
+                "Standard_A5",
+                "Standard_A6",
+                "Standard_D1",
+                "Standard_D2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2"
+            ]
+        },
+        "vNetName": {
+            "type": "string",
+            "defaultValue": "NWLAB",
+            "metadata": {
+                "description": "Select the virtual network to connect the VMs"
+            }
+        },
+        "vNetResourceGroupName": {
+            "type": "string",
+            "defaultValue": "NWLAB",
+            "metadata": {
+                "description": "Specify Resource Group for the corresponding vNet you selected"
+            }
+        },
+        "vnetSubnetName": {
+            "type": "string",
+            "defaultValue": "subnet1",
+            "metadata": {
+                "description": "Specify the subnet for the corresponding vNet and vNetResourceGroup you selected"
+            }
+        },
+        "username": {
+            "type": "string",
+            "defaultValue": "azureadmin"
+        },
+        "pwd": {
+            "type": "securestring"
+        },
+        "ssh": {
+            "type": "string"
+        },
+        "azureLogAnalyticsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Azure Log Analytics name"
+            }
+        },
+        "azureLogAnalyticsResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Resource Group containing your Azure Log Analytics resource"
+            }
+        }
+    },
+    "variables": {
+        "storageAccountName": "[toLower(concat('st', uniquestring(resourceGroup().name)))]",
+        "vnetID": "[resourceId(parameters('vnetResourceGroupName'), 'Microsoft.Network/virtualnetworks', parameters('vNetName'))]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('vNetSubnetName'))]",
+        "managementTypeWindows": {
+            "type": "MicrosoftMonitoringAgent"
+        },
+        "managementTypeLinux": {
+            "type": "OmsAgentForLinux"
+        },
+        "osTypeWindows": {
+            "imageOffer": "WindowsServer",
+            "imageSku": "2016-Datacenter",
+            "imagePublisher": "MicrosoftWindowsServer"
+        },
+        "osTypeLinux": {
+            "imageOffer": "UbuntuServer",
+            "imageSku": "12.04.5-LTS",
+            "imagePublisher": "Canonical"
+        },
+        "omsWorkspaceResourceGroup": "MicrosoftOMS",
+        "omsWorkspaceName": "OMSLAworkspace"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2017-06-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage"
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'Windows')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('vmNameSuffix'), 'wIP', copyIndex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNameSuffix'), 'wIP')]",
+                "count": "[parameters('instanceCount')]"
+            },
+            "properties": {
+                "publicIPallocationmethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(concat(parameters('vmNameSuffix'), 'wVM', copyIndex()))]"
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'Linux')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('vmNameSuffix'), 'lIP', copyIndex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNameSuffix'), 'lIP')]",
+                "count": "[parameters('instanceCount')]"
+            },
+            "properties": {
+                "publicIPallocationmethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(concat(parameters('vmNameSuffix'), 'lVM', copyIndex()))]"
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'Windows')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('vmNameSuffix'), 'wnic', copyIndex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNameSuffix'), 'wnic')]",
+                "count": "[parameters('instanceCount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('vmNameSuffix'), 'wIP', copyIndex())]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('vmNameSuffix'), 'wIP', copyIndex()))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'Linux')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('vmNameSuffix'), 'lnic', copyIndex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNameSuffix'), 'lnic')]",
+                "count": "[parameters('instanceCount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('vmNameSuffix'), 'lIP', copyIndex())]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('vmNameSuffix'), 'lIP', copyIndex()))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'Windows')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2016-03-30",
+            "name": "[concat(parameters('vmNameSuffix'), 'wVM', copyIndex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNameSuffix'), 'wVM')]",
+                "count": "[parameters('instancecount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/StorageAccounts/', variables('storageAccountName'))]",
+                "[concat('Microsoft.Network/networkinterfaces/', parameters('vmNameSuffix'), 'wnic', copyIndex())]"
+            ],
+            "properties": {
+                "hardwareprofile": {
+                    "vmsize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computername": "[concat(parameters('vmNameSuffix'), 'wVM', copyIndex())]",
+                    "adminusername": "[parameters('username')]",
+                    "adminpassword": "[parameters('pwd')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('osTypeWindows').imagePublisher]",
+                        "offer": "[variables('osTypeWindows').imageOffer]",
+                        "version": "latest",
+                        "sku": "[variables('osTypeWindows').imageSku]"
+                    },
+                    "osdisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/', 'vhds', '/', 'osdisk', copyIndex(), '.vhd')]"
+                        },
+                        "caching": "readwrite",
+                        "createoption": "FromImage"
+                    }
+                },
+                "networkprofile": {
+                    "networkinterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces', concat(parameters('vmNameSuffix'),'wnic', copyIndex()))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'Windows')]",
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmNameSuffix'), 'wVM', copyIndex(), '/OMS')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNameSuffix'), 'wVM', 'OMS')]",
+                "count": "[parameters('instancecount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameSuffix'), 'wVM', copyIndex())]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                "type": "[variables('managementTypeWindows').type]",
+                "typeHandlerVersion": "1.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "workspaceId": "[reference(resourceId(parameters('azureLogAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces/', parameters('azureLogAnalyticsWorkspaceName')), '2015-11-01-preview').customerId]",
+                    "azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNameSuffix'), 'wVM', copyIndex()))]"
+                },
+                "protectedSettings": {
+                    "workspaceKey": "[listKeys(resourceId(parameters('azureLogAnalyticsResourceGroupName'),'Microsoft.OperationalInsights/workspaces/', parameters('azureLogAnalyticsWorkspaceName')), '2015-11-01-preview').primarySharedKey]"
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'Linux')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2016-03-30",
+            "name": "[concat(parameters('vmNameSuffix'), 'lVM', copyIndex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNameSuffix'), 'lVM')]",
+                "count": "[parameters('instancecount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/StorageAccounts/', variables('storageAccountName'))]",
+                "[concat('Microsoft.Network/networkinterfaces/', parameters('vmNameSuffix'), 'lnic', copyIndex())]"
+            ],
+            "properties": {
+                "hardwareprofile": {
+                    "vmsize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computername": "[concat(parameters('vmNameSuffix'), 'lVM', copyIndex())]",
+                    "adminusername": "[parameters('username')]",
+                    "adminpassword": "[parameters('ssh')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('osTypeLinux').imagePublisher]",
+                        "offer": "[variables('osTypeLinux').imageOffer]",
+                        "version": "latest",
+                        "sku": "[variables('osTypeLinux').imageSku]"
+                    },
+                    "osdisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/', 'vhds', '/', 'osdisk', copyIndex(), '.vhd')]"
+                        },
+                        "caching": "readwrite",
+                        "createoption": "FromImage"
+                    }
+                },
+                "networkprofile": {
+                    "networkinterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces', concat(parameters('vmNameSuffix'),'lnic', copyIndex()))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'Linux')]",
+            "apiVersion": "2015-05-01-preview",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmNameSuffix'), 'lVM', copyIndex(), '/OMS')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNameSuffix'), 'lVM', 'OMS')]",
+                "count": "[parameters('instanceCount')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameSuffix'), 'lVM', copyIndex())]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                "type": "[variables('managementTypeLinux').type]",
+                "typeHandlerVersion": "1.3",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "workspaceId": "[reference(resourceId(parameters('azureLogAnalyticsResourceGroupName'), 'Microsoft.OperationalInsights/workspaces/', parameters('azureLogAnalyticsWorkspaceName')), '2015-11-01-preview').customerId]",
+                    "azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNameSuffix'), 'lVM', copyIndex()))]"
+                },
+                "protectedSettings": {
+                    "workspaceKey": "[listKeys(resourceId(parameters('azureLogAnalyticsResourceGroupName'),'Microsoft.OperationalInsights/workspaces/', parameters('azureLogAnalyticsWorkspaceName')), '2015-11-01-preview').primarySharedKey]"
+                }
+            }
+        }        
+    ],
+    "outputs": {}
+}
