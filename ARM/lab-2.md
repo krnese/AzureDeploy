@@ -1,6 +1,6 @@
 # Lab 2 - Exploring Resource Manager Templates
 
->Last updated: 4/24/2017
+>Last updated: 6/12/2017
 
 >Author: krnese
 
