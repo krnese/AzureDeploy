@@ -59,4 +59,4 @@ We have some recommended reading we suggest you familiarize yourself with, prior
 
 ### Hands-on labs
 
-[Go to this section to access the hands-on labs](./lab-overview.md)
+[Get started with the hands-on labs!](./lab-overview.md)
