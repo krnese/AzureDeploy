@@ -55,4 +55,4 @@ The main template will deploy resources into two different resource groups, and 
 
 Navigate to [Azure Portal](https://portal.azure.com) and find the newly created dashboard, which will have the following naming convention *AzureMgmt(uniqueString(deployment().name))*:
 
-![media](./images/dashboard.png)
+![media](./images/dashboard-new.png)
