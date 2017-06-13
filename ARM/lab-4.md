@@ -574,3 +574,41 @@ Once the management services are instantiated, we can safely deploy the VM workl
 ###### Enabling VM Backup
 Explore the *managedVms.json* template. In the end, you can see that another nested deployment will start, once the VM extension for OMS has completed. This will start a deployment to the resource group holding the Azure Recovery Services resource. 
 
+###### Adding Azure dashboard
+
+The final step of the main template, is to add the resource pointing to the Azure dashboard nested template.
+
+	{
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2017-05-10",
+          "name": "mgmtDashboards",
+          "dependsOn": [
+            "omsAutomation",
+            "omsWorkspace",
+            "omsRecoveryServices"
+          ],
+          "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[variables('nestedTemplates').mgmtDashboards]",
+              "contentVersion": "1.0.0.0"              
+            },
+            "parameters": {
+              "omsWorkspaceName": {
+                "value": "[parameters('omsWorkspaceName')]"
+              },
+              "omsRecoveryVaultName": {
+                "value": "[parameters('omsRecoveryVaultName')]"
+              },
+              "omsAutomationAccountName": {
+                "value": "[parameters('omsAutomationAccountName')]"
+              },
+              "vmResourceGroup": {
+                "value": "[parameters('vmResourceGroup')]"
+              }
+            }
+          }
+        }
+
+The deployment of this nested template will kick in once the management services has been successfully deployed.
+
