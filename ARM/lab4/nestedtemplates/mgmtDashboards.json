@@ -40,8 +40,8 @@
                                     "settings": {
                                         "content": {
                                             "settings": {
-                                                "content": "### Welcome to a fully integrated demo environment for Azure management services!\r\n\r\nWith this dashboard, you have access to the complete deployment of Azure management services (OMS), and the selected workload you deployed, fully integrated.\r\n\r\nTake the tour by exploring each service, and try out its capabilities.\r\n\r\nFeedback/questions:\r\n\r\nkrnese@microsoft.com \r\n\r\n\r\n",
-                                                "title": "Azure Management - PREVIEW",
+                                                "content": "### Azure Operations Dashboard!\r\n\r\nUse this dashboard to manage your management services and the attached workload.\r\n\r\nThe dashboard can be shared with individuals and teams using RBAC.\r\n\r\nFeedback/questions:\r\n\r\nkrnese@microsoft.com \r\n\r\n\r\n",
+                                                "title": "Azure Management",
                                                 "subtitle": ""
                                             }
                                         }
