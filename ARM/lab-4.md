@@ -62,13 +62,9 @@ The virtual machine workload will be deployed into a new virtual network, and at
 
 * **managedVmsBackup.json**
 
-You can't enable backup before the management services (Azure Backup) *and* the workload has been provisioned
-
-* **managedVmsBackup.json**
-
 One of the last step, once the management services and the workload have been deployed, is to enable backup on the virtual machines.
 
-* **mgmtDashboard**
+* **mgmtDashboard.json**
 
 Once all the resources are deployed, a last nested template will be invoked to create an Azure dashboard for the operations team
 
