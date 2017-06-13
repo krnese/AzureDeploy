@@ -904,3 +904,8 @@ Next, deploy *Linux* workload to a new resource group
 
 
 
+#### Proceeding to Lab 4 
+
+This was the third lab, and hopefully you've learned more about the advanced use-cases for ARM templates. Last but not least, we believe that your CIO is satisfied with your accomplishments in this lab, which naturally can lead to higher expectations in lab 4. In the next lab, you will take the next step, tackling more advanced scenarios using nested deployments.
+
+[Lab 4 - Nested Resource Manager Templates](./lab-4.md)
