@@ -183,9 +183,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "name": "omsWorkspace",
-            "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/', 'omsRecoveryServices')]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -206,6 +204,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "name": "omsRecoveryServices",
+            "dependsOn": [],            
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
