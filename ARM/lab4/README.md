@@ -1,6 +1,6 @@
-# Microsoft Operations Management Suite
+# Nested Resource Manager templates
 
-Your time is precious, so here's a set of ARM templates that will deploy all of the OMS services, fully integrated, with running VM workloads attached to it.
+This sample is built specifically as part of the **Azure Resource Manager - Demystified** hackathon.
 
 ### How to deploy
 
@@ -8,22 +8,22 @@ The main template will deploy resources into two different resource groups, and 
 	
 	# Create 2 resource groups, for mgmt and workload
 	
-	$MgmtRg = New-AzureRmResourceGroup -Name mgmtRg -Location westeurope -Verbose
-	$WorkloadRg = New-AzureRmResourceGroup -Name workloadRg -Location westeurope -Verbose
+	$MgmtRg = New-AzureRmResourceGroup -Name mymgmtrg -Location westeurope -Verbose
+	$WorkloadRg = New-AzureRmResourceGroup -Name myworkloadrg -Location westeurope -Verbose
 	
-	# Define parameters for template deployment
+	# Define parameters for template deployment - remember to change the values!
 	
-	$OMSWorkspaceName = 'myOmsWorkspace'
+	$OMSWorkspaceName = 'myworkspace50'
 	$OMSWorkspaceRegion = 'West Europe'
-	$OMSRecoveryVaultName = 'myRecoveryVault'
+	$OMSRecoveryVaultName = 'myrecoveryvault50'
 	$OMSRecoveryVaultRegion = 'West Europe'
-	$OMSAutomationName = 'MyAutomationAccount'
+	$OMSAutomationName = 'myautomation50'
 	$OMSAutomationRegion = 'West Europe'
 	$azureAdmin = 'yourUser@domain.com'
-	$Platform = 'Windows' # Note that Linux isn't fully supported yet
+	$Platform = 'Windows'
 	$userName = 'azureadmin'
-	$vmNameSuffix = 'workload'
-	$instanceCount = '4'
+	$vmNameSuffix = 'myvmwl'
+	$instanceCount = '2'
 	$DSCJobGuid = (New-Guid)
 	$DSCJobGuid2 = (New-Guid)
 	$DSCJobGuid3 = (New-Guid)
@@ -32,7 +32,7 @@ The main template will deploy resources into two different resource groups, and 
 	
 	New-AzureRmResourceGroupDeployment -Name myDemo `
 	                                   -ResourceGroupName $MgmtRg.ResourceGroupName `
-	                                   -TemplateUri https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/OMSDemo/azuredeploy.json `
+	                                   -TemplateUri 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/lab4/azuredeploy.json' `
 	                                   -vmResourceGroup $WorkloadRg.ResourceGroupName `
 	                                   -omsRecoveryVaultName $OMSRecoveryVaultName `
 	                                   -omsRecoveryVaultRegion $OMSRecoveryVaultRegion `
@@ -48,7 +48,7 @@ The main template will deploy resources into two different resource groups, and 
 	                                   -DSCJobGuid $DSCJobGuid `
 	                                   -DSCJobGuid2 $DSCJobGuid2 `
 	                                   -DSCJobGuid3 $DSCJobGuid3 `
-	                                   -verbose 
+	                                   -verbose
 
 
 ### Post Deployment
