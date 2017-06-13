@@ -608,3 +608,60 @@ The final step of the main template, is to add the resource pointing to the Azur
 
 The deployment of this nested template will kick in once the management services has been successfully deployed.
 
+#### Deploy
+
+Now that you have built your main template, it's time for you to save it on your computer, and ensure the deployments succeeds.
+
+You can deploy the template by using the following PowerShell snippet - but remember to change the variables to fit your environment:
+
+	# Create 2 resource groups, for mgmt and workload
+	
+	$MgmtRg = New-AzureRmResourceGroup -Name '' -Location '' -Verbose
+	$WorkloadRg = New-AzureRmResourceGroup -Name '' -Location '' -Verbose
+	
+	# Define parameters for template deployment - remember to change the values!
+	
+	$OMSWorkspaceName = ''
+	$OMSWorkspaceRegion = ''
+	$OMSRecoveryVaultName = ''
+	$OMSRecoveryVaultRegion = ''
+	$OMSAutomationName = ''
+	$OMSAutomationRegion = ''
+	$azureAdmin = 'yourUser@domain.com'
+	$Platform = 'Windows'
+	$userName = 'azureadmin'
+	$vmNameSuffix = ''
+	$instanceCount = '4'
+	$DSCJobGuid = (New-Guid)
+	$DSCJobGuid2 = (New-Guid)
+	$DSCJobGuid3 = (New-Guid)
+	
+	# Deploy template
+	
+	New-AzureRmResourceGroupDeployment -Name myDemo `
+	                                   -ResourceGroupName $MgmtRg.ResourceGroupName `
+	                                   -TemplateFile <path to your .json file> `
+	                                   -vmResourceGroup $WorkloadRg.ResourceGroupName `
+	                                   -omsRecoveryVaultName $OMSRecoveryVaultName `
+	                                   -omsRecoveryVaultRegion $OMSRecoveryVaultRegion `
+	                                   -omsWorkspaceName $OMSWorkspaceName `
+	                                   -omsWorkspaceRegion $OMSWorkspaceRegion `
+	                                   -omsAutomationAccountName $OMSAutomationName `
+	                                   -omsAutomationRegion $OMSAutomationRegion `
+	                                   -vmNameSuffix $vmNameSuffix `
+	                                   -userName $userName `
+	                                   -platform $platform `
+	                                   -instanceCount $instanceCount `
+	                                   -azureAdmin $azureAdmin `
+	                                   -DSCJobGuid $DSCJobGuid `
+	                                   -DSCJobGuid2 $DSCJobGuid2 `
+	                                   -DSCJobGuid3 $DSCJobGuid3 `
+	                                   -verbose
+
+Did the deployment complete successfully? If not, please troubleshoot to ensure you get a successful deployment.
+
+#### Proceeding to Lab 5 
+
+This was the fourth lab, And you explored the potential complexity involved when dealing with multiple nested templates. However, we do believe you saw many opportunities with this model, and this isn't the last time we'll work with nested templates throughout this hackathon. Let us get started with lab 5, to see what the CIO and your devs are up to next!
+
+[Lab 5 - Troubleshooting](./lab-4.md)
