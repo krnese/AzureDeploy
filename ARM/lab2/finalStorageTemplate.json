@@ -1,0 +1,54 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageNamePreFix": {
+            "type": "string",
+            "maxLength": 10,
+            "minLength": 3,
+            "metadata": {
+                "description": "Specify the pre-fix for the storage account name"
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Azure location for the storage account. Ex: 'eastus'"
+            }
+        },
+        "applicationEnvironment": {
+            "type": "string",
+            "defaultValue": "Test",
+            "metadata": {
+                "description": "Specify the environment for this application - for billing purposes"
+            }
+        }
+    },
+    "variables": {
+        "storageName": "[concat(parameters('storageNamePreFix'), uniqueString('storage'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageName')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "applicationEnvironment": "[parameters('applicationEnvironment')]"
+            },
+            "properties":{
+                "accountType": "Standard_LRS"
+            }
+        }
+    ],
+    "outputs": {
+        "fqdn": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName')), '2015-05-01-preview').primaryEndpoints.blob]"
+        },
+        "applicationEnvironment": {
+            "type": "string",
+            "value": "[parameters('applicationEnvironment')]"
+        }
+    }
+}

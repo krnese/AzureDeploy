@@ -1,0 +1,37 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "count": {
+            "type": "int"
+        }
+    },
+    "variables": {
+        "storageName": "[toLower(concat('k', parameters('count'), deployment().name, uniqueString('s')))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[concat(variables('storageName'), copyIndex())]",
+            "location": "[parameters('location')]",
+            "tags": {},
+            "copy": {
+                "name": "blob",
+                "count": "[parameters('count')]"
+            },
+            "properties": {
+                "accountType": "Standard_LRS"
+            }
+        }
+    ],
+    "outputs": {
+        "storageFQDN": {
+            "type": "array",
+            "value": "[length(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName')), '2015-05-01-preview').primaryEndpoints.blob)]"
+        }
+    }
+}

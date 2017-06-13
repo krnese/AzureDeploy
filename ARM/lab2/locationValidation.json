@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        }
+    },
+    "variables": {
+      "omsWorkspaceLocation": "(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(parameters('location'), 'North Europe', 'West Europe'), 'East US2', 'East US'), 'West India', 'Australia Southeast'), 'Canada East', 'East US'), 'West US', 'West Central US'), 'West US 2', 'West Central US'), 'North Central US', 'West Central US'), 'South Central US', 'West Central US'), 'East Asia', 'Southeast Asia'), 'Japan East', 'Southeast Asia'), 'Japan West', 'Southeast Asia'), 'Australia East', 'Australia Southeast'), 'South India', 'Southeast Asia'), 'Central India', 'Southeast Asia'), 'Canada Central', 'East US'), 'Korea Central', 'Southeast Asia'), 'Korea South', 'Southeast Asia'), 'Brazil South', 'East US'), 'UK West', 'West Europe'), 'UK South', 'West Europe'), 'Central US', 'West Central US')]",
+      "testLocation": "[replace(replace(replace(parameters('location'), 'South Central US', 'West Central US'), 'West US', 'West Central US'), 'West US2', 'West Central US')]",
+    },
+    "resources": [
+        
+    ],
+    "outputs": {
+        "omsLocation": {
+            "type": "string",
+            "value": "[variables('omsWorkspaceLocation')]"
+        },
+        "testLocation": {
+            "type": "string",
+            "value": "[variables('testLocation')]"
+        }
+    }
+}
