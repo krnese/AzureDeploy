@@ -20,7 +20,17 @@ To complete these labs, you need to ensure you have access to the following tool
 
 ### Objectives
 
-In this lab, you explore the difference between imperative vs declarative, to better understand the power and capabilities of Resource Manager and templates
+In this lab, you explore the difference between imperative vs declarative, to better understand the power and capabilities of Resource Manager and templates.
+
+**Scenario**
+
+As the cloud architect, you will take lead on the journey to Azure using Resource Manager. To convince your developers and fellow architects, you want to demonstrate the power of Resource Manager and templates.
+You have created the following samples below, which will demonstrate some of the benefits of Resource Manager, such as:
+
+* You can deploy, manage, and monitor all the resources for your solution as a group, rather than handling these resources individually.
+* You can repeatedly deploy your solution throughout the development lifecycle and have confidence your resources are deployed in a consistent state.
+* You can manage your infrastructure through declarative templates rather than scripts.
+* You can define the dependencies between resources so they are deployed in the correct order.
 
 ### Imperative
 
