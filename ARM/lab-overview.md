@@ -20,13 +20,13 @@ Learn the basics of an ARM template, and work with some of the most frequently u
 
 * [**LAB 3 - Advanced Resource Manager Templates**](./lab-3.md)
 
-You will work on some sample templates that deploys various workloads, spanning multiple services across different regions, while exploring many more functions
+You will work on some sample templates that deploys various workloads, spanning multiple services while exploring many more functions
 
 * [**LAB 4 - Nested Resource Manager Templates**](./lab-4.md)
 
-In this lab, you will explore nested templates, and how they are used in real-world scenarios to handle conditions and to build out an entire infrastructure together with your apps, all based on ARM templates
+In this lab, you will explore nested templates, how they are used in real-world scenarios to handle the most complex environments, and to build out an entire infrastructure together with your apps, all based on ARM templates
 
-* [**LAB 5 - Troubleshooting**](./lab-5.md)
+* [**LAB 5 - Troubleshooting**](./lab-5.md) (Available 6/14/2017)
 
 Learn how to troubleshoot templates and deployments, how to improve your templates, and understand how to leverage the **outputs** section
 
@@ -38,7 +38,7 @@ Explore how to govern your subscriptions, resource groups and resources with Res
 
 Learn how to use and implement Resource Locks for your production workload
 
-* [**LAB 8 - Azure Managed Appliactions**](./lab-8.md)
+* [**LAB 8 - Azure Managed Appliactions**](./lab-8.md) (Available 6/14/2017)
 
 Learn how to build and publish an Azure Managed Applications to the Service Catalog, include management services for automated actions and healing, and manage the life-cycle of the Managed Applications using Resource Manager templates.
 
