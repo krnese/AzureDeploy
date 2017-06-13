@@ -22,7 +22,7 @@ Last but not least, you will learn how to create an Azure Managed Application, a
 
 ·  **Troubleshooting**
 
-Every now and then, you need to dive a bit deeper in order to troubleshoot, to really understand what is going on. Learn about the techniques, where to find what, how to use the information and resolve the issues.
+Every now and then, you need to dive a bit deeper in order to troubleshoot, to really understand what is going on. Learn about the techniques, where to find what, how to use the information and resolve the issues by identifying the root cause.
 
 ·  **Infrastructure as Code**
 
