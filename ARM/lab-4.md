@@ -662,6 +662,6 @@ Did the deployment complete successfully? If not, please troubleshoot to ensure 
 
 #### Proceeding to Lab 5 
 
-This was the fourth lab, And you explored the potential complexity involved when dealing with multiple nested templates. However, we do believe you saw many opportunities with this model, and this isn't the last time we'll work with nested templates throughout this hackathon. Let us get started with lab 5, to see what the CIO and your devs are up to next!
+This was the fourth lab, and you explored the potential complexity involved when dealing with multiple nested templates. However, we do believe you saw many opportunities with this model, and this isn't the last time we'll work with nested templates throughout this hackathon. Let us get started with lab 5, to see what the CIO and your devs are up to next!
 
 [Lab 5 - Troubleshooting](./lab-4.md)
