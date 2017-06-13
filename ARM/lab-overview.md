@@ -5,6 +5,9 @@
 
 ### Azure Resource Manager - Demystified
 
+During this hackathon, you take the role as the cloud architect within your company, which is a large ISV and has recently started to use Azure. 
+You need to set the scene, to ensure that your developers and business units have everything they need to leverage Azure in the most efficient way. On top of that, you have a demanding, but very forward leaning CIO who tends to come up with some crazy ideas, followed by a ridiculous deadline. His vision is that "everything you do in the cloud, should only happen through an API". 
+
 Use the following labs to advance your ARM skills throughout this hackathon
 
 * [**LAB 1 - Imperative vs. Declarative**](./lab-1.md)

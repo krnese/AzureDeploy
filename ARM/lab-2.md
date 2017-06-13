@@ -24,9 +24,8 @@ In this lab, you will learn the basics of Resource Manager templates, and create
 
 **Scenario**
 
-Your organization is pivoting over to the DevOps era, and are fairly new to Azure. 
-Your company will start to leverage storage accounts in Azure for their applications, hence you need to create a reusable Resource Manager template. You want to ensure that they can successfully deploy this template every time.
-Post deployment, the devs want to know the FQDN for the primary endpoint of the storage account, to be used by their web application, and they don't want to use the Azure portal to retrieve this information.  
+Your developers want to use a storage account for their new application, that will be hosted in Azure. Ideally, they will be able to deploy a new storage account when needed, in a programmatic way, and can interact with it immediately post deployment. 
+You have been chartered to create a Resource Manager template, which will ensure they can deploy a storage account successfully every time. The template must also provide the blob endpoint, being used by their web application, so your devs don't have to log-on to the Azure portal to retrieve this information. 
 
 #### Creating a resource manager template for storage accounts
 

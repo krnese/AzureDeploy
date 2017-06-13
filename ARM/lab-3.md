@@ -26,13 +26,18 @@ In this lab, you will work on more advanced templates, and discover some new fun
 
 **Scenario**
 
-Recently, your organization decided to move more of their application and services to Azure. The CIO wants you to leverage the native management services in Azure, to ensure a healthy and reliable environment for the business applications. It's important that both the management services, and the workloads can be deployed at scale, since your organization is planning to enable several 100 of Azure subscriptions within the next 4 months.
-The CIO does also require that any approved Azure service should be managed automatically when being deployed.
-To get started, you will deploy and configure Azure Log Analytics - which is able to monitor IaaS and PaaS. Next, you will create the base templates for new IaaS and PaaS workload, that will automatically connect to Azure Log Analytics during deployment. 
+Your CIO has determined that you will use Azure for all your new IaaS deployments. He provides you with the following list of requirements:
+
+* Every VM must be managed, using native Azure management services
+* Both the management services and the workloads, must be deployed in a programmatic fashion
+* Management shouldn't be an afterthough; it's important that every VM is automatically managed as part of the deployment to ensure compliance
+* The different teams that will deploy VM workloads, must be able to select both Windows (Server 2016) and Linux (Ubuntu)
+* Every VM workload must be connected to the same virtual network
+
 
 #### Creating a resource manager template for Azure Log Analytisc
 
-For you to monitor and manage your organization's Azure environments and resources, you will deploy Azure Log Analytics using a Resource Manager template.
+For you to monitor and manage your organization's VM workload, you will deploy Azure Log Analytics using a Resource Manager template.
 
 Open your preferred JSON editor (Visual Studio or Visual Studio Code), and create a template similar to the example below
 
