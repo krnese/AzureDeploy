@@ -26,8 +26,11 @@ Learn how to build and publish an Azure Managed Applications to your company's i
 
 **Scenario**
 
-Your company had recently an incident, when someone accidentally deleted a storage account in Azure, being used by a LOB application. Your CIO states that "my devs know all about code, but nothing about the operational aspect of the environment it executes in". You suggest that any approved service being used in Azure, should ideally be *managed* and *operated* by central IT. As you realize this is your opportunity to make a proposal on the approach, you sit down with the CIO to define the requirements:
+Your company recently had an incident, when someone accidentally deleted a storage account in Azure, being used by a LOB application. Your CIO states that "my devs know all about code, but nothing about the operational aspect of the environment it executes in". For your company to be even more successful with Azure, he wants you to start building templates for all the approved Azure services you are using. Further, he wants you to initialize a Service Catalog with Managed Applications for these offerings, and make them available to the developers.
+
+He list the following requirements:
 
 * Approved Azure services for production should be templatized, centralized and managed by the SMEs
-* The business units and devs should not have *write* access to the underlying Azure resources, to avoid that anything can be deleted by accident (again)
+* The business units and devs should only be able to *consume* the service - and have *read only* access to the underlying Azure resources, to avoid that anything can be deleted by accident (again)
 * It's important that the devs can deploy what they need, through self-service, without any enterprise IT tax on top
+* The top priority right now, is to start with a storage account, to replace the storage that just got deleted
