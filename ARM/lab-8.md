@@ -38,7 +38,7 @@ He list the following requirements:
 * the API version for each resource, must be using the latest version available
 * The UI in the Azure portal for deploying, must be easy to understand and eliminate any possible human error
 
-#### Creating the managed storage account template
+#### Creating the *storageAccount* template
 
 Before you start to build the Resource Manager template for storage accounts, you need to determine the latest API version available.
 
@@ -55,7 +55,7 @@ Go ahead and create the template from scratch, ensuring you include the followin
 
 When done, save the template as *storageAccount.json*
 
-#### Creating the appliance main template
+#### Creating the *applianceMainTemplate*
 
 From scratch, build a appliance main template that will deploy the newly created storage account template, as a nested template deployment
 
@@ -67,7 +67,7 @@ The requirements for this template is to have:
 
 When done, save the template as *applianceMainTemplate.json*
 
-#### Creating the main template
+#### Creating the *mainTemplate*
 
 The main template will be the template the developer will interact with from the portal, when deploying the Managed Application later. The construct of this template is a bit similar to the *applianceMainTemplate.json*, as it need to contain the same parameters, and those parameters must be embedded into the appliance resource declaration too.
 
@@ -117,7 +117,7 @@ Next, create the Resource Manager template similar to the one below, but ensure 
 
 Save the template as *mainTemplate.json* - and pay attention to the "applianceDefinitionId" property, which you will revisit and update later.
 
-#### Create the appliance UI definition
+#### Create the *applianceUiDefinition*
 
 In order for your devs to deploy this managed application successfully through the Service Catalog using the Azure portal, you need to build an UI definition which will generate the required outputs to the templates you just created.
 
@@ -225,7 +225,7 @@ Upload the zip to a blob storage in Azure - and note the uri!
 
 #### Creating the Managed Application definition in Azure
 
-In the [Azure portal](https://portal.azure.com), start the cloud shell and run the following Azure CLI cmdlet, but ensure you update the cmdlet to reflect your:
+In the [Azure portal](https://portal.azure.com), start the cloud shell and run the following Azure CLI cmdlet, but ensure you update the cmdlet to reflect the correct values for the following parameters:
 
 * --authorizations matches the AAD object Id + Role Definition Id in your environment - which are ids separated by ':'
 * --package-file-uri points to your storage endpoint
