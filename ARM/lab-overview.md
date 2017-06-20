@@ -26,7 +26,7 @@ You will work on some sample templates that deploys various workloads, spanning 
 
 In this lab, you will explore nested templates, how they are used in real-world scenarios to handle the most complex environments, and to build out an entire infrastructure together with your apps, all based on ARM templates
 
-* [**LAB 5 - Azure Managed Appliactions**](./lab-5.md) (Coming soon)
+* [**LAB 5 - Azure Managed Appliactions**](./lab-5.md)
 
 Learn how to build and publish an Azure Managed Applications to the Service Catalog, include management services for automated actions and healing, and manage the life-cycle of the Managed Applications using Resource Manager templates.
 
