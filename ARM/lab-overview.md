@@ -28,7 +28,7 @@ In this lab, you will explore nested templates, how they are used in real-world 
 
 * [**LAB 5 - Azure Managed Appliactions**](./lab-5.md)
 
-Learn how to build and publish an Azure Managed Applications to the Service Catalog, include management services for automated actions and healing, and manage the life-cycle of the Managed Applications using Resource Manager templates.
+Learn how to build and publish an Azure Managed Applications to your organization's Service Catalog.
 
 * [**LAB 6 - Troubleshooting**](./lab-6.md) (Coming soon)
 
