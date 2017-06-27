@@ -216,20 +216,6 @@ Add the following parameters to the template:
                 "description": "Specify the region for your Automation account"
             }
         },
-        "_artifactsLocation": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/lab4/",
-            "metadata": {
-                "description": "The base URI where artifacts required by this template are located"
-            }
-        },
-        "_artifactsLocationSasToken": {
-            "type": "securestring",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated"
-            }
-        },
         "azureAdmin": {
             "type": "string",
             "metadata": {
@@ -306,24 +292,24 @@ Add the following parameters to the template:
         }
     },
 
-Notice the *_artifactsLocation* parameter. This has a default value which points to the URL containing the nested templates.
-To be more specific towards each template needed, we'll add the following variables to the main template.
+After adding the parameters, we also need a few variables that will construct the Uri to our nested templates.
 
 ##### Adding variables
 
     "variables": {
         "nestedTemplates": {
-            "omsRecoveryServices": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsRecoveryServices.json', parameters('_artifactsLocationSasToken'))]",
-            "omsAutomation": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsAutomation.json', parameters('_artifactsLocationSasToken'))]",
-            "omsWorkspace": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsWorkspace.json', parameters('_artifactsLocationSasToken'))]",
-            "managedVMs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/managedVms.json', parameters('_artifactsLocationSasToken'))]",
-            "asrRunbooks": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/asrRunbooks.json', parameters('_artifactsLocationSasToken'))]",
-            "dscConfigs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/dscConfigs.json', parameters('_artifactsLocationSasToken'))]",
-            "mgmtDashboards": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/mgmtDashboards.json', parameters('_artifactsLocationSasToken'))]"
+            "omsRecoveryServices": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsRecoveryServices.json')]",
+            "omsAutomation": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsAutomation.json')]",
+            "omsWorkspace": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsWorkspace.json')]",
+            "managedVMs": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/managedVms.json')]",
+            "asrRunbooks": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/asrRunbooks.json')]",
+            "dscConfigs": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/dscConfigs.json')]",
+            "mgmtDashboards": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/mgmtDashboards.json')]"
         }
     },
 
-This makes the template more dynamic. In case you are switching location (GitHub repo, or using a storage account), you simply change the value for the *_artifactsLocation* parameter. We're also using *_artifactsLocationSasToken* as a placeholder if ever a SAS token will be used.
+Notice the *uri()* function. This will create an absolute URI by combining the baseUri and the relative uri ('nestedtemplates/templateName.json). 
+This makes the template more dynamic. In case you are switching location (GitHub repo, or using a storage account), the uri(deployment().properties.templateLink.uri will return the base path dynamically regardless of location, and then point to the nested templates/artifacts.
 
 ##### Adding resources
 ###### Azure Log Analytics
