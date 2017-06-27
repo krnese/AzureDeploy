@@ -1,5 +1,5 @@
 # Hands-on labs
->Last updated: 6/12/2017
+>Last updated: 6/26/2017
 >
 >Author: krnese
 
