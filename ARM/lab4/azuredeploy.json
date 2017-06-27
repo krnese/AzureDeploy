@@ -170,7 +170,7 @@
     "variables": {
         "nestedTemplates": {
             "omsRecoveryServices": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsRecoveryServices.json')]",
-            "omsAutomation": "[uri(deployment().properties.tempalteLink.uri, 'nestedtemplates/omsAutomation.json')]",
+            "omsAutomation": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsAutomation.json')]",
             "omsWorkspace": "[uri(deployment().properties.templateLink.uri, '/nestedtemplates/omsWorkspace.json')]",
             "managedVMs": "[uri(deployment().properties.templateLink.uri, '/nestedtemplates/managedVms.json')]",
             "asrRunbooks": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/asrRunbooks.json')]",
