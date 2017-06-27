@@ -1,4 +1,4 @@
-# Lab 8 - Azure Managed Application
+# Lab 5 - Azure Managed Application
 
 >Last updated: 6/20/2017
 
@@ -18,7 +18,7 @@ To complete these labs, you need to ensure you have access to the following tool
 * Visual Studio or Visual Studio Code with the Azure SDK/ARM extension installed
 * Azure PowerShell module
 
-### Lab 8 - Azure Managed Application
+### Lab 5 - Azure Managed Application
 
 ### Objectives
 
