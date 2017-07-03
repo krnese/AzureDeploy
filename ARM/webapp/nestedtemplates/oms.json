@@ -35,24 +35,8 @@
                     "marketplaceName": "Updates"
                 },
                 {
-                    "name": "[concat('AzureActivity', '(', parameters('omsWorkspaceName'), ')')]",
-                    "marketplaceName": "AzureActivity"
-                },
-                {
                     "name": "[concat('AzureAutomation', '(', parameters('omsWorkspaceName'), ')')]",
                     "marketplaceName": "AzureAutomation"
-                },
-                {
-                    "name": "[concat('ADAssessment', '(', parameters('omsWorkspaceName'), ')')]",
-                    "marketplaceName": "ADAssessment"
-                },
-                {
-                    "name": "[concat('SQLAssessment', '(', parameters('omsWorkspaceName'), ')')]",
-                    "marketplaceName": "SQLAssessment"
-                },
-                {
-                    "name": "[concat('AzureSQLAnalytics', '(', parameters('omsWorkspaceName'), ')')]",
-                    "marketplaceName": "AzureSQLAnalytics"
                 },
                 {
                     "name": "[concat('AlertManagement', '(', parameters('omsWorkspaceName'), ')')]",
