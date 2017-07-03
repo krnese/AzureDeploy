@@ -226,7 +226,7 @@
                     "name": "PowerShellDSC",
                     "location": "[parameters('location')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), 'wVm')]"
+                        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), 'wVm'))]"
                     ],
                     "properties": {
                         "autoUpgradeMinorVersion": true,
@@ -244,6 +244,9 @@
                     "apiVersion": "2017-03-30",
                     "name": "OMS",
                     "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), 'wVm'))]"
+                    ],                    
                     "properties": {
                         "autoUpgradeMinorVersion": true,
                         "typeHandlerVersion": "1.0",
