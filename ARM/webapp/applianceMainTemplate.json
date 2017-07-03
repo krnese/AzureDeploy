@@ -1,0 +1,142 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Specify the location for the Azure resources"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D1",
+            "metadata": {
+                "description": "Select the VM Size"
+            }
+        },
+        "vmNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Assign a prefix for the VM name"
+            }
+        },
+        "userName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the user name for the virtual machine guest OS"
+            }
+        },
+        "pwd": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Specify the password for the user account for the virtual machine"
+            }
+        }
+    },
+    "variables": {
+        "artifacts": {
+            "logAnalytics": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/oms.json')]",
+            "compute": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/managedVm.json')]",
+            "scripts": "[uri(deployment().properties.templateLink.uri, 'scripts/ManagedWebApplication.ps1.zip')]"
+        },
+        "logAnalyticsLocationMap": {
+            "eastasia": "southeastasia",
+            "southeastasia": "southeastasia",
+            "centralus": "westcentralus",
+            "eastus": "eastus",
+            "eastus2": "eastus",
+            "westus": "westcentralus",
+            "northcentralus": "westcentralus",
+            "southcentralus": "westcentralus",
+            "northeurope": "westeurope",
+            "westeurope": "westeurope",
+            "japanwest": "southeastasia",
+            "japaneast": "southeastasia",
+            "brazilsouth": "eastus",
+            "australiaeast": "australiasoutheast",
+            "australiasoutheast": "australiasoutheast",
+            "southindia": "southeastasia",
+            "centralindia": "southeastasia",
+            "westindia": "southeastasia",
+            "canadacentral": "eastus",
+            "canadaeast": "eastus",
+            "uksouth": "westeurope",
+            "ukwest": "westeurope",
+            "westcentralus": "westcentralus",
+            "westus2": "westcentralus",
+            "koreacentral": "southeastasia",
+            "koreasouth": "southeastasia",
+            "eastus2euap": "eastus"
+        },
+        "logAnalyticsLocation": "[variables('logAnalyticsLocationMap')[parameters('location')]]",
+        "logAnalyticsWorkspaceName": "[concat(resourceGroup().name, '-', uniqueString('oms'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "name": "logAnalytics",
+            "properties": {
+                "mode":"Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('artifacts').logAnalytics]"
+                },
+                "parameters": {
+                    "omsWorkspaceName": {
+                        "value": "[variables('logAnalyticsWorkspaceName')]"
+                    },
+                    "omsWorkspaceRegion": {
+                        "value": "[variables('logAnalyticsLocation')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "name": "compute",
+            "dependsOn": [
+                "logAnalytics"
+            ],
+            "properties": {
+                "mode":"Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('artifacts').compute]"
+                },
+                "parameters": {
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "vmSize": {
+                        "value": "[parameters('vmSize')]"
+                    },
+                    "vmNamePrefix": {
+                        "value": "[parameters('vmNamePrefix')]"
+                    },
+                    "userName": {
+                        "value": "[parameters('userName')]"
+                    },
+                    "pwd": {
+                        "value": "[parameters('pwd')]"
+                    },
+                    "dscScript": {
+                        "value": "[variables('artifacts').scripts]"
+                    },
+                    "logAnalyticsWorkspaceName": {
+                        "value": "[variables('logAnalyticsWorkspaceName')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "applicationEndpoint": {
+            "type": "string",
+            "value": "[reference('compute').outputs.vmEndpoint.value]"
+        }
+    }
+}

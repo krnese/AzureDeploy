@@ -1,0 +1,270 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmNamePrefix": {
+            "type": "string",
+            "defaultValue": "VM",
+            "metadata": {
+                "description": "Assing a prefix for the VM you will create"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Select the Azure region for the resources"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D1_v2",
+            "metadata": {
+                "description": "Selec the vm size"
+            }
+        },
+        "userName": {
+            "type": "string",
+            "defaultValue": "azureadmin",
+            "metadata": {
+                "description": "Specify the OS username"
+            }
+        },
+        "pwd": {
+            "type": "securestring",
+            "metadata": {
+                "description": "If Windows, specify the password for the OS username"
+            }
+        },
+        "dscScript": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the path to the DSC artifacts"
+            }
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure Log Analytics workspace"
+            }
+        }
+    },
+    "variables": {
+        "storageAccountName": "[toLower(concat('st', uniquestring(resourceGroup().name)))]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', 'vmVnet')]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/', 'subnet1')]",
+        "managementTypeWindows": {
+            "omsType": "MicrosoftMonitoringAgent",
+            "scriptType": "DSC"
+        },
+        "osTypeWindows": {
+            "imageOffer": "WindowsServer",
+            "imageSku": "2016-Datacenter",
+            "imagePublisher": "MicrosoftWindowsServer"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2017-06-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage"
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2017-03-01",
+            "name": "vmVnet",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups/', 'NSG')]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "subnet1",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups/', 'NSG')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2017-03-01",
+            "name": "NSG",
+            "location": "[parameters('location')]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "RDP",
+                        "properties": {
+                            "access": "Allow",
+                            "description": "Inbound RDP rule",
+                            "direction": "Inbound",
+                            "destinationAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": 3389,
+                            "sourcePortRange": "*",
+                            "priority": 500,
+                            "sourceAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "HTTP",
+                        "properties": {
+                            "access": "Allow",
+                            "description": "Inbound HTTP rule",
+                            "direction": "Inbound",
+                            "destinationAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": 80,
+                            "sourcePortRange": "*",
+                            "priority": 550,
+                            "sourceAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('vmNamePrefix'), 'IP')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPallocationmethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(concat(parameters('vmNamePrefix')))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(parameters('vmNamePrefix'), 'nic')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('vmNamePrefix'), 'IP')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/', 'vmVnet')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('vmNamePrefix'), 'IP'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2017-03-30",
+            "name": "[concat(parameters('vmNamePrefix'), 'wVM')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/StorageAccounts/', variables('storageAccountName'))]",
+                "[concat('Microsoft.Network/networkinterfaces/', parameters('vmNamePrefix'), 'nic')]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmsize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computername": "[concat(parameters('vmNamePrefix'), 'wVM')]",
+                    "adminusername": "[parameters('username')]",
+                    "adminpassword": "[parameters('pwd')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('osTypeWindows').imagePublisher]",
+                        "offer": "[variables('osTypeWindows').imageOffer]",
+                        "version": "latest",
+                        "sku": "[variables('osTypeWindows').imageSku]"
+                    },
+                    "osdisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/', 'vhds', '/', 'osdisk','.vhd')]"
+                        },
+                        "caching": "readwrite",
+                        "createoption": "FromImage"
+                    }
+                },
+                "networkprofile": {
+                    "networkinterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces', concat(parameters('vmNamePrefix'),'nic'))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "apiVersion": "2017-03-30",
+                    "name": "PowerShellDSC",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), 'wVm')]"
+                    ],
+                    "properties": {
+                        "autoUpgradeMinorVersion": true,
+                        "typeHandlerVersion": "2.20",
+                        "publisher": "Microsoft.Powershell",
+                        "type": "[variables('managementTypeWindows').scriptType]",
+                        "settings": {
+                            "configurationFunction": "ManagedWebApplication.ps1\\ManagedWebApplication",
+                            "modulesUrl": "[parameters('dscScript')]"
+                        }
+                    }
+                },
+                {
+                    "type": "extensions",
+                    "apiVersion": "2017-03-30",
+                    "name": "OMS",
+                    "location": "[parameters('location')]",
+                    "properties": {
+                        "autoUpgradeMinorVersion": true,
+                        "typeHandlerVersion": "1.0",
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "settings": {
+                            "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName')), '2015-11-01-preview').customerId]",
+                            "azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), 'wVm'))]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName')), '2015-11-01-preview').primarySharedKey]"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "vmEndpoint": {
+            "type": "string",
+            "value": "[reference(concat(parameters('vmNamePrefix'), 'IP')).dnsSettings.fqdn]"
+        }
+    }
+}
