@@ -13,6 +13,16 @@
             "metadata": {
                 "description": "Specify the region for your Workspace"
             }
+        },
+        "enablePremiumManagement": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Select whether premium management should be enabled or not"
+            }
         }
     },
     "variables": {
@@ -491,6 +501,7 @@
             ]
         },
         {
+            "condition": "[equals(parameters('enablePremiumManagement'), 'Yes')]",
             "apiVersion": "2015-11-01-preview",
             "type": "Microsoft.OperationsManagement/solutions",
             "name": "[concat(variables('batch1').solutions[copyIndex()].Name)]",

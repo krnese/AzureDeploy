@@ -33,6 +33,16 @@
             "metadata": {
                 "description": "Specify the password for the user account for the virtual machine"
             }
+        },
+        "enablePremiumManagement": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Select whether premium management should be enabled or not"
+            }
         }
     },
     "variables": {
@@ -90,6 +100,9 @@
                     },
                     "omsWorkspaceRegion": {
                         "value": "[variables('logAnalyticsLocation')]"
+                    },
+                    "enablePremiumManagement": {
+                        "value": "[parameters('enablePremiumManagement')]"
                     }
                 }
             }
