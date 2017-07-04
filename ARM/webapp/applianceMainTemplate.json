@@ -18,6 +18,8 @@
         },
         "vmNamePrefix": {
             "type": "string",
+            "maxLength": 5,
+            "minLength": 3,
             "metadata": {
                 "description": "Assign a prefix for the VM name"
             }
@@ -43,7 +45,19 @@
             "metadata": {
                 "description": "Select whether premium management should be enabled or not"
             }
-        }
+        },
+        "dnsName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the DNS name for the managed web app"
+            }
+        },
+        "publicIPAddressName": {
+            "type": "string",
+            "metadata": {
+                "description": "Assign a name for the public IP address"
+            }
+        }        
     },
     "variables": {
         "artifacts": {
@@ -141,6 +155,12 @@
                     },
                     "logAnalyticsWorkspaceName": {
                         "value": "[variables('logAnalyticsWorkspaceName')]"
+                    },
+                    "publicIPAddressName": {
+                        "value": "[parameters('publicIPAddressName')]"
+                    },
+                    "dnsName": {
+                        "value": "[parameters('dnsName')]"
                     }
                 }
             }

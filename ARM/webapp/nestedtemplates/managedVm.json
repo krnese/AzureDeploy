@@ -4,9 +4,10 @@
     "parameters": {
         "vmNamePrefix": {
             "type": "string",
-            "defaultValue": "VM",
+            "maxLength": 5,
+            "minLength": 3,
             "metadata": {
-                "description": "Assing a prefix for the VM you will create"
+                "description": "Assign a prefix for the VM name"
             }
         },
         "location": {
@@ -46,6 +47,18 @@
             "type": "string",
             "metadata": {
                 "description": "The name of the Azure Log Analytics workspace"
+            }
+        },
+        "dnsName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the DNS name for the managed web app"
+            }
+        },
+        "publicIPAddressName": {
+            "type": "string",
+            "metadata": {
+                "description": "Assign a name for the public IP address"
             }
         }
     },
@@ -142,12 +155,12 @@
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2017-04-01",
-            "name": "[concat(parameters('vmNamePrefix'), 'IP')]",
+            "name": "[concat(parameters('publicIPAddressName'), 'IP')]",
             "location": "[parameters('location')]",
             "properties": {
                 "publicIPallocationmethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[toLower(concat(parameters('vmNamePrefix')))]"
+                    "domainNameLabel": "[toLower(parameters('dnsName'))]"
                 }
             }
         },
@@ -157,7 +170,7 @@
             "name": "[concat(parameters('vmNamePrefix'), 'nic')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/publicIPAddresses/', parameters('vmNamePrefix'), 'IP')]",
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('publicIPAddressName'), 'IP')]",
                 "[resourceId('Microsoft.Network/virtualNetworks/', 'vmVnet')]"
             ],
             "properties": {
@@ -167,7 +180,7 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('vmNamePrefix'), 'IP'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('publicIPAddressName'), 'IP'))]"
                             },
                             "subnet": {
                                 "id": "[variables('subnetRef')]"
@@ -180,7 +193,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2017-03-30",
-            "name": "[concat(parameters('vmNamePrefix'), 'wVM')]",
+            "name": "[concat(parameters('vmNamePrefix'), '-appliance')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Storage/StorageAccounts/', variables('storageAccountName'))]",
@@ -191,7 +204,7 @@
                     "vmsize": "[parameters('vmSize')]"
                 },
                 "osProfile": {
-                    "computername": "[concat(parameters('vmNamePrefix'), 'wVM')]",
+                    "computername": "[concat(parameters('vmNamePrefix'), '-appliance')]",
                     "adminusername": "[parameters('username')]",
                     "adminpassword": "[parameters('pwd')]"
                 },
@@ -226,7 +239,7 @@
                     "name": "PowerShellDSC",
                     "location": "[parameters('location')]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), 'wVm'))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), '-appliance'))]"
                     ],
                     "properties": {
                         "autoUpgradeMinorVersion": true,
@@ -245,7 +258,7 @@
                     "name": "OMS",
                     "location": "[parameters('location')]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), 'wVm'))]"
+                        "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), '-appliance'))]"
                     ],                    
                     "properties": {
                         "autoUpgradeMinorVersion": true,
@@ -254,7 +267,7 @@
                         "type": "MicrosoftMonitoringAgent",
                         "settings": {
                             "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName')), '2015-11-01-preview').customerId]",
-                            "azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), 'wVm'))]"
+                            "azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', concat(parameters('vmNamePrefix'), '-appliance'))]"
                         },
                         "protectedSettings": {
                             "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName')), '2015-11-01-preview').primarySharedKey]"
@@ -267,7 +280,7 @@
     "outputs": {
         "vmEndpoint": {
             "type": "string",
-            "value": "[reference(concat(parameters('vmNamePrefix'), 'IP')).dnsSettings.fqdn]"
+            "value": "[reference(concat(parameters('publicIPAddressName'), 'IP')).dnsSettings.fqdn]"
         }
     }
 }
