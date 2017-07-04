@@ -45,10 +45,6 @@
                     "marketplaceName": "Updates"
                 },
                 {
-                    "name": "[concat('AzureAutomation', '(', parameters('omsWorkspaceName'), ')')]",
-                    "marketplaceName": "AzureAutomation"
-                },
-                {
                     "name": "[concat('AlertManagement', '(', parameters('omsWorkspaceName'), ')')]",
                     "marketplaceName": "AlertManagement"
                 },

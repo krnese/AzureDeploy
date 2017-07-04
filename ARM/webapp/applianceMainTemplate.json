@@ -18,8 +18,6 @@
         },
         "vmNamePrefix": {
             "type": "string",
-            "maxLength": 5,
-            "minLength": 3,
             "metadata": {
                 "description": "Assign a prefix for the VM name"
             }
