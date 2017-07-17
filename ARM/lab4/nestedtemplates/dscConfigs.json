@@ -153,6 +153,7 @@
                     "name": "[variables('assets').dsc.omsConfig.name]",
                     "type": "Configurations",
                     "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
                     "tags": {},
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
@@ -190,6 +191,7 @@
                     "name": "[variables('assets').dsc.omsAsrComplete.name]",
                     "type": "Configurations",
                     "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
                     "tags": {},
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
@@ -227,6 +229,7 @@
                     "name": "[variables('assets').dsc.omsService.name]",
                     "type": "Configurations",
                     "apiVersion": "2015-10-31",
+                    "location": "[parameters('omsAutomationRegion')]",
                     "tags": {},
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
