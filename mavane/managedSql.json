@@ -1,0 +1,293 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "type": "string",
+            "defaultValue": "iaassql",
+            "metadata": {
+                "description": "Assing a suffix for the VM you will create"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D1",
+            "allowedValues": [
+                "Standard_A1",
+                "Standard_A2",
+                "Standard_A3",
+                "Standard_A4",
+                "Standard_A5",
+                "Standard_A6",
+                "Standard_D1",
+                "Standard_D2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2"
+            ],
+            "metadata": {
+                "description": "Selec the vm size"
+            }
+        },
+        "vNetName": {
+            "type": "string",
+            "defaultValue": "cloudVnet",
+            "metadata": {
+                "description": "Select the virtual network to connect the VMs"
+            }
+        },
+        "vnetSubnetName": {
+            "type": "string",
+            "defaultValue": "subnet1",
+            "metadata": {
+                "description": "Specify the subnet for the corresponding vNet and vNetResourceGroup you selected"
+            }
+        },
+        "username": {
+            "type": "string",
+            "defaultValue": "azureadmin",
+            "metadata": {
+                "description": "Specify the OS username"
+            }
+        },
+        "pwd": {
+            "type": "securestring",
+            "metadata": {
+                "description": "If Windows, specify the password for the OS username"
+            }
+        },
+        "registrationUrl": {
+            "type": "string"
+        },
+        "registrationKey": {
+            "type": "string"
+        },
+        "azureLogAnalyticsId": {
+            "type": "string"
+        },
+        "azureLogAnalyticsKey": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "storageAccountName": "[concat(uniqueString(resourceGroup().id),'sql')]",
+        "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', parameters('vNetName'))]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('vNetSubnetName'))]",
+        "managementTypeWindows": {
+            "type": "MicrosoftMonitoringAgent"
+        },
+        "osTypeWindows": {
+            "imageOffer": "SQL2016SP1-WS2016",
+            "imageSku": "Express",
+            "imagePublisher": "MicrosoftSQLServer"
+        },
+        "modulesUrl": "https://github.com/Azure/azure-quickstart-templates/raw/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip",
+        "configurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
+        "configName": "OMSSERVICE.localhost",
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2017-06-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage"
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-04-01",
+            "name": "sql-pip",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPallocationmethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(concat(parameters('vmName')))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-04-01",
+            "name": "sql-nic",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses/', 'sql-pip')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'sql-pip')]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2017-03-30",
+            "name": "[parameters('vmName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/StorageAccounts/', variables('storageAccountName'))]",
+                "[resourceId('Microsoft.Network/networkinterfaces/', 'sql-nic')]"
+            ],
+            "properties": {
+                "hardwareprofile": {
+                    "vmsize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computername": "[parameters('vmName')]",
+                    "adminusername": "[parameters('username')]",
+                    "adminpassword": "[parameters('pwd')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('osTypeWindows').imagePublisher]",
+                        "offer": "[variables('osTypeWindows').imageOffer]",
+                        "version": "latest",
+                        "sku": "[variables('osTypeWindows').imageSku]"
+                    },
+                    "osdisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2015-06-15').primaryEndpoints.blob, 'vmcontainer', '/', 'sql','.vhd')]"
+                        },
+                        "caching": "readwrite",
+                        "createoption": "FromImage"
+                    }
+                },
+                "networkprofile": {
+                    "networkinterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces/', 'sql-nic')]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-03-30",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'),'/OMS')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                "type": "[variables('managementTypeWindows').type]",
+                "typeHandlerVersion": "1.0",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "workspaceId": "[parameters('azureLogAnalyticsId')]"
+                },
+                "protectedSettings": {
+                    "workspaceKey": "[parameters('azureLogAnalyticsKey')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'),'/DependencyAgent')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions/', parameters('vmName'), 'OMS')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+                "type": "DependencyAgentWindows",
+                "typeHandlerVersion": "9.1",
+                "autoUpgradeMinorVersion": true
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'),'/Microsoft.Powershell.DSC')]",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions/', parameters('vmName'), 'OMS')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.19",
+                "autoUpgradeMinorVersion": true,
+                "protectedSettings": {
+                    "Items": {
+                        "registrationKeyPrivate": "[parameters('registrationKey')]"
+                    }
+                },
+                "settings": {
+                    "ModulesUrl": "[variables('modulesUrl')]",
+                    "SasToken": "",
+                    "ConfigurationFunction": "[variables('configurationFunction')]",
+                    "Properties": [
+                        {
+                            "Name": "RegistrationKey",
+                            "Value": {
+                                "UserName": "PLACEHOLDER_DONOTUSE",
+                                "Password": "PrivateSettingsRef:registrationKeyPrivate"
+                            },
+                            "TypeName": "System.Management.Automation.PSCredential"
+                        },
+                        {
+                            "Name": "RegistrationUrl",
+                            "Value": "[parameters('registrationUrl')]",
+                            "TypeName": "System.String"
+                        },
+                        {
+                            "Name": "NodeConfigurationName",
+                            "Value": "[variables('configName')]",
+                            "TypeName": "System.String"
+                        },
+                        {
+                            "Name": "ConfigurationMode",
+                            "Value": "ApplyAndMonitor",
+                            "TypeName": "System.String"
+                        },
+                        {
+                            "Name": "ConfigurationModeFrequencyMins",
+                            "Value": 15,
+                            "TypeName": "System.Int32"
+                        },
+                        {
+                            "Name": "RefreshFrequencyMins",
+                            "Value": 30,
+                            "TypeName": "System.Int32"
+                        },
+                        {
+                            "Name": "RebootNodeIfNeeded",
+                            "Value": true,
+                            "TypeName": "System.Boolean"
+                        },
+                        {
+                            "Name": "ActionAfterReboot",
+                            "Value": "ContinueConfiguration",
+                            "TypeName": "System.String"
+                        },
+                        {
+                            "Name": "AllowModuleOverwrite",
+                            "Value": true,
+                            "TypeName": "System.Boolean"
+                        }
+                    ]
+                }
+            }
+        }        
+    ],
+    "outputs": {
+    }
+}
