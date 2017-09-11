@@ -14,7 +14,7 @@
             "type": "string",
             "defaultValue": "VM",
             "metadata": {
-                "description": "Assing a suffix for the VMs you will create"
+                "description": "Assing a prefix for the VMs you will create"
             }
         },
         "platform": {
@@ -230,7 +230,7 @@
                     "instanceCount": {
                         "value": "[parameters('instanceCount')]"                        
                     },
-                    "vmNameSuffix": {
+                    "vmNamePrefix": {
                         "value": "[parameters('vmNamePrefix')]"
                     },
                     "vmRgName": {

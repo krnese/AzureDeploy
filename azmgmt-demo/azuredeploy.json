@@ -20,7 +20,7 @@
             "type": "string",
             "defaultValue": "az1demo",
             "metadata": {
-                "description": "Assing a suffix for the VMs you will create"
+                "description": "Assing a prefix for the VMs you will create"
             }
         },
         "platform": {
