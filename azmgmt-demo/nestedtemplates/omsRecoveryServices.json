@@ -11,26 +11,6 @@
     },
     "omsRecoveryVaultRegion": {
       "type": "string",
-      "defaultValue": "West Europe",
-      "allowedValues": [
-        "West US",
-        "East US",
-        "North Europe",
-        "West Europe",
-        "Brazil South",
-        "East Asia",
-        "Southeast Asia",
-        "North Central US",
-        "South Central US",
-        "Japan East",
-        "Japan West",
-        "Australia East",
-        "Australia Southeast",
-        "Central US",
-        "East US 2",
-        "Central India",
-        "South India"
-      ],
       "metadata": {
         "description": "Specify the region for your Recovery Vault"
       }

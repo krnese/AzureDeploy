@@ -241,7 +241,7 @@
                     "instanceCount": {
                         "value": "[parameters('instanceCount')]"
                     },
-                    "vmNameSuffix": {
+                    "vmNamePrefix": {
                         "value": "[parameters('vmNamePrefix')]"
                     },
                     "platform": {
@@ -250,7 +250,7 @@
                     "userName": {
                         "value": "[parameters('userName')]"
                     },
-                    "pwd": {
+                    "pwdOrSsh": {
                         "value": "[parameters('pwdOrSsh')]"
                     },
                     "omsRecoveryVaultName": {

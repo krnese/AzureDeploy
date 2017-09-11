@@ -196,7 +196,7 @@
                 "count": "[parameters('instanceCount')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), parameters('platform'), copyIndex())]",
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), parameters('platform'), copyIndex())]"
             ],
             "properties": {
                 "publisher": "Microsoft.EnterpriseCloud.Monitoring",
