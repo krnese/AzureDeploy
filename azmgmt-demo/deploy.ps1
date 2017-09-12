@@ -1,19 +1,19 @@
 # Create 2 resource groups, for mgmt and workload
-$MgmtRgName = 'krnesemgmt' # Specify a name for the resource group containing the management services
-$WorkloadRgName = 'krnesewl' # Specify a name for the resource group containing the virtual machine(s)
+$MgmtRgName = 'krnesemgmt47' # Specify a name for the resource group containing the management services
+$WorkloadRgName = 'krnesewl47' # Specify a name for the resource group containing the virtual machine(s)
 
 $MgmtRg = New-AzureRmResourceGroup -Name $MgmtRgName -Location westeurope -Verbose
 $WorkloadRg = New-AzureRmResourceGroup -Name $WorkloadRgName -Location westeurope -Verbose
 
-# Define parameters for template deployment - remember to change the values!
+# Define parameters for template deployment - remember to change the values!f
 
-$azMgmtPrefix = 'kn100'
+$azMgmtPrefix = 'olv47'
 $Platform = 'Linux' # Select either 'Windows' or 'Linux'
 $userName = 'knadmin' # username for the VM
-$vmNamePrefix = 'ol100' # Specify the suffix for the virtual machine(s) that will be created
+$vmNamePrefix = 'ol47' # Specify the suffix for the virtual machine(s) that will be created
 $instanceCount = '2' # You can create 1-10 VMs
-$deploymentName = 'asd' # Specify the name of the main ARM template deployment job
-$templateuri = 'https://github.com/krnese/AzureDeploy/blob/master/azmgmt-demo/azuredeploy.json'
+$deploymentName = 'tss' # Specify the name of the main ARM template deployment job
+$templateuri = 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/azmgmt-demo/azuredeploy.json'
 
 # Deploy template
 
