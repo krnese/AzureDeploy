@@ -246,7 +246,7 @@
                 "count": "[parameters('instanceCount')]"
             },            
             "dependsOn": [
-                "[concat(parameters('vmNamePrefix'), parameters('platform'), copyIndex(), '/OMS')]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), parameters('platform'), copyIndex(), '/OMS')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
