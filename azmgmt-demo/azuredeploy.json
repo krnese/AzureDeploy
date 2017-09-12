@@ -62,7 +62,8 @@
             "managedVMs": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/managedVms.json')]",
             "asrRunbooks": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/asrRunbooks.json')]",
             "dscConfigs": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/dscConfigs.json')]",
-            "mgmtDashboards": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/mgmtDashboards.json')]"
+            "mgmtDashboards": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/mgmtDashboards.json')]",
+            "winDsc": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/windowsDsc.json')]"
         },
         "resourceNames": {
             "omsWorkspace": "[concat(parameters('azMgmtPrefix'), uniquestring(resourceGroup().name, '-oms'))]",
@@ -264,6 +265,33 @@
                     },
                     "omsWorkspaceName": {
                         "value": "[variables('resourceNames').omsWorkspace]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('platform'), 'WinSrv')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "windowsDsc",
+            "dependsOn": [
+                "deployVms"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('nestedTemplates').winDsc]"
+                },
+                "parameters": {
+                    "vmNamePrefix": {
+                        "value": "[parameters('vmNamePrefix')]"
+                    },
+                    "platform": {
+                        "value": "[parameters('platform')]"
+                    },
+                    "automationAccountName": {
+                        "value": "[variables('resourceNames').azureAutomation]"
                     }
                 }
             }
