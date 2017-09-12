@@ -74,7 +74,7 @@
         "windowsMgmtType": "MicrosoftMonitoringAgent",
         "windowsMgmtVersion": "2.19",
         "linuxMgmtType": "OmsAgentForLinux",
-        "linuxMgmtVersion": "2.0"
+        "linuxMgmtVersion": "1.4"
     },
     "resources": [
         {
