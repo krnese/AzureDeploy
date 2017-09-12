@@ -1,0 +1,24 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "AutomationAccountName": {
+            "value": "adval000"
+        },
+        "storageAccountType": {
+            "value": "Premium_LRS"
+        },
+        "adminUsername": {
+            "value": "admin123"
+        },
+        "adminPassword": {
+            "value": "$@T0pSecret$@"
+        },
+        "VMSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "storageAccountNamePrefix": {
+            "value": "adval000"
+        }
+    }
+}

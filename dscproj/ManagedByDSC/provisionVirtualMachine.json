@@ -1,0 +1,139 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "VMName": {
+      "type": "string"
+    },
+    "VMSize": {
+      "type": "string"
+    },
+    "adminUsername": {
+      "type": "string"
+    },
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "storageAccountNamePrefix": {
+      "type": "string"
+    },
+    "DataDisk": {
+      "type": "string"
+    },
+    "NicName": {
+      "type": "string"
+    },
+    "AutomationAccountName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "extAutomationMetaMOFURL": "https://eus2oaasibizamarketprod1.blob.core.windows.net/automationdscpreview/RegistrationMetaConfigV2.zip",
+    "extConfigurationFunction": "RegistrationMetaConfigV2.ps1\\RegistrationMetaConfigV2",
+    "extConfigurationName": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('VMName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('VMSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('VMName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2016-Datacenter",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/vhds/',parameters('VMName'),'-osdisk.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "vhd": {
+                "uri": "[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/vhds/', variables('DataDisk'),'-1.vhd')]"
+              },
+              "name": "[concat(parameters('VMName'),'-data-disk1')]",
+              "caching": "None",
+              "createOption": "empty",
+              "diskSizeGB": 1000,
+              "lun": 0
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('NicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true",
+            "storageUri": "[concat('http://',parameters('storageAccountNamePrefix'),'2.blob.core.windows.net')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('VMName'),'/Microsoft.Powershell.DSC')]",
+      "apiVersion": "2015-06-15",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('VMName'))]",
+        "[concat('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+      ],
+      "properties": {
+          "publisher": "Microsoft.Powershell",
+          "type": "DSC",
+          "typeHandlerVersion": "2.19",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+              "ModulesUrl": "[variables('extAutomationMetaMOFURL')]",
+              "SasToken": "",
+              "ConfigurationFunction": "[variables('extConfigurationFunction')]",
+              "Properties": [
+                  {
+                    "Name": "RegistrationKey",
+                    "Value": {
+                        "UserName": "PLACEHOLDER_DONOTUSE",
+                        "Password": "[listKeys(resourceId('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName')), '2015-01-01-preview').Keys[0].value]"
+                    },
+                    "TypeName": "System.Management.Automation.PSCredential"
+                },
+                  {
+                      "Name": "RegistrationUrl",
+                      "value" : "[reference(resourceId('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))).RegistrationUrl]",
+                      "TypeName": "System.String"
+                  },
+                  {
+                      "Name": "NodeConfigurationName",
+                      "Value": "[variables('extConfigurationName')]",
+                      "TypeName": "System.String"
+                  }
+              ]
+          }
+      }
+    }
+  ],
+  "outputs": {}
+}

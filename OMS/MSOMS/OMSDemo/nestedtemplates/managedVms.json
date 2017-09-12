@@ -263,7 +263,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/OMSDemo/nestedtemplates/managedVmsBackup.json",
+                    "uri": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/lab4/nestedtemplates/managedVmsBackup.json",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

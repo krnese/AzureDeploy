@@ -80,7 +80,7 @@
         },
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/OMS/MSOMS/OMSDemo",
+            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/lab4/",
             "metadata": {
                 "description": "The base URI where artifacts required by this template are located"
             }
@@ -169,13 +169,13 @@
     },
     "variables": {
         "nestedTemplates": {
-            "omsRecoveryServices": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsRecoveryServices.json', parameters('_artifactsLocationSasToken'))]",
-            "omsAutomation": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsAutomation.json', parameters('_artifactsLocationSasToken'))]",
-            "omsWorkspace": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/omsWorkspace.json', parameters('_artifactsLocationSasToken'))]",
-            "managedVMs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/managedVms.json', parameters('_artifactsLocationSasToken'))]",
-            "asrRunbooks": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/asrRunbooks.json', parameters('_artifactsLocationSasToken'))]",
-            "dscConfigs": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/dscConfigs.json', parameters('_artifactsLocationSasToken'))]",
-            "mgmtDashboards": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/mgmtDashboards.json', parameters('_artifactsLocationSasToken'))]"
+            "omsRecoveryServices": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsRecoveryServices.json')]",
+            "omsAutomation": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsAutomation.json')]",
+            "omsWorkspace": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsWorkspace.json')]",
+            "managedVMs": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/managedVms.json')]",
+            "asrRunbooks": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/asrRunbooks.json')]",
+            "dscConfigs": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/dscConfigs.json')]",
+            "mgmtDashboards": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/mgmtDashboards.json')]"
         }
     },
     "resources": [
@@ -183,9 +183,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "name": "omsWorkspace",
-            "dependsOn": [
-                "[concat('Microsoft.Resources/deployments/', 'omsRecoveryServices')]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -206,6 +204,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "name": "omsRecoveryServices",
+            "dependsOn": [],            
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
