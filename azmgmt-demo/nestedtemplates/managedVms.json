@@ -48,10 +48,22 @@
             }
         },
         "omsRecoveryVaultName": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Name of Recovery Vault"
+            }
         },
         "omsRecoveryVaultRegion": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Recovery Vault region"
+            }
+        },
+        "automationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Automation account name"
+            }
         }
     },
     "variables": {
@@ -74,7 +86,16 @@
         "windowsMgmtType": "MicrosoftMonitoringAgent",
         "windowsMgmtVersion": "2.19",
         "linuxMgmtType": "OmsAgentForLinux",
-        "linuxMgmtVersion": "1.4"
+        "linuxMgmtVersion": "1.4",
+        "modulesUrl": "[uri(deployment().properties.templateLink.uri, 'scripts/UpdateLCMforAAPull.zip')]",
+        "configurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
+        "configurationMode": "ApplyAndMonitor",
+        "configurationModeFrequencyMins": 15,
+        "refreshFrequencyMins": 30,
+        "rebootNodeIfNeeded": true,
+        "actionAfterReboot": "ContinueConfiguration",
+        "allowModuleOverwrite": true,
+        "configName": "OMSSERVICE.localhost"    
     },
     "resources": [
         {
@@ -233,6 +254,81 @@
                 }
             }
         },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'),'/Microsoft.Powershell.DSC')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), parameters('platform'), '0', '/extensions/', 'OMS')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.19",
+                "autoUpgradeMinorVersion": true,
+                "protectedSettings": {
+                    "Items": {
+                        "registrationKeyPrivate": "[parameters('registrationKey')]"
+                    }
+                },
+                "settings": {
+                    "ModulesUrl": "[variables('modulesUrl')]",
+                    "SasToken": "",
+                    "ConfigurationFunction": "[variables('configurationFunction')]",
+                    "Properties": [
+                        {
+                            "Name": "RegistrationKey",
+                            "Value": {
+                                "UserName": "PLACEHOLDER_DONOTUSE",
+                                "Password": "[listKeys(resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName')), '2015-01-01-preview').Keys[0].value]"
+                            },
+                            "TypeName": "System.Management.Automation.PSCredential"
+                        },
+                        {
+                            "Name": "RegistrationUrl",
+                            "Value": "[reference(resourceId('Microsoft.Automation/automationAccounts/', parameters('automationAccountName')), '2015-01-01-preview').registrationUrl]",
+                            "TypeName": "System.String"
+                        },
+                        {
+                            "Name": "NodeConfigurationName",
+                            "Value": "[parameters('nodeConfigurationName')]",
+                            "TypeName": "System.String"
+                        },
+                        {
+                            "Name": "ConfigurationMode",
+                            "Value": "[variables('configurationMode')]",
+                            "TypeName": "System.String"
+                        },
+                        {
+                            "Name": "ConfigurationModeFrequencyMins",
+                            "Value": "[variables('configurationModeFrequencyMins')]",
+                            "TypeName": "System.Int32"
+                        },
+                        {
+                            "Name": "RefreshFrequencyMins",
+                            "Value": "[variables('refreshFrequencyMins')]",
+                            "TypeName": "System.Int32"
+                        },
+                        {
+                            "Name": "RebootNodeIfNeeded",
+                            "Value": "[variables('rebootNodeIfNeeded')]",
+                            "TypeName": "System.Boolean"
+                        },
+                        {
+                            "Name": "ActionAfterReboot",
+                            "Value": "[variables('actionAfterReboot')]",
+                            "TypeName": "System.String"
+                        },
+                        {
+                            "Name": "AllowModuleOverwrite",
+                            "Value": "[variables('allowModuleOverwrite')]",
+                            "TypeName": "System.Boolean"
+                        }
+                    ]
+                }
+            }
+        },   
         {
             "apiVersion": "2017-05-10",
             "type": "Microsoft.Resources/deployments",
