@@ -190,7 +190,7 @@
                         "sku": "[if(equals(parameters('platform'), 'WinSrv'), variables('windowsSku'), variables('linuxSku'))]"
                     },
                     "osdisk": {
-                        "name": "[concat(parameters('platform'), '-osDisk')]",
+                        "name": "[concat(parameters('platform'), '-osDisk', copyIndex())]",
                         "createOption": "FromImage",
                         "managedDisk": {
                             "storageAccountType": "Standard_LRS"
