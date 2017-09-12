@@ -56,6 +56,9 @@
     },
     "variables": {
         "availabilitySetName": "vmAvSet",
+        "availabilitySetId": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        },        
         "vNetName": "managedVnet",
         "vNetAddressPrefix": "192.168.0.0/16",
         "subnetName": "subnet01",
@@ -155,7 +158,7 @@
             }
         },
         {
-            "apiVersion": "2016-03-30",
+            "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), copyIndex())]",
             "location": "[resourceGroup().location]",
@@ -204,7 +207,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "apiVersion": "2016-03-30",            
+            "apiVersion": "2017-03-30",            
             "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), copyIndex(), '/OMS')]",
             "location": "[resourceGroup().location]",
             "copy": {
