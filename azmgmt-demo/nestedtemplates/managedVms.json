@@ -58,7 +58,7 @@
         "availabilitySetName": "vmAvSet",
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
-        },        
+        },
         "vNetName": "managedVnet",
         "vNetAddressPrefix": "192.168.0.0/16",
         "subnetName": "subnet01",
@@ -74,9 +74,9 @@
         "windowsMgmtType": "MicrosoftMonitoringAgent",
         "windowsMgmtVersion": "2.19",
         "linuxMgmtType": "OmsAgentForLinux",
-        "linuxMgmtVersion": "2.0"        
+        "linuxMgmtVersion": "2.0"
     },
-    "resources": [      
+    "resources": [
         {
             "apiVersion": "2017-04-01",
             "type": "Microsoft.Network/publicIPAddresses",
@@ -171,7 +171,9 @@
                 "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
             ],
             "properties": {
-                "availabilitySet": "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]",
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
+                },
                 "hardwareprofile": {
                     "vmsize": "Standard_D1"
                 },
@@ -193,8 +195,8 @@
                         "managedDisk": {
                             "storageAccountType": "Standard_LRS"
                         },
-                        "caching": "ReadWrite"                        
-                        }
+                        "caching": "ReadWrite"
+                    }
                 },
                 "networkprofile": {
                     "networkinterfaces": [
@@ -207,7 +209,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "apiVersion": "2017-03-30",            
+            "apiVersion": "2017-03-30",
             "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), copyIndex(), '/OMS')]",
             "location": "[resourceGroup().location]",
             "copy": {
@@ -230,7 +232,7 @@
                     "workspaceKey": "[listKeys(resourceId(parameters('omsResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-11-01-preview').primarySharedKey]"
                 }
             }
-        },        
+        },
         {
             "apiVersion": "2017-05-10",
             "type": "Microsoft.Resources/deployments",
@@ -247,7 +249,7 @@
                 },
                 "parameters": {
                     "instanceCount": {
-                        "value": "[parameters('instanceCount')]"                        
+                        "value": "[parameters('instanceCount')]"
                     },
                     "vmNamePrefix": {
                         "value": "[parameters('vmNamePrefix')]"
@@ -266,7 +268,7 @@
                     }
                 }
             }
-        }    
+        }
     ],
     "outputs": {}
 }
