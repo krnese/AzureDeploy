@@ -290,6 +290,9 @@
                     "platform": {
                         "value": "[parameters('platform')]"
                     },
+                    "instanceCount": {
+                        "value": "[parameters('instanceCount')]"
+                    },
                     "automationAccountName": {
                         "value": "[variables('resourceNames').azureAutomation]"
                     }

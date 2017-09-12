@@ -12,6 +12,9 @@
                 "Linux"
             ]
         },
+        "instanceCount": {
+            "type": "int"
+        },
         "automationAccountName": {
             "type": "string"
         }
@@ -34,6 +37,10 @@
             "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), copyIndex(), '/DSC')]",
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), 'DSC')]",
+                "count": "[parameters('instanceCount')]"
+            },    
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), parameters('platform'), '0', '/extensions/', 'OMS')]"
             ],
