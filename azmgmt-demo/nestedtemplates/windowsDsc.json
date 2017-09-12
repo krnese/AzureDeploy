@@ -42,7 +42,6 @@
                 "count": "[parameters('instanceCount')]"
             },    
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), parameters('platform'), '0', '/extensions/', 'OMS')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
