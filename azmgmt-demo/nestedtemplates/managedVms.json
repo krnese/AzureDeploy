@@ -75,7 +75,7 @@
         "linuxSku": "12.04.5-LTS",
         "linuxPublisher": "Canonical",
         "windowsMgmtType": "MicrosoftMonitoringAgent",
-        "windowsMgmtVersion": "2.19",
+        "windowsMgmtVersion": "1.0",
         "linuxMgmtType": "OmsAgentForLinux",
         "linuxMgmtVersion": "1.4"   
     },
