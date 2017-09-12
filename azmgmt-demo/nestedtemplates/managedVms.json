@@ -216,7 +216,7 @@
             "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), copyIndex(), '/OMS')]",
             "location": "[resourceGroup().location]",
             "copy": {
-                "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), 'OMS')]",
+                "name": "omsCopy",
                 "count": "[parameters('instanceCount')]"
             },
             "dependsOn": [
@@ -242,11 +242,11 @@
             "apiVersion": "2017-03-30",
             "location": "[resourceGroup().location]",
             "copy": {
-                "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), 'ServiceMap')]",
+                "name": "serviceMapCopy",
                 "count": "[parameters('instanceCount')]"
             },            
             "dependsOn": [
-                "[concat(parameters('vmNamePrefix'), parameters('platform'), 'OMS')]"
+                "omsCopy"
             ],
             "properties": {
                 "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
