@@ -50,7 +50,6 @@
           "apiVersion": "2016-06-01",
           "name": "DefaultVMwarePolicy",
           "type": "replicationPolicies",
-          "id": "[resourceId('Microsoft.RecoveryServices/vaults/replicationPolicies', parameters('omsRecoveryVaultName'), 'DefaultVMwarePolicy')]",
           "dependsOn": [
             "[concat('Microsoft.RecoveryServices/vaults/', parameters('omsRecoveryVaultName'))]"
           ],
@@ -71,7 +70,6 @@
           "apiVersion": "2016-06-01",
           "name": "DefaultVMwarePolicy-failback",
           "type": "replicationPolicies",
-          "id": "[resourceId('Microsoft.RecoveryServices/vaults/replicationPolicies', parameters('omsRecoveryVaultName'), 'DefaultVMwarePolicy-failback')]",
           "dependsOn": [
             "[concat('Microsoft.RecoveryServices/vaults/', parameters('omsRecoveryVaultName'))]",
             "[concat('Microsoft.RecoveryServices/vaults/', parameters('omsRecoveryVaultName'), '/replicationPolicies/DefaultVMwarePolicy')]"
@@ -92,7 +90,6 @@
           "apiVersion": "2016-06-01",
           "name": "DefaultHyperVPolicy",
           "type": "replicationPolicies",
-          "id": "[resourceId('Microsoft.RecoveryServices/vaults/replicationPolicies', parameters('omsRecoveryVaultName'), 'DefaultHyperVPolicy')]",
           "dependsOn": [
             "[concat('Microsoft.RecoveryServices/vaults/', parameters('omsRecoveryVaultName'))]"
           ],
@@ -113,15 +110,16 @@
       ]
     },
     {
-      "apiVersion": "2015-06-15",
-      "location": "[parameters('omsRecoveryVaultRegion')]",
-      "name": "[variables('recoveryStorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
-      "comments": "Storage account for ASR",
-      "properties": {
-        "accountType": "[variables('recoveryStorageType')]"
-      }
-    }
+      "name": "[variables('recoveryStorageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[parameters('omsRecoveryVaultRegion')]",
+      "sku": {
+          "name": "[variables('recoveryStorageType')]"
+      },
+      "kind": "Storage",
+      "properties": {}
+  }
   ],
   "outputs": { }
 }

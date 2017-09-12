@@ -55,6 +55,7 @@
         }
     },
     "variables": {
+        "availabilitySetName": "vmAvSet",
         "vNetName": "managedVnet",
         "vNetAddressPrefix": "192.168.0.0/16",
         "subnetName": "subnet01",
@@ -141,6 +142,19 @@
             }
         },
         {
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2017-03-30",
+            "name": "[variables('availabilitySetName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 3
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[concat(parameters('vmNamePrefix'), parameters('platform'), copyIndex())]",
@@ -150,9 +164,11 @@
                 "count": "[parameters('instanceCount')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Network/networkinterfaces/', parameters('vmNamePrefix'), 'nic', copyIndex())]"
+                "[concat('Microsoft.Network/networkinterfaces/', parameters('vmNamePrefix'), 'nic', copyIndex())]",
+                "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
             ],
             "properties": {
+                "availabilitySet": "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]",
                 "hardwareprofile": {
                     "vmsize": "Standard_D1"
                 },
