@@ -63,9 +63,9 @@
                 }
             },
             "guids": {
-                "guid1": "[guid('dscJob01')]",
-                "guid2": "[guid('dscJob02')]",
-                "guid3": "[guid('dscJob03')]"
+                "guid1": "[guid('dscJobx1')]",
+                "guid2": "[guid('dscJobx2')]",
+                "guid3": "[guid('dscJobx3')]"
             }
         }
     },
