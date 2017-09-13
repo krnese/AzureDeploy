@@ -63,9 +63,9 @@
                 }
             },
             "guids": {
-                "guid1": "[guid('dscJobx1')]",
-                "guid2": "[guid('dscJobx2')]",
-                "guid3": "[guid('dscJobx3')]"
+                "guid1": "[guid(subscription().subscriptionId)]",
+                "guid2": "[guid(resourceGroup().id)]",
+                "guid3": "[guid(resourceGroup().id, deployment().name)]"
             }
         }
     },
