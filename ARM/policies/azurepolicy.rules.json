@@ -8,9 +8,7 @@
             {
                 "not": {
                     "field": "Microsoft.Compute/imageId",
-                    "in": [
-                        "[parameters('imageIds')]"
-                    ]
+                    "in": "[array(parameters('imageIds'))]"
                 }
             }
         ]
