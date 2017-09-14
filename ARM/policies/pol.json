@@ -8,7 +8,7 @@
             {
                 "not": {
                     "field": "location",
-                    "in": "[parameters(''allowedLocations'')]"
+                    "in": "eastus"
                 }
             }
         ]
