@@ -229,7 +229,8 @@
             "resourceGroup": "[parameters('vmResourceGroup')]",
             "dependsOn": [
               "omsWorkspace",
-              "omsRecoveryServices"
+              "omsRecoveryServices",
+              "dscConfigs"
             ],
             "properties": {
                 "mode": "Incremental",
