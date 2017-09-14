@@ -63,8 +63,8 @@
                 }
             },
             "guids": {
-                "guid1": "[guid(subscription().subscriptionId)]",
-                "guid2": "[guid(resourceGroup().id)]",
+                "guid1": "[guid(parameters('omsAutomationAccountName'))]",
+                "guid2": "[guid(parameters('omsWorkspaceName'))]",
                 "guid3": "[guid(resourceGroup().id, deployment().name)]"
             }
         }
