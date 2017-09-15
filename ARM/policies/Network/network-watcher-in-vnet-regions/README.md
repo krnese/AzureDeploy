@@ -11,7 +11,7 @@ This policy will enforce Network Watchers in regions where virtual networks are 
 ````powershell
 $definition = New-AzureRmPolicyDefinition -Name enforceNetworkWatcher `
                                           -DisplayName "Enforce Network Watcher in vNet regions" `
-                                          -Policy 'https://raw.githubusercontent.com/Azure/azure-policy-samples/master/samples/Network/network-watcher-in-vnet-regions/azurepolicy.rules.json'
+                                          -Policy 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/policies/Network/network-watcher-in-vnet-regions/azurepolicy.rules.json'
 ````
 
 ## How to create Policy Definitions using AzureCLI

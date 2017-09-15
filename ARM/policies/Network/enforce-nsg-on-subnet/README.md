@@ -11,8 +11,8 @@ This policy will enforce that a Network Security Group is associated with subnet
 ````powershell
 $definition = New-AzureRmPolicyDefinition -Name nsgSubnetEnforcement `
                                           -DisplayName "Enforce a NSG on virtual subnet" `
-                                          -Policy 'https://raw.githubusercontent.com/Azure/azure-policy-samples/master/samples/Network/enforce-nsg-on-subnet/azurepolicy.rules.json' `
-                                          -Parameter 'https://raw.githubusercontent.com/Azure/azure-policy-samples/master/samples/Network/enforce-nsg-on-subnet/azurepolicy.parameters.json'
+                                          -Policy 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/policies/Network/enforce-nsg-on-subnet/azurepolicy.rules.json' `
+                                          -Parameter 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/policies/Network/enforce-nsg-on-subnet/azurepolicy.parameters.json'
 ````
 
 ## How to create Policy Definitions using AzureCLI

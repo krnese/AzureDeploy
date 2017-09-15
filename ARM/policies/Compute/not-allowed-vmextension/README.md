@@ -2,10 +2,6 @@
 
 This policy controls which VM extensions that are not allowed.
 
-## Deploy Policy to Azure
-
-[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://portal.azure.com/?feature.customportal=false&microsoft_azure_policy=true#blade/Microsoft_Azure_Policy/CreatePolicyDefinitionBlade)
-
 ## How to create Policy Definition using PowerShell
 
 ````powershell

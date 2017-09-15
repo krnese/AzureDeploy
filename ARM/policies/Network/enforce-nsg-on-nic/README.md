@@ -11,8 +11,8 @@ This policy will enforce that a Network Security Group is associated with virtua
 ````powershell
 $definition = New-AzureRmPolicyDefinition -Name nsgNicEnforcement `
                                           -DisplayName "Enforce NSG on virtual network interfaces" `
-                                          -Policy 'https://raw.githubusercontent.com/Azure/azure-policy-samples/master/samples/Network/enforce-nsg-on-nic/azurepolicy.rules.json' `
-                                          -Parameter 'https://raw.githubusercontent.com/Azure/azure-policy-samples/master/samples/Network/enforce-nsg-on-nic/azurepolicy.parameters.json'
+                                          -Policy 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/policies/Network/enforce-nsg-on-nic/azurepolicy.rules.json' `
+                                          -Parameter 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/policies/Network/enforce-nsg-on-nic/azurepolicy.parameters.json'
 ````
 
 ## How to create Policy Definitions using AzureCLI
