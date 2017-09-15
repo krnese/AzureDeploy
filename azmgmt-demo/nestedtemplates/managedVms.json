@@ -36,10 +36,16 @@
         },
         "username": {
             "type": "string",
-            "defaultValue": "azureadmin"
+            "defaultValue": "azureadmin",
+            "metadata": {
+                "description": "User name for the OS."
+            }
         },
         "pwdOrSsh": {
-            "type": "securestring"
+            "type": "securestring",
+            "metadata": {
+                "description": "Provide pwd if WinSrv, SSH if Linux."
+            }
         },
         "omsResourceGroup": {
             "type": "string",
