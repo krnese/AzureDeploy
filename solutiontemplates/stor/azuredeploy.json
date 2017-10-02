@@ -3,27 +3,52 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "name": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "ManagedStorageAccount",
+            "metadata": {
+                "description": "Provide a name for the managed application"
+            }
         },
         "location": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Azure region to place the application definition"
+            }
         },
         "lockLevel": {
-            "type": "string"
+            "type": "string",
+            "allowedValues": [
+                "ReadOnly",
+                "CanNotDelete"
+            ],
+            "defaultValue": "ReadOnly",
+            "metadata": {
+                "description": "Specify the resource lock being used for the managed application"
+            }
         },
         "authorizations": {
-            "type": "array"
+            "type": "array",
+            "metadata": {
+                "description": "Provide the authorization mapping for the managed application."
+            }
         },
         "description": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Managed Azure Storage Account",
+            "metadata": {
+                "description": "Provide a brief description of the managed application"
+            }
         },
         "displayName": {
-            "type": "string"
-        },
-        "packageFileUri": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/solutiontemplates/stor/stor.zip"
+            "defaultValue": "Managed Storage Account",
+            "metadata": {
+                "description": "Display name for the managed application"
+            }
         }
+    },
+    "variables": {
+        "packageFileUri": "[uri(deployment().properties.templateLink.uri, 'stor.zip')]"
     },
     "resources": [
         {
@@ -33,11 +58,25 @@
             "type": "Microsoft.Solutions/applicationDefinitions",
             "properties": {
                 "lockLevel": "[parameters('lockLevel')]",
-                "authorizations": "[parameters('authorizations')]",
+                "authorizations": "[array(parameters('authorizations'))]",
                 "description": "[parameters('description')]",
                 "displayName": "[parameters('displayName')]",
-                "packageFileUri": "[parameters('packageFileUri')]"
+                "packageFileUri": "[variables('packageFileUri')]"
             }
         }
-    ]
+    ],
+    "outputs": {
+        "managedApplicationName": {
+            "type": "string",
+            "value": "[parameters('name')]"
+        },
+        "lockLevel": {
+            "type": "string",
+            "value": "[parameters('locklevel')]"
+        },
+        "packageFileUri": {
+            "type": "string",
+            "value": "[variables('packageFileUri')]"
+        }
+    }
 }
