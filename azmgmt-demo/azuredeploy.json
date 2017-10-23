@@ -98,7 +98,37 @@
             "koreasouth": "southeastasia",
             "eastus2euap": "eastus"
         },
-        "azMgmtLocation": "[variables('azMgmtLocationMap')[resourceGroup().location]]"        
+        "azMgmtLocation": "[variables('azMgmtLocationMap')[resourceGroup().location]]",
+        "azAutoLocationMap": {
+            "eastasia": "southeastasia",
+            "southeastasia": "southeastasia",
+            "centralus": "westcentralus",
+            "eastus": "eastus2",
+            "eastus2": "eastus2",
+            "westus": "westcentralus",
+            "northcentralus": "westcentralus",
+            "southcentralus": "southcentralus",
+            "northeurope": "westeurope",
+            "westeurope": "westeurope",
+            "japanwest": "southeastasia",
+            "japaneast": "southeastasia",
+            "brazilsouth": "eastus2",
+            "australiaeast": "australiasoutheast",
+            "australiasoutheast": "australiasoutheast",
+            "southindia": "southeastasia",
+            "centralindia": "southeastasia",
+            "westindia": "southeastasia",
+            "canadacentral": "eastus2",
+            "canadaeast": "eastus2",
+            "uksouth": "westeurope",
+            "ukwest": "westeurope",
+            "westcentralus": "westcentralus",
+            "westus2": "westcentralus",
+            "koreacentral": "southeastasia",
+            "koreasouth": "southeastasia",
+            "eastus2euap": "eastus2"
+        },
+        "azAutoLocation": "[variables('azAutoLocationMap')[resourceGroup().location]]"               
     },
     "resources": [
         {
@@ -162,7 +192,7 @@
                         "value": "[variables('resourceNames').azureAutomation]"
                     },
                     "omsAutomationRegion": {
-                        "value": "[variables('azMgmtLocation')]"
+                        "value": "[variables('azAutoLocation')]"
                     },
                     "omsRecoveryVaultName": {
                         "value": "[variables('resourceNames').azureRecoveryServices]"
@@ -191,7 +221,7 @@
                 "value": "[variables('resourceNames').azureAutomation]"
               },
               "automationRegion": {
-                "value": "[variables('azMgmtLocation')]"
+                "value": "[variables('azAutoLocation')]"
               }
             }
           }          
@@ -214,7 +244,7 @@
                 "value": "[variables('resourceNames').azureAutomation]"
               },
               "omsAutomationRegion": {
-                "value": "[variables('azMgmtLocation')]"
+                "value": "[variables('azAutoLocation')]"
               },
               "omsWorkspaceName": {
                 "value": "[variables('resourceNames').omsWorkspace]"

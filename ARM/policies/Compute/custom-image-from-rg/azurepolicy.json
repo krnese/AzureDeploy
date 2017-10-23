@@ -1,17 +1,10 @@
 {
+    "type": "Microsoft.Authorization/policyDefinitions",
+    "name": "custom-image-from-rg",
     "properties": {
-        "displayName": "Approved VM images",
-        "description": "This policy governs the approved VM images",
-        "parameters": {
-            "imageIds": {
-                "type": "array",
-                "metadata": {
-                    "description": "The list of approved VM images",
-                    "strongType": "type",
-                    "displayName": "Approved VM images"
-                }
-            }
-        },
+        "displayName": "Allow custom VM image",
+        "description": "This policy allows only usage of a custom VM image",
+        "parameters": {},
         "policyRule": {
             "if": {
                 "allOf": [
@@ -22,7 +15,7 @@
                     {
                         "not": {
                             "field": "Microsoft.Compute/imageId",
-                            "in": "[parameters('imageIds')]"
+                            "contains": "resourceGroups/testImage"
                         }
                     }
                 ]

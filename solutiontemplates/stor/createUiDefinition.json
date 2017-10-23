@@ -1,0 +1,45 @@
+{
+    "handler": "Microsoft.Compute.MultiVm",
+    "version": "0.1.2-preview",
+    "parameters": {
+        "basics": [
+            {}
+        ],
+        "steps": [
+            {
+                "name": "storageConfig",
+                "label": "Storage settings",
+                "subLabel": {
+                    "preValidation": "Configure the infrastructure settings",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Storage settings",
+                "elements": [
+                    {
+                        "name": "storageAccounts",
+                        "type": "Microsoft.Storage.MultiStorageAccountCombo",
+                        "label": {
+                            "prefix": "Storage account name prefix",
+                            "type": "Storage account type"
+                        },
+                        "defaultValue": {
+                            "type": "Standard_LRS"
+                        },
+                        "constraints": {
+                            "allowedTypes": [
+                                "Premium_LRS",
+                                "Standard_LRS",
+                                "Standard_GRS"
+                            ]
+                        }
+                    }
+                ]
+            }
+        ],
+        "outputs": {
+            "storageAccountNamePrefix": "[steps('storageConfig').storageAccounts.prefix]",
+            "storageAccountType": "[steps('storageConfig').storageAccounts.type]",
+            "location": "[location()]"
+        }
+    }
+}
