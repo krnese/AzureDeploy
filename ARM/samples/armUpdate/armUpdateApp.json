@@ -73,8 +73,8 @@
                 }
             }
         ],
-       // "baseApp": "[uri(deployment().properties.templateLink.uri, 'scripts/WebApp.ps1.zip')]",
-       // "updateApp": "[uri(deployment().properties.templateLink.uri, 'scripts/updateWebApp.ps1.zip')]"
+       "baseApp": "[uri(deployment().properties.templateLink.uri, 'scripts/WebApp.ps1.zip')]",
+       "updateApp": "[uri(deployment().properties.templateLink.uri, 'scripts/updateWebApp.ps1.zip')]"
     },
     "resources": [
         {
