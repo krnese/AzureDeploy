@@ -222,6 +222,9 @@
             "apiVersion": "2017-03-30",
             "name": "[concat(parameters('vmName'), '/app')]",
             "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+            ],
             "properties": {
                 "autoUpgradeMinorVersion": true,
                 "typeHandlerVersion": "2.20",
