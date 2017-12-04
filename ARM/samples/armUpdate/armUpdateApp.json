@@ -231,6 +231,23 @@
                     "modulesUrl": "[variables('baseApp')]"
                 }
             }            
+        },
+        {
+            "comments": "[equals(parameters('update'), 'Yes')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2017-03-30",
+            "name": "[concat(parameters('vmName'), '/updateApp')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "typeHandlerVersion": "2.20",
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "settings": {
+                    "configurationFunction": "updateWebApp.ps1\\updateWebApp",
+                    "modulesUrl": "[variables('updateApp')]"
+                }
+            }            
         }
     ],
     "outputs": {
