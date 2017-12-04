@@ -74,7 +74,9 @@
             }
         ],
        "baseApp": "[uri(deployment().properties.templateLink.uri, 'scripts/WebApp.ps1.zip')]",
-       "updateApp": "[uri(deployment().properties.templateLink.uri, 'scripts/updateWebApp.ps1.zip')]"
+       "baseAppConfig": "WebApp.ps1\\WebApp",
+       "updateApp": "[uri(deployment().properties.templateLink.uri, 'scripts/updateWebApp.ps1.zip')]",
+       "updateAppConfig": "updateWebApp.ps1\\updateWebApp"
     },
     "resources": [
         {
@@ -216,7 +218,6 @@
             }
         },
         {
-            "comments": "[equals(parameters('update'), 'Yes')]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2017-03-30",
             "name": "[concat(parameters('vmName'), '/app')]",
@@ -227,8 +228,8 @@
                 "publisher": "Microsoft.Powershell",
                 "type": "DSC",
                 "settings": {
-                    "configurationFunction": "updateWebApp.ps1\\updateWebApp",
-                    "modulesUrl": "[variables('updateApp')]"                    
+                    "configurationFunction": "[if(equals(parameters('update'), 'No'), variables('baseAppConfig'), variables('updateAppConfig'))]",
+                    "modulesUrl": "[if(equals(parameters('update'), 'No'), variables('baseApp'), variables('updateApp'))]"                    
                 }
             }            
         }
