@@ -245,9 +245,181 @@
                 "type": "DSC",
                 "settings": {
                     "configurationFunction": "updateWebApp.ps1\\updateWebApp",
-                    "modulesUrl": "[variables('updateApp')]"
+                    "modulesUrl": "[variables('updateApp')]"                    
                 }
             }            
+        },
+        {
+            "condition": "[equals(parameters('update'), 'Yes')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "batch1",
+            "properties":{
+                "mode": "Complete",
+                "template":{
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                    },
+                    "resources": [
+                        {
+                            "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
+                            "apiVersion": "2017-04-01",
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "name": "[variables('vNetName')]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "addressSpace": {
+                                    "addressPrefixes": [
+                                        "[variables('vNetAddressPrefix')]"
+                                    ]
+                                },
+                                "subnets": [
+                                    {
+                                        "name": "[variables('subnetName')]",
+                                        "properties": {
+                                            "addressPrefix": "[variables('subnetAddressPrefix')]"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/publicIPAddresses",
+                            "apiVersion": "2017-04-01",
+                            "name": "[variables('pNicName')]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "publicIPallocationmethod": "Dynamic",
+                                "dnsSettings": {
+                                    "domainNameLabel": "[toLower(parameters('vmName'))]"
+                                }
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
+                            "type": "Microsoft.Network/networkInterfaces",
+                            "apiVersion": "2017-04-01",
+                            "name": "[variables('vNicName')]",
+                            "location": "[resourceGroup().location]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pNicName'))]",
+                                "[resourceId('Microsoft.network/virtualNetworks/', variables('vNetName'))]"
+                            ],
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "publicIPAddress": {
+                                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('pNicName'))]"
+                                            },
+                                            "subnet": {
+                                                "id": "[variables('subnetRef')]"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
+                            "type": "Microsoft.Compute/availabilitySets",
+                            "apiVersion": "2017-03-30",
+                            "name": "[variables('availabilitySetName')]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "platformFaultDomainCount": 2,
+                                "platformUpdateDomainCount": 3
+                            },
+                            "sku": {
+                                "name": "Aligned"
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
+                            "type": "Microsoft.Compute/disks",
+                            "apiVersion": "2017-03-30",
+                            "name": "[concat(variables('vmName'), '-mdisk')]",
+                            "location": "[resourceGroup().location]",
+                            "sku": {
+                                "name": "Standard_LRS"
+                            },
+                            "properties": {
+                                "creationData": {
+                                    "createOption": "Empty"
+                                },
+                                "diskSizeGB": 200
+                            }
+                        },
+                        {
+                            "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "apiVersion": "2017-03-30",
+                            "name": "[concat(variables('vmName'))]",
+                            "location": "[resourceGroup().location]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkinterfaces/', variables('vNicName'))]",
+                                "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]",
+                                "[resourceId('Microsoft.Compute/disks', concat(variables('vmName'), '-mDisk'))]"
+                            ],
+                            "properties": {
+                                "availabilitySet": "[if(equals(parameters('trialOrProduction'), 'Production'), variables('availabilitySetId'), json('null'))]",
+                                "hardwareprofile": {
+                                    "vmsize": "Standard_D1"
+                                },
+                                "osProfile": {
+                                    "computername": "[parameters('vmName')]",
+                                    "adminusername": "[parameters('username')]",
+                                    "adminpassword": "[parameters('pwd')]"
+                                },
+                                "storageProfile": {
+                                    "imageReference": {
+                                        "publisher": "[variables('windowsPublisher')]",
+                                        "offer": "[variables('windowsOffer')]",
+                                        "version": "latest",
+                                        "sku": "[variables('windowsSku')]"
+                                    },
+                                    "osdisk": {
+                                        "name": "[concat(parameters('vmName'), '-osDisk')]",
+                                        "createOption": "FromImage",
+                                        "managedDisk": {
+                                            "storageAccountType": "Standard_LRS"
+                                        },
+                                        "caching": "ReadWrite"
+                                    },
+                                    "dataDisks": "[if(equals(parameters('trialOrProduction'), 'Yes'), variables('managedDiskId'), json('null'))]"
+                                },
+                                "networkprofile": {
+                                    "networkinterfaces": [
+                                        {
+                                            "id": "[resourceId('Microsoft.Network/networkinterfaces', variables('vNicName'))]"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Compute/virtualMachines/extensions",
+                            "apiVersion": "2017-03-30",
+                            "name": "[concat(parameters('vmName'), '/app')]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {
+                                "autoUpgradeMinorVersion": true,
+                                "typeHandlerVersion": "2.20",
+                                "publisher": "Microsoft.Powershell",
+                                "type": "DSC",
+                                "settings": {
+                                    "configurationFunction": "WebApp.ps1\\WebApp",
+                                    "modulesUrl": "[variables('baseApp')]"
+                                }
+                            }            
+                        }
+                    ],
+                    "outputs": {}                    
+                }
+            }
         }
     ],
     "outputs": {
