@@ -111,7 +111,7 @@
             "runbooks": {
                 "vmManagement": {
                     "name": "azureMgmtAnalytics",
-                    "url": "[uri(deployment().properties.templateLink.uri, '/scripts/azureMgmtAnalytics.ps1')]",
+                    "url": "[uri(deployment().properties.templateLink.uri, 'scripts/azureMgmtAnalytics.ps1')]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "OMS runbook to capture Azure Resources into OMS Log Analytics",
