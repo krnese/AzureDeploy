@@ -22,7 +22,6 @@ $OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
 $OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
 $AzureSubscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionId'
 $AzureTenantId = Get-AutomationVariable -Name 'AzureTenantId'
-$OMSRecoveryVault = Get-AutomationVariable -Name 'OMSRecoveryVault'
 $OMSResourceGroupName = Get-AutomationVariable -Name 'OMSResourceGroupName'
 $OMSAutomationAccountName = Get-AutomationVariable -Name 'OMSAutomationAccountName'
 
