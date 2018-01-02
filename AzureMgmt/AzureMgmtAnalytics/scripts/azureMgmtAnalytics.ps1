@@ -21,6 +21,7 @@ Select-AzureRmSubscription -SubscriptionId $Conn.SubscriptionID -TenantId $Conn.
 $OMSWorkspaceId = Get-AutomationVariable -Name 'OMSWorkspaceId'
 $OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
 $AzureSubscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionId'
+$AzureTenantId = Get-AutomationVariable -Name 'AzureTenantId'
 $OMSRecoveryVault = Get-AutomationVariable -Name 'OMSRecoveryVault'
 $OMSResourceGroupName = Get-AutomationVariable -Name 'OMSResourceGroupName'
 $OMSAutomationAccountName = Get-AutomationVariable -Name 'OMSAutomationAccountName'
@@ -63,6 +64,7 @@ foreach ($VM in $VMs)
                  # Extension = $Extensions;
                    MgmtStatus = $Status;
                    SubscriptionId = $AzureSubscriptionId;
+                   TenantId = $AzureTenantId;
                    Log = 'IaaS';
                    AvailabilityStatus = $HA;
                    ResourceId = $VM.Id;
@@ -95,6 +97,7 @@ foreach ($Automation in $AutomationAccounts)
                     ResourceName = $Automation.Name;
                     ResourceGroupName = $Automation.ResourceGroupName;
                     SubscriptionId = $AzureSubscriptionId;
+                    TenantId = $AzureTenantId;
                     Location = $Automation.Location;
                     MgmtStatus = 'Unmanaged'
                     ResourceId = $Automation.ResourceId;
@@ -117,6 +120,7 @@ foreach ($Automation in $AutomationAccounts)
                     ResourceName = $Automation.Name;
                     ResourceGroupName = $Automation.ResourceGroupName;
                     SubscriptionId = $AzureSubscriptionId;
+                    TenantId = $AzureTenantId;
                     Location = $Automation.Location;
                     RecommendedActions = 'This resource is managed by a Log Analytics Workspace and you can explore, perform forensics and analytics on the data by using specific solutions or the search engine';
                     MgmtStatus = 'Managed'
@@ -150,6 +154,7 @@ foreach ($NSG in $NSGS)
                     ResourceName = $NSG.Name;
                     ResourceGroupName = $NSG.ResourceGroupName;
                     SubscriptionId = $AzureSubscriptionId;
+                    TenantId = $AzureTenantId;
                     Location = $NSG.Location;
                     RecommendedActions = 'This PaaS resource should be managed by Azure OMS services';
                     MgmtStatus = 'Unmanaged'
@@ -172,6 +177,7 @@ foreach ($NSG in $NSGS)
                     ResourceName = $NSG.Name;
                     ResourceGroupName = $NSG.ResourceGroupName;
                     SubscriptionId = $AzureSubscriptionId;
+                    TenantId = $AzureTenantId;
                     Location = $VM.Location;
                     RecommendedActions = 'This PaaS resource is managed by OMS Services';
                     MgmtStatus = 'Managed'
@@ -211,6 +217,7 @@ foreach ($backupvault in $backupVaults)
                 VMName = $_.Name;
                 ProtectionStatus = $protected;
                 SubscriptionId = $AzureSubscriptionId;
+                TenantId = $AzureTenantId;
                 Log = 'Backup';
                 VaultName = $rsVault.Name;
                 Location = $rsVault.Location
@@ -247,6 +254,7 @@ $DSCManaged = Get-AzureRmAutomationDscNode -AutomationAccountName $Au.Name -Reso
                         VMName = $DSC.Name;
                         ResourceGroupName = $DSC.ResourceGroupName;
                         SubscriptionId = $AzureSubscriptionId;
+                        TenantId = $AzureTenantId;
                         NodeConfigurationName = $DSC.NodeConfigurationName;
                         MgmtStatus = 'Managed'
                         AutomationAccountName = $DSC.AutomationAccountName;
@@ -277,6 +285,7 @@ foreach ($resource in $resources)
            ResourceName = $Resource.Name;
            ResourceId = $Resource.ResourceId;
            SubscriptionId = $Resource.SubscriptionId;
+           TenantId = $AzureTenantId;
            Log = 'Resources'
            }
 
@@ -305,6 +314,7 @@ foreach ($resourcegroup in $ResourceGroups)
         $DeploymentData = new-object psobject -Property @{
             ResourceGroupName = $Deployment.ResourceGroupName;
             SubscriptionId = $AzureSubscriptionId;
+            TenantId = $AzureTenantId;
             DeploymentName = $Deployment.DeploymentName;
             ProvisioningState = $Deployment.ProvisioningState;
             TimeStamp = $Deployment.TimeStamp.ToUniversalTime().ToString('yyyy-MM-ddtHH:mm:ss');
@@ -358,6 +368,7 @@ foreach ($StorageAccount in $StorageAccounts)
         StorageAccountName = $StorageAccount.StorageAccountName;
         Log = "Storage";
         SubscriptionId = $AzureSubscriptionId;
+        TenantId = $AzureTenantId;
         Tags = $StorageAccount.Tags
         }
     $StorageTable += $StorageData
@@ -387,6 +398,7 @@ foreach ($region in $regions)
             CurrentValue = $VMUsage.CurrentValue;
             Limit = $VMUsage.Limit;
             SubscriptionId = $AzureSubscriptionId;
+            TenantId = $AzureTenantId;
             Log = 'VMUsage'
             }
         $VMUsageTable += $VMUsageData
@@ -413,6 +425,7 @@ foreach ($Pol in $Policies)
         ResourceId = $pol.ResourceId;
         ResourceType = $pol.ResourceType;
         SubscriptionId = $AzureSubscriptionId;
+        TenantId = $AzureTenantId;
         Properties = $pol.properties;
         PolicyAssignmentId = $pol.PolicyAssignmentId;
         ResourceGroupName = $pol.ResourceGroupName;
@@ -469,7 +482,8 @@ foreach ($role in $RoleAssignments)
         ObjectId = $Role.ObjectId;
         ObjectType = $Role.ObjectId;
         Log = 'RBAC';
-        SubscriptionId = $AzureSubscriptionId
+        SubscriptionId = $AzureSubscriptionId;
+        TenantId = $AzureTenantId
         }
     $RoleTable += $RoleData
     
@@ -493,6 +507,7 @@ foreach ($lock in $locks)
         ResourceName = $lock.ResourceName;
         ResourceType = $lock.ResourceType;
         SubscriptionId = $AzureSubscriptionId;
+        TenantId = $AzureTenantId;
         LockId = $lock.LockId;
         ResourceId = $lock.ResourceId;
         ExtensionResourceType = $lock.ExtensionResourceType;

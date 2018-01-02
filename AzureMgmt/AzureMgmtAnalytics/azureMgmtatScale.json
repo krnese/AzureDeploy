@@ -95,6 +95,10 @@
                     "name": "AzureSubscriptionId",
                     "description": "Azure subscription Id"
                 },
+                "AzureTenantId": {
+                    "name": "AzureTenantId",
+                    "description": "Azure tenant id"
+                },
                 "OMSAutomationAccountName": {
                     "name": "OMSAutomationAccountName",
                     "description": "Name of the linked Automation account"
@@ -1027,6 +1031,19 @@
                         "value": "[concat('\"',subscription().subscriptionId,'\"')]"
                     }
                 },
+                {
+                    "name": "[variables('assets').aaVariables.AzureTenantId.name]",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "[variables('assets').aaVariables.AzureTenantId.description]",
+                        "value": "[concat('\"',subscription().tenantId,'\"')]"
+                    }
+                },                
                 {
                     "name": "[variables('assets').aaVariables.OMSAutomationAccountName.name]",
                     "type": "variables",
