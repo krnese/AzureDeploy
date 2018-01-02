@@ -1,0 +1,58 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "localStorage": {
+            "type": "string"
+        },
+        "remoteStorage": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "localStorageName": "[concat(parameters('localStorage'), uniquestring('stor1'))]",
+        "remoteStorageName": "[concat(parameters('remoteStorage'), uniquestring('stor2'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2017-06-01",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('localStorageName')]",
+            "properties": {
+            },
+            "kind": "Storage",
+            "sku": {
+                "name":"Standard_LRS"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "subscriptionId": "09e8ed26-7d8b-4678-a179-cfca8a0cef5c",
+            "resourceGroup": "remoteStorage",
+            "name": "deployment2",
+            "properties": {
+                "mode":"Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "apiVersion": "2017-06-01",
+                            "name": "[variables('remoteStorageName')]",
+                            "location": "[resourceGroup().location]",
+                            "properties": {},
+                            "kind": "Storage",
+                            "sku": {
+                                "name": "Standard_LRS"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
