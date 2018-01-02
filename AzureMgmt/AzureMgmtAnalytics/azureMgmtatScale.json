@@ -10,7 +10,6 @@
         },
         "omsWorkspaceRegion": {
             "type": "string",
-            "defaultValue": "West Europe",
             "metadata": {
                 "description": "Specify the region for your OMS workspace"
             }
@@ -23,20 +22,13 @@
         },
         "omsAutomationRegion": {
             "type": "string",
-            "defaultValue": "West Europe",
             "metadata": {
                 "description": "Specify region for your automation account"
             }
         },
-        "omsRecoveryVaultName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the OMS Recovery Vault"
-            }
-        },
         "jobGuid": {
             "type": "string",
-            "defaultValue": "416ee58e-a925-4f9e-8b8d-b18e6500a3a7",
+            "defaultValue": "Use Powershell and run 'New-Guid' to get the GUID",
             "metadata": {
                 "description": "GUID for the schedule creation - create a unique before deploy"
             }
@@ -45,10 +37,6 @@
     "variables": {
         "assets": {
             "psModules": {
-                "xPSDSC": {
-                    "name": "xPSDesiredStateConfiguration",
-                    "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/xpsdesiredstateconfiguration.3.9.0.nupkg"
-                },
                 "ingestionAPI": {
                     "name": "OMSIngestionAPI",
                     "uri": "https://github.com/krnese/AzureDeploy/raw/master/OMS/MSOMS/Solutions/custom/OMSIngestionAPI.zip"
@@ -102,10 +90,6 @@
                 "OMSAutomationAccountName": {
                     "name": "OMSAutomationAccountName",
                     "description": "Name of the linked Automation account"
-                },
-                "OMSRecoveryVault": {
-                    "name": "OMSRecoveryVault",
-                    "description": "Name of the linked Recovery Vault"
                 },
                 "OMSResourceGroupName": {
                     "name": "OMSResourceGroupName",
@@ -208,13 +192,13 @@
                                         "Options": {
                                             "colors": [
                                                 "#55d455",
-                                                "#ff8c00",
+                                                "#e81123",
                                                 "#00bcf2"
                                             ],
                                             "valueColorMapping": [
                                                 {
                                                     "value": "Unmanaged",
-                                                    "color": "#ff8c00"
+                                                    "color": "#e81123"
                                                 },
                                                 {
                                                     "value": "Managed",
@@ -287,7 +271,7 @@
                                         "Options": {
                                             "colors": [
                                                 "#55d455",
-                                                "#ff8c00",
+                                                "#e81123",
                                                 "#00bcf2"
                                             ],
                                             "valueColorMapping": [
@@ -297,7 +281,7 @@
                                                 },
                                                 {
                                                     "value": "Unmanaged",
-                                                    "color": "#ff8c00"
+                                                    "color": "#e81123"
                                                 }
                                             ]
                                         },
@@ -307,7 +291,6 @@
                                         "Query": "AzureManagement_CL | where Log_s == \"PaaS\" and MgmtStatus_s == \"Unmanaged\" | summarize AggregatedValue = count() by ResourceName_s, ResourceType, SubscriptionId | project ResourceName_s, ResourceType, SubscriptionId | project ResourceName_s, ResourceType// Oql: Type:AzureManagement_CL Log_s:PaaS MgmtStatus_s:Unmanaged | measure count () by ResourceName_s, ResourceType | Select ResourceName_s, ResourceType | select ResourceName_s, ResourceType",
                                         "HideGraph": true,
                                         "enableSparklines": false,
-                                        "operation": "Summary",
                                         "ColumnsTitle": {
                                             "Name": "Unmanaged Resources",
                                             "Value": ""
@@ -427,7 +410,7 @@
                                         },
                                         "Options": {
                                             "colors": [
-                                                "#ff8c00",
+                                                "#e81123",
                                                 "#55d455",
                                                 "#00bcf2"
                                             ],
@@ -439,7 +422,6 @@
                                         "Query": "AzureManagement_CL | where ProtectionStatus_s == \"Unprotected\" and Log_s == \"Backup\" | project VMName_s, SubscriptionId, Location_s | summarize AggregatedValue = dcount(VMName_s) by VMName_s, Location_s, SubscriptionId // Oql: Type:AzureManagement_CL ProtectionStatus_s:Unprotected LogType_s:Backup | measure countdistinct (VMName_s) by VMName_s | select VMName_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
-                                        "operation": "Summary",
                                         "ColumnsTitle": {
                                             "Name": "Unprotected VMs",
                                             "Value": ""
@@ -490,7 +472,7 @@
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "AzureManagement_CL | where (Log_s == \"IaaS\" or Log_s == \"Storage\") | summarize AggregatedValue = dcount(ResourceId) by AvailabilityStatus_s | sort by AggregatedValue desc\r\n// Oql: Type:AzureManagement_CL AND (Log_s=IaaS OR Log_s:Storage)  | measure countdistinct (ResourceId) by AvailabilityStatus_s",
+                                        "Query": "AzureManagement_CL | where (Log_s == \"IaaS\" or Log_s == \"Storage\") | summarize AggregatedValue = dcount(ResourceId) by AvailabilityStatus_s | sort by AggregatedValue desc// Oql: Type:AzureManagement_CL AND (Log_s=IaaS OR Log_s:Storage)  | measure countdistinct (ResourceId) by AvailabilityStatus_s",
                                         "CenterLegend": {
                                             "Text": "Total",
                                             "Operation": "Sum",
@@ -505,7 +487,7 @@
                                             "valueColorMapping": [
                                                 {
                                                     "value": "Not Highly Available",
-                                                    "color": "#ff8c00"
+                                                    "color": "#e81123"
                                                 },
                                                 {
                                                     "value": "Highly Available",
@@ -516,10 +498,9 @@
                                         "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "AzureManagement_CL | where (Log_s == \"IaaS\" or Log_s == \"Storage\") and AvailabilityStatus_s == \"Not Highly Available\" | summarize AggregatedValue = count() by ResourceId, ResourceGroupName_s, AvailabilityStatus_s | project ResourceId, ResourceGroupName_s, AvailabilityStatus_s\r\n// Oql: Type:AzureManagement_CL AND (Log_s=IaaS OR Log_s:Storage) AvailabilityStatus_s:\"Not Highly Available\" | measure count () by ResourceId, ResourceGroupName_s, AvailabilityStatus_s | select ResourceId, ResourceGroupName_s, AvailabilityStatus_s",
+                                        "Query": "AzureManagement_CL | where (Log_s == \"IaaS\" or Log_s == \"Storage\") and AvailabilityStatus_s == \"Not Highly Available\" | summarize AggregatedValue = count() by ResourceId, ResourceGroupName_s, AvailabilityStatus_s | project ResourceId, ResourceGroupName_s, AvailabilityStatus_s// Oql: Type:AzureManagement_CL AND (Log_s=IaaS OR Log_s:Storage) AvailabilityStatus_s:\"Not Highly Available\" | measure count () by ResourceId, ResourceGroupName_s, AvailabilityStatus_s | select ResourceId, ResourceGroupName_s, AvailabilityStatus_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
-                                        "operation": "Summary",
                                         "ColumnsTitle": {
                                             "Name": "ResourceId",
                                             "Value": ""
@@ -549,7 +530,7 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
+                                        "NavigationQuery": "search {selected item}// Oql: {selected item}",
                                         "NavigationSelect": {}
                                     }
                                 }
@@ -939,12 +920,12 @@
                             "Version": 2,
                             "Configuration": {
                                 "TileOne": {
-                                    "Legend": "Unmanaged PaaS resources",
-                                    "Query": "AzureManagement_CL | where MgmtStatus_s == \"Unmanaged\" | summarize AggregatedValue = count() by ResourceName_s| count // Oql: Type:AzureManagement_CL MgmtStatus_s:Unmanaged | measure count () by ResourceName_s"
+                                    "Legend": "Tenants",
+                                    "Query": "AzureManagement_CL | where Log_s == \"IaaS\" |  summarize AggregatedValue = count() by TenantId | count"
                                 },
                                 "TileTwo": {
-                                    "Legend": "Unmanaged IaaS resources",
-                                    "Query": "AzureManagement_CL | where TimeGenerated > ago(1h) and MgmtStatus_s == \"Unmanaged\" and Log_s == \"IaaS\" | summarize AggregatedValue = count() by VMName_s| count // Oql: Type:AzureManagement_CL TimeGenerated>NOW-1HOUR MgmtStatus_s:Unmanaged Log_s:IaaS | measure count () by VMName_s"
+                                    "Legend": "Subscriptions",
+                                    "Query": "AzureManagement_CL | where Log_s == \"IaaS\" |  summarize AggregatedValue = count() by SubscriptionId | count"
                                 },
                                 "Advanced": {
                                     "DataFlowVerification": {
@@ -1055,32 +1036,6 @@
                     "properties": {
                         "description": "[variables('assets').aaVariables.OMSAutomationAccountName.description]",
                         "value": "[concat('\"',parameters('omsAutomationAccountName'),'\"')]"
-                    }
-                },
-                {
-                    "name": "[variables('assets').aaVariables.OMSRecoveryVault.name]",
-                    "type": "variables",
-                    "apiVersion": "2015-10-31",
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-                    ],
-                    "tags": {},
-                    "properties": {
-                        "description": "[variables('assets').aaVariables.OMSRecoveryVault.description]",
-                        "value": "[concat('\"',parameters('omsRecoveryVaultName'),'\"')]"
-                    }
-                },
-                {
-                    "name": "[variables('assets').aaVariables.OMSResourceGroupName.name]",
-                    "type": "variables",
-                    "apiVersion": "2015-10-31",
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
-                    ],
-                    "tags": {},
-                    "properties": {
-                        "description": "[variables('assets').aaVariables.OMSRecoveryVault.description]",
-                        "value": "[concat('\"',resourceGroup().name,'\"')]"
                     }
                 },
                 {
@@ -1214,22 +1169,6 @@
                     "properties": {
                         "contentLink": {
                             "uri": "[variables('assets').psModules.ingestionAPI.uri]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('assets').psModules.xPSDSC.name]",
-                    "type": "Modules",
-                    "apiVersion": "2015-10-31",
-                    "tags": {},
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('assets').psModules.xPSDSC.uri]"
                         }
                     }
                 },
