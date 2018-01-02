@@ -11,10 +11,6 @@
         "omsWorkspaceRegion": {
             "type": "string",
             "defaultValue": "West Europe",
-            "allowedValues": [
-                "West Europe",
-                "East US"
-            ],
             "metadata": {
                 "description": "Specify the region for your OMS workspace"
             }
@@ -28,10 +24,6 @@
         "omsAutomationRegion": {
             "type": "string",
             "defaultValue": "West Europe",
-            "allowedValues": [
-                "West Europe",
-                "East US2"
-            ],
             "metadata": {
                 "description": "Specify region for your automation account"
             }
@@ -40,20 +32,6 @@
             "type": "string",
             "metadata": {
                 "description": "Name of the OMS Recovery Vault"
-            }
-        },
-        "_artifactsLocation": {
-            "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/AzureMgmt/AzureMgmtAnalytics",
-            "metadata": {
-                "description": "URI to artifacts location"
-            }
-        },
-        "_artifactsLocationSasToken": {
-            "type": "securestring",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated"
             }
         },
         "jobGuid": {
@@ -133,7 +111,7 @@
             "runbooks": {
                 "vmManagement": {
                     "name": "azureMgmtAnalytics",
-                    "url": "[concat(parameters('_artifactsLocation'), '/scripts/azureMgmtAnalytics.ps1', parameters('_artifactsLocationSasToken'))]",
+                    "url": "[uri(deployment().properties.templateLink.uri, '/scripts/azureMgmtAnalytics.ps1')]",
                     "version": "1.0.0.0",
                     "type": "PowerShell",
                     "description": "OMS runbook to capture Azure Resources into OMS Log Analytics",
@@ -158,25 +136,6 @@
                 "description": "Management assessment of Azure resources",
                 "author": "krnese@microsoft.com"
             }
-        },
-        "alert1": {
-            "searchName": "Azure VM Creation",
-            "description": "A new virtual machines has been created.",
-            "severity": "Critical",
-            "query": "Type:AzureActivity OperationName:\"Microsoft.Compute/virtualMachines/write\"",
-            "alertTresholdValue": 2,
-            "operator": "gt",
-            "alertThrottleInMinutes": 60,
-            "alertBreach": 1,
-            "searchCategory": "Azure",
-            "scheduleIntervalInMinutes": 5,
-            "scheduleQueryTimeSpan": 5,
-            "alertName": "Azure VM creation"
-        },
-        "alertConstruct1": {
-            "searchId": "[concat(toLower(variables('alert1').searchCategory), '|', toLower(variables('alert1').searchName))]",
-            "scheduleId": "[toLower(concat('schedule-', uniqueString(resourceGroup().id, deployment().name)))]",
-            "alertId": "[toLower(concat('alert1-', uniqueString(resourceGroup().id, deployment().name)))]"
         }
     },
     "resources": [
@@ -203,59 +162,7 @@
                         "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
                     }
                 },
-                {
-                    "apiVersion": "2015-11-01-preview",
-                    "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
-                    "name": "[concat(parameters('omsWorkspaceName'), '/', variables('alertConstruct1').searchId)]",
-                    "dependsOn": [
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-                    ],
-                    "properties": {
-                        "etag": "*",
-                        "query": "[variables('alert1').query]",
-                        "displayName": "[variables('alert1').searchName]",
-                        "category": "[variables('alert1').searchCategory]"
-                    }
-                },
-                {
-                    "apiVersion": "2015-11-01-preview",
-                    "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules",
-                    "name": "[concat(parameters('omsWorkspaceName'), '/', variables('alertConstruct1').searchId, '/', variables('alertConstruct1').scheduleId)]",
-                    "dependsOn": [
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/savedSearches/', variables('alertConstruct1').searchId)]"
-                    ],
-                    "properties": {
-                        "etag": "*",
-                        "Interval": "[variables('alert1').scheduleIntervalInMinutes]",
-                        "QueryTimeSpan": "[variables('alert1').scheduleQueryTimeSpan]",
-                        "enabled": true
-                    }
-                },
-                {
-                    "apiVersion": "2015-11-01-preview",
-                    "type": "Microsoft.OperationalInsights/workspaces/savedSearches/schedules/actions",
-                    "name": "[concat(parameters('omsWorkspaceName'), '/', variables('alertConstruct1').searchId, '/', variables('alertConstruct1').scheduleId, '/', variables('alertConstruct1').alertId)]",
-                    "dependsOn": [
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/savedSearches/', variables('alertConstruct1').searchId)]",
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/savedSearches/', variables('alertConstruct1').searchId, '/schedules/', variables('alertConstruct1').scheduleId)]"
-                    ],
-                    "properties": {
-                        "etag": "*",
-                        "Type": "Alert",
-                        "Name": "[variables('alert1').alertName]",
-                        "Description": "[variables('alert1').description]",
-                        "Severity": "[variables('alert1').severity]",
-                        "Throttling": {
-                            "DurationInMinutes": "[variables('alert1').alertThrottleInMinutes]"
-                        },
-                        "Threshold": {
-                            "Operator": "[variables('alert1').operator]",
-                            "Value": "[variables('alert1').alertTresholdValue]"
-                        }
-                    }
-                },
+
                 {
                     "apiVersion": "2015-11-01-preview",
                     "name": "[variables('omsSolutions').customSolution.name]",
@@ -288,7 +195,7 @@
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "Type:AzureManagement_CL Log_s:IaaS | measure countdistinct (VMName_s) by MgmtStatus_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"IaaS\" | summarize AggregatedValue = dcount(VMName_s) by MgmtStatus_s | sort by AggregatedValue desc | where isnotempty(MgmtStatus_s)",
                                         "CenterLegend": {
                                             "Text": "Total",
                                             "Operation": "Sum",
@@ -310,13 +217,13 @@
                                                     "color": "#55d455"
                                                 }
                                             ]
-                                        }
+                                        },
+                                        "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:IaaS MgmtStatus_s:Unmanaged | measure countdistinct (MgmtStatus_s) by VMName_s, ResourceGroupName_s | select VMName_s, ResourceGroupName_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"IaaS\" and MgmtStatus_s == \"Unmanaged\" | summarize AggregatedValue = dcount(MgmtStatus_s) by VMName_s, ResourceGroupName_s, SubscriptionId | project VMName_s, ResourceGroupName_s, SubscriptionId",
                                         "HideGraph": true,
                                         "enableSparklines": false,
-                                        "operation": "Summary",
                                         "ColumnsTitle": {
                                             "Name": "Unmanaged VMs",
                                             "Value": ""
@@ -346,7 +253,8 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}// Oql: {selected item}",
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -366,7 +274,7 @@
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "Type:AzureManagement_CL Log_s:PaaS | measure countdistinct (ResourceName_s) by MgmtStatus_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"PaaS\" | summarize AggregatedValue = dcount(ResourceName_s) by MgmtStatus_s | sort by AggregatedValue desc// Oql: Type:AzureManagement_CL Log_s:PaaS | measure countdistinct (ResourceName_s) by MgmtStatus_s",
                                         "CenterLegend": {
                                             "Text": "Total",
                                             "Operation": "Sum",
@@ -388,10 +296,11 @@
                                                     "color": "#ff8c00"
                                                 }
                                             ]
-                                        }
+                                        },
+                                        "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:PaaS MgmtStatus_s:Unmanaged | measure count () by ResourceName_s, ResourceType | Select ResourceName_s, ResourceType | select ResourceName_s, ResourceType",
+                                        "Query": "AzureManagement_CL | where Log_s == \"PaaS\" and MgmtStatus_s == \"Unmanaged\" | summarize AggregatedValue = count() by ResourceName_s, ResourceType, SubscriptionId | project ResourceName_s, ResourceType, SubscriptionId | project ResourceName_s, ResourceType// Oql: Type:AzureManagement_CL Log_s:PaaS MgmtStatus_s:Unmanaged | measure count () by ResourceName_s, ResourceType | Select ResourceName_s, ResourceType | select ResourceName_s, ResourceType",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -424,7 +333,8 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}// Oql: {selected item}",
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -441,14 +351,14 @@
                                     },
                                     "Tile": {
                                         "Legend": "DSC Nodes",
-                                        "Query": "Type:AzureManagement_CL Log_s:DSC | measure countdistinct (VMName_s) by VMName_s"
+                                        "Query": "AzureManagement_CL | where Log_s == \"DSC\" | summarize AggregatedValue = dcount(VMName_s) by VMName_s\r\n| count // Oql: Type:AzureManagement_CL Log_s:DSC | measure countdistinct (VMName_s) by VMName_s"
                                     },
                                     "SecondTile": {
                                         "Legend": "Automation Accounts",
-                                        "Query": "Type:AzureManagement_CL Log_s:DSC | measure countdistinct (AutomationAccountName_s) by AutomationAccountName_s"
+                                        "Query": "AzureManagement_CL | where Log_s == \"DSC\" | summarize AggregatedValue = dcount(AutomationAccountName_s) by AutomationAccountName_s\r\n| count // Oql: Type:AzureManagement_CL Log_s:DSC | measure countdistinct (AutomationAccountName_s) by AutomationAccountName_s"
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:DSC MgmtStatus_s:Managed | measure countdistinct (VMName_s) by VMName_s, NodeConfigurationName_s, Status_s | Select VMName_s, NodeConfigurationName_s, Status_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"DSC\" and MgmtStatus_s == \"Managed\" | summarize AggregatedValue = dcount(VMName_s) by VMName_s, NodeConfigurationName_s, Status_s | project VMName_s, NodeConfigurationName_s, Status_s\r\n// Oql: Type:AzureManagement_CL Log_s:DSC MgmtStatus_s:Managed | measure countdistinct (VMName_s) by VMName_s, NodeConfigurationName_s, Status_s | Select VMName_s, NodeConfigurationName_s, Status_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -481,7 +391,11 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
+                                        "NavigationSelect": {}
+                                    },
+                                    "Blade": {
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -501,7 +415,7 @@
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Backup | measure countdistinct (VMName_s) by ProtectionStatus_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Backup\" | summarize AggregatedValue = dcount(VMName_s) by ProtectionStatus_s | sort by AggregatedValue desc// Oql: Type:AzureManagement_CL Log_s:Backup | measure countdistinct (VMName_s) by ProtectionStatus_s",
                                         "CenterLegend": {
                                             "Text": "Total",
                                             "Operation": "Sum",
@@ -514,10 +428,11 @@
                                                 "#00bcf2"
                                             ],
                                             "valueColorMapping": []
-                                        }
+                                        },
+                                        "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL ProtectionStatus_s:Unprotected Log_s:Backup | measure countdistinct (VMName_s) by VMName_s | select VMName_s",
+                                        "Query": "AzureManagement_CL | where ProtectionStatus_s == \"Unprotected\" and Log_s == \"Backup\" | project VMName_s, SubscriptionId, Location_s | summarize AggregatedValue = dcount(VMName_s) by VMName_s, Location_s, SubscriptionId // Oql: Type:AzureManagement_CL ProtectionStatus_s:Unprotected LogType_s:Backup | measure countdistinct (VMName_s) by VMName_s | select VMName_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -550,7 +465,8 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}// Oql: {selected item}",
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -570,7 +486,7 @@
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "Type:AzureManagement_CL AND (Log_s=IaaS OR Log_s:Storage)  | measure countdistinct (ResourceId) by AvailabilityStatus_s",
+                                        "Query": "AzureManagement_CL | where (Log_s == \"IaaS\" or Log_s == \"Storage\") | summarize AggregatedValue = dcount(ResourceId) by AvailabilityStatus_s | sort by AggregatedValue desc\r\n// Oql: Type:AzureManagement_CL AND (Log_s=IaaS OR Log_s:Storage)  | measure countdistinct (ResourceId) by AvailabilityStatus_s",
                                         "CenterLegend": {
                                             "Text": "Total",
                                             "Operation": "Sum",
@@ -592,10 +508,11 @@
                                                     "color": "#55d455"
                                                 }
                                             ]
-                                        }
+                                        },
+                                        "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL AND (Log_s=IaaS OR Log_s:Storage) AvailabilityStatus_s:\"Not Highly Available\" | measure count () by ResourceId, ResourceGroupName_s, AvailabilityStatus_s | select ResourceId, ResourceGroupName_s, AvailabilityStatus_s",
+                                        "Query": "AzureManagement_CL | where (Log_s == \"IaaS\" or Log_s == \"Storage\") and AvailabilityStatus_s == \"Not Highly Available\" | summarize AggregatedValue = count() by ResourceId, ResourceGroupName_s, AvailabilityStatus_s | project ResourceId, ResourceGroupName_s, AvailabilityStatus_s\r\n// Oql: Type:AzureManagement_CL AND (Log_s=IaaS OR Log_s:Storage) AvailabilityStatus_s:\"Not Highly Available\" | measure count () by ResourceId, ResourceGroupName_s, AvailabilityStatus_s | select ResourceId, ResourceGroupName_s, AvailabilityStatus_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -628,7 +545,8 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -640,7 +558,7 @@
                                     "General": {
                                         "title": "Azure Resource Manager",
                                         "newGroup": false,
-                                        "icon": "",
+                                        "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACUAAAAhCAYAAABeD2IVAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAG1SURBVFhH7ZbPSwJREID7ZzZsE5VyNU0wDAulQDYwOwQdEsPs1iJIZBB0qFtREKSHQgj0JB07FXQJPNTJQ0dv/Q9TM/Hk+WOXt8VaxDt8sMzODB8yzuyYoijw15BSokgpUf6XlKZpA7Fxt5fojw/LtcK2VDgchmw2C/l8vifuyRRg5vSe8Kxu97zDXKzBWj5uhi2pVCoFhmFAPB7vxtTYMgSOmxC6fOpBO7yldywvmUxSLfZgMTNsSZVKJVBVlZ5d/hD496oDMv1MG2eUizVYiz34nsOwLcWecXZ8uYOhIjyYw8+ZY1LeuUWI75+Dy+Mz/cUwNjE7D14tAMWrOtXwPaz4ltRUQoe1uzak6y2IFsoUw/kJnjSJyUSGYrmjU6i9dKDRfqcavocVP5Ji6NcPoOnr3byljS2oPL+RDGPkUozI5i7By/y6VHSnTEgp1tAdjMDKzaOwVPVzvrCG72GFbSm2PBGcn3SjZSpVe+3QP5DlO7I82ZnBk8FiuKsWyhcDUsVKg3YUy3PszCBmBxmXI84NEtO/9hTD0YPMY+dzxPFPl1EgpUSRUqJIKVGklChSSgwFPgAtyp8CCywroQAAAABJRU5ErkJggg==",
                                         "useIcon": false
                                     },
                                     "Header": {
@@ -648,7 +566,7 @@
                                         "Subtitle": ""
                                     },
                                     "Donut": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Deployments | measure countdistinct (CorrelationId) by ProvisioningState_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Deployments\" | summarize AggregatedValue = dcount(CorrelationId) by ProvisioningState_s | sort by AggregatedValue desc | where isnotempty(ProvisioningState_s)  // Oql: Type:AzureManagement_CL Log_s:Deployments | measure countdistinct (CorrelationId) by ProvisioningState_s",
                                         "CenterLegend": {
                                             "Text": "Total",
                                             "Operation": "Sum",
@@ -674,10 +592,11 @@
                                                     "color": "#00188f"
                                                 }
                                             ]
-                                        }
+                                        },
+                                        "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Deployments AND (ProvisioningState_s:Failed OR ProvisioningState_s:Canceled) | measure count () by DeploymentName_s, ResourceGroupName_s, ProvisioningState_s | select DeploymentName_s, ResourceGroupName_s, ProvisioningState_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Deployments\" and (ProvisioningState_s == \"Failed\" or ProvisioningState_s == \"Canceled\") | summarize AggregatedValue = count() by DeploymentName_s, ResourceGroupName_s, ProvisioningState_s | project DeploymentName_s, ResourceGroupName_s, ProvisioningState_s// Oql: Type:AzureManagement_CL Log_s:Deployments AND (ProvisioningState_s:Failed OR ProvisioningState_s:Canceled) | measure count () by DeploymentName_s, ResourceGroupName_s, ProvisioningState_s | select DeploymentName_s, ResourceGroupName_s, ProvisioningState_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -710,7 +629,8 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}// Oql: {selected item}",
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -727,14 +647,14 @@
                                     },
                                     "Tile": {
                                         "Legend": "Resources in total",
-                                        "Query": "Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by ResourceName_s "
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(ResourceId) by ResourceName_s\r\n| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by ResourceName_s"
                                     },
                                     "SecondTile": {
                                         "Legend": "Resource Types",
-                                        "Query": "Type:AzureManagement_CL Log_s:Resources | measure count () by ResourceType"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = count() by ResourceType\r\n| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure count () by ResourceType"
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by ResourceType ",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(ResourceId) by ResourceType\r\n// Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by ResourceType",
                                         "HideGraph": false,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -767,7 +687,11 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
+                                        "NavigationSelect": {}
+                                    },
+                                    "Blade": {
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -784,14 +708,14 @@
                                     },
                                     "Tile": {
                                         "Legend": "Total User Roles",
-                                        "Query": "Type:AzureManagement_CL Log_s:RBAC | measure countdistinct (RoleDefinitionId_g) by DisplayName_s"
+                                        "Query": "AzureManagement_CL | where Log_s == \"RBAC\" | summarize AggregatedValue = dcount(RoleDefinitionId_g) by Name_s| count // Oql: Type:AzureManagement_CL Log_s:RBAC | measure countdistinct (RoleDefinitionId_g) by DisplayName_s"
                                     },
                                     "SecondTile": {
                                         "Legend": "Resources with assigned RBAC",
-                                        "Query": "Type:AzureManagement_CL Log_s:RBAC !Scope_s:\"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | measure countdistinct (RoleDefinitionId_g) by DisplayName_s, Scope_s"
+                                        "Query": "AzureManagement_CL | where Log_s == \"RBAC\" and Scope_s != \"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | summarize AggregatedValue = dcount(RoleDefinitionId_g) by DisplayName_s, Scope_s| count // Oql: Type:AzureManagement_CL Log_s:RBAC !Scope_s:\"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | measure countdistinct (RoleDefinitionId_g) by DisplayName_s, Scope_s"
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:RBAC !Scope_s:\"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | measure countdistinct (RoleDefinitionId_g) by DisplayName_s, Scope_s | select DisplayName_s, Scope_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"RBAC\" and Scope_s != \"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | summarize AggregatedValue = dcount(RoleDefinitionId_g) by DisplayName_s, Scope_s | project DisplayName_s, Scope_s// Oql: Type:AzureManagement_CL Log_s:RBAC !Scope_s:\"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | measure countdistinct (RoleDefinitionId_g) by DisplayName_s, Scope_s | select DisplayName_s, Scope_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -824,7 +748,11 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}// Oql: {selected item}",
+                                        "NavigationSelect": {}
+                                    },
+                                    "Blade": {
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -836,15 +764,16 @@
                                     "General": {
                                         "title": "Policy Overview",
                                         "newGroup": false,
-                                        "icon": "",
+                                        "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAAAjCAYAAADsZeb8AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAM5SURBVGhD7ZjLaxNBGMD9Z5LGpmn6SJP0RQRBFFqb1lw8hFTR9mAfIKZ6EOtBFOtFY0Cr0gYvSsEHpSpqWwNC0D9Bcuupp556yuUz3zRfmJ2d7CtTtM0EfmR25ptd9rffzOzOCZ/PB5rm0BIVoCUqQEtUgJaoAC1RAZ4knhw8DZHbK4xApF8a00q4kujvCEP37EPoXy5B7NE6xHNbrNw1tcjaZH1aAUcSUVA4k61K22TiwpkFVndQv8Dq4vkfEDwzIe1/3LGVGBq/DNGldZZxPXNL0ozDId17/TEE4qdMba2ApcS+e2+ZPLdz39jyFxh58k7adhyxlMjmu+m70jaRgcwcJGYWWTn56juMPv1oijksSqUSlMvlenl3dxfS6bQp7rCwlYhznljfHonB8NRNGLpyAwKhLmjvjcHFjT+MaGrSFO8EvGm8ef5HYuzgJf4LXEsMRgcg9eZXXdr4yha0BUNw7kEBxp5/hmAkboh3Ckrc2dmBfD5fP0apKEiMFTlyEhPX7tQFEjiU+Zjki68wkntvqLNDlIisra3V5WB9pVKp5SgY5PISRaHZbBb29/drvQCKxSJ7OHhuisFz7+3tsViqc4N7iTMyifOGmOTLbzCa+2Cos8NKIomgG6cspeNGEsV+eO5CoWASjccIHbvF/XCODVaH8++6wPHVbQh0dMLZ+6tw/tlGdb5UM5x5AeJNIyQYy3w7X+ZjePAaeC28puzhucXTwhLs64fh6VswdDULgc5uttCQ1GjqkineCZRd/I/PNDFTeBGNJMr6Ibw4/jxinFNsJTp+xZmch8TsQexEoVjNyk+mGCusMoIXQzjJRFk/gjKckMU4xVKil5dtv78NLrz+yV64Ze2NsJKIdbioUGZirJM5UeyHxzgnYhmnC7we4nVBISwlIvjZh5sNKBM3Hxp99vU0+dlnJREhIfQjMUgjiWI//OfPj3F8rFdsJSKGjYbcZrWc5TYgahsT+e0jtwGBAvmH4RVHEgmUhpsQmJW4KYHyaN6UZej/DGYkZn4zCwrhSiJxlDdlaT4Vh3YzeJKoMaIlKkBLVICWqAAtUQFaogK0RAVoiQrQEhWgJSpAS2waH/wFQFyL5eOaSbQAAAAASUVORK5CYII=",
                                         "useIcon": false
                                     },
                                     "Tile": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Policy | measure countdistinct(ResourceId) by Name_s, Properties_scope_s",
-                                        "Legend": "Assigned ARM Policies"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Policy\" | summarize AggregatedValue = dcount(ResourceId) by Name_s, Properties_scope_s| count // Oql: Type:AzureManagement_CL Log_s:Policy | measure countdistinct(ResourceId) by Name_s, Properties_scope_s",
+                                        "Legend": "Assigned ARM Policies",
+                                        "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Policy | measure countdistinct(ResourceId) by Name_s, Properties_scope_s | Select Name_s, Properties_scope_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Policy\" | summarize AggregatedValue = dcount(ResourceId) by Name_s, Properties_scope_s | project Name_s, Properties_scope_s// Oql: Type:AzureManagement_CL Log_s:Policy | measure countdistinct(ResourceId) by Name_s, Properties_scope_s | Select Name_s, Properties_scope_s",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -877,7 +806,8 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}// Oql: {selected item}",
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -893,11 +823,12 @@
                                         "useIcon": false
                                     },
                                     "Tile": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Lock | measure countdistinct (LockId_s) by ResourceType, ResourceName_s",
-                                        "Legend": "Active Resource Locks"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Lock\" | summarize AggregatedValue = dcount(LockId_s) by ResourceType, ResourceName_s\r\n| count // Oql: Type:AzureManagement_CL Log_s:Lock | measure countdistinct (LockId_s) by ResourceType, ResourceName_s",
+                                        "Legend": "Active Resource Locks",
+                                        "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Lock | measure countdistinct (LockId_s) by ResourceName_s, ResourceType | Select ResourceName_s, ResourceType",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Lock\" | summarize AggregatedValue = dcount(LockId_s) by ResourceName_s, ResourceType | project ResourceName_s, ResourceType\r\n// Oql: Type:AzureManagement_CL Log_s:Lock | measure countdistinct (LockId_s) by ResourceName_s, ResourceType | Select ResourceName_s, ResourceType",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -930,7 +861,8 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
+                                        "NavigationSelect": {}
                                     }
                                 }
                             },
@@ -947,14 +879,14 @@
                                     },
                                     "Tile": {
                                         "Legend": "Subscriptions",
-                                        "Query": "Type:AzureManagement_CL Log_s:Resources | measure countdistinct (SubscriptionId) by SubscriptionId"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(SubscriptionId) by SubscriptionId\r\n| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (SubscriptionId) by SubscriptionId"
                                     },
                                     "SecondTile": {
                                         "Legend": "Regions in use",
-                                        "Query": "Type:AzureManagement_CL Log_s:Resources | measure countdistinct (Location_s) by Location_s"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(Location_s) by Location_s\r\n| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (Location_s) by Location_s"
                                     },
                                     "List": {
-                                        "Query": "Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by Location_s, SubscriptionId",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(ResourceId) by Location_s, SubscriptionId\r\n// Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by Location_s, SubscriptionId",
                                         "HideGraph": false,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -987,28 +919,33 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "{selected item}"
+                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
+                                        "NavigationSelect": {}
+                                    },
+                                    "Blade": {
+                                        "NavigationSelect": {}
                                     }
                                 }
                             }
                         ],
+                        "Filters": [],
                         "OverviewTile": {
                             "Id": "DoubleNumberBuilderTile",
                             "Type": "OverviewTile",
-                            "Version": 0,
+                            "Version": 2,
                             "Configuration": {
                                 "TileOne": {
                                     "Legend": "Unmanaged PaaS resources",
-                                    "Query": "Type:AzureManagement_CL MgmtStatus_s:Unmanaged | measure count () by ResourceName_s"
+                                    "Query": "AzureManagement_CL | where MgmtStatus_s == \"Unmanaged\" | summarize AggregatedValue = count() by ResourceName_s| count // Oql: Type:AzureManagement_CL MgmtStatus_s:Unmanaged | measure count () by ResourceName_s"
                                 },
                                 "TileTwo": {
                                     "Legend": "Unmanaged IaaS resources",
-                                    "Query": "Type:AzureManagement_CL TimeGenerated>NOW-1HOUR MgmtStatus_s:Unmanaged Log_s:IaaS | measure count () by VMName_s"
+                                    "Query": "AzureManagement_CL | where TimeGenerated > ago(1h) and MgmtStatus_s == \"Unmanaged\" and Log_s == \"IaaS\" | summarize AggregatedValue = count() by VMName_s| count // Oql: Type:AzureManagement_CL TimeGenerated>NOW-1HOUR MgmtStatus_s:Unmanaged Log_s:IaaS | measure count () by VMName_s"
                                 },
                                 "Advanced": {
                                     "DataFlowVerification": {
                                         "Enabled": false,
-                                        "Query": "*",
+                                        "Query": "search *// Oql: *",
                                         "Message": ""
                                     }
                                 }

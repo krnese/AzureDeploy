@@ -94,6 +94,7 @@ foreach ($Automation in $AutomationAccounts)
                 $PaaSData = New-Object psobject -Property @{
                     ResourceName = $Automation.Name;
                     ResourceGroupName = $Automation.ResourceGroupName;
+                    SubscriptionId = $AzureSubscriptionId;
                     Location = $Automation.Location;
                     MgmtStatus = 'Unmanaged'
                     ResourceId = $Automation.ResourceId;
@@ -115,6 +116,7 @@ foreach ($Automation in $AutomationAccounts)
                 $PaaSData = New-Object psobject -Property @{
                     ResourceName = $Automation.Name;
                     ResourceGroupName = $Automation.ResourceGroupName;
+                    SubscriptionId = $AzureSubscriptionId;
                     Location = $Automation.Location;
                     RecommendedActions = 'This resource is managed by a Log Analytics Workspace and you can explore, perform forensics and analytics on the data by using specific solutions or the search engine';
                     MgmtStatus = 'Managed'
@@ -147,6 +149,7 @@ foreach ($NSG in $NSGS)
                 $PaaSData = New-Object psobject -Property @{
                     ResourceName = $NSG.Name;
                     ResourceGroupName = $NSG.ResourceGroupName;
+                    SubscriptionId = $AzureSubscriptionId;
                     Location = $NSG.Location;
                     RecommendedActions = 'This PaaS resource should be managed by Azure OMS services';
                     MgmtStatus = 'Unmanaged'
@@ -168,6 +171,7 @@ foreach ($NSG in $NSGS)
                 $PaaSData = New-Object psobject -Property @{
                     ResourceName = $NSG.Name;
                     ResourceGroupName = $NSG.ResourceGroupName;
+                    SubscriptionId = $AzureSubscriptionId;
                     Location = $VM.Location;
                     RecommendedActions = 'This PaaS resource is managed by OMS Services';
                     MgmtStatus = 'Managed'
@@ -206,7 +210,8 @@ foreach ($backupvault in $backupVaults)
                $backupData = New-Object psobject -Property @{
                 VMName = $_.Name;
                 ProtectionStatus = $protected;
-                LogType = 'Backup';
+                SubscriptionId = $AzureSubscriptionId;
+                Log = 'Backup';
                 VaultName = $rsVault.Name;
                 Location = $rsVault.Location
                 ResourceGroupName = $_.ResourceGroupName;
@@ -241,6 +246,7 @@ $DSCManaged = Get-AzureRmAutomationDscNode -AutomationAccountName $Au.Name -Reso
                     $DSCData = New-Object psobject -Property @{
                         VMName = $DSC.Name;
                         ResourceGroupName = $DSC.ResourceGroupName;
+                        SubscriptionId = $AzureSubscriptionId;
                         NodeConfigurationName = $DSC.NodeConfigurationName;
                         MgmtStatus = 'Managed'
                         AutomationAccountName = $DSC.AutomationAccountName;
@@ -266,7 +272,7 @@ foreach ($resource in $resources)
        $ResourcesTable = @()
        $ResourcesData = new-object psobject -Property @{
            ResourceType = $Resource.ResourceType;
-           ResourceGroupName = $Resource.ResourceGroupName;
+           ResourceGroupName = $Resource.ResourceGroupName;           
            Location = $Resource.Location;
            ResourceName = $Resource.Name;
            ResourceId = $Resource.ResourceId;
@@ -298,6 +304,7 @@ foreach ($resourcegroup in $ResourceGroups)
         $DeploymentTable = @()
         $DeploymentData = new-object psobject -Property @{
             ResourceGroupName = $Deployment.ResourceGroupName;
+            SubscriptionId = $AzureSubscriptionId;
             DeploymentName = $Deployment.DeploymentName;
             ProvisioningState = $Deployment.ProvisioningState;
             TimeStamp = $Deployment.TimeStamp.ToUniversalTime().ToString('yyyy-MM-ddtHH:mm:ss');
@@ -379,6 +386,7 @@ foreach ($region in $regions)
             Name = $VMUsage.Name.Value;
             CurrentValue = $VMUsage.CurrentValue;
             Limit = $VMUsage.Limit;
+            SubscriptionId = $AzureSubscriptionId;
             Log = 'VMUsage'
             }
         $VMUsageTable += $VMUsageData
@@ -464,7 +472,7 @@ foreach ($role in $RoleAssignments)
         SubscriptionId = $AzureSubscriptionId
         }
     $RoleTable += $RoleData
-
+    
     $RoleJson = ConvertTo-Json -inputobject $RoleTable
 
     $LogType = 'AzureManagement'
