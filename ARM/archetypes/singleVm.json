@@ -1,0 +1,261 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Virtual machine name"
+            }
+        },
+        "userName": {
+            "type": "string",
+            "defaultValue": "azureadmin",
+            "metadata": {
+                "description": "Username for the guest OS"
+            }
+        },
+        "pwdOrSsh": {
+            "type": "securestring",
+            "metadata": {
+                "description": "user password"
+            }
+        },
+        "vmType": {
+            "type": "string",
+            "allowedValues": [
+                "database",
+                "web",
+                "app"
+            ],
+            "metadata": {
+                "description": "Select the vm type for this instance."
+            }
+        },
+        "platform": {
+            "type": "string",
+            "allowedValues": [
+                "WinServer",
+                "Linux"
+            ],
+            "metadata": {
+                "description": "Select OS platform; WinServer or Linux."
+            }
+        }
+    },
+    "variables": {
+        "diskSizes": [
+            20,
+            30
+        ],
+        "vNetRg": "bp-wus2-spoke-networking",
+        "vNetName": "bp-wus2-prod-spoke",
+        "vNetId": "[resourceId(variables('vNetRg'), 'Microsoft.Networks/virtualNetworks/', variables('vNetName'))]",
+        "vmToSubnetMap": {
+            "database": "bp-wus2-prod-db",
+            "web": "bp-wus2-prod-web",
+            "app": "bp-wus2-prod-app"
+        },
+        "subnetMap": "[variables('vmToSubnetmap')[parameters('vmType')]]",
+        "subnetId": "[concat(variables('vNetId'), '/subnets/', variables('subnetMap'))]",
+        "windowsOffer": "WindowsServer",
+        "windowsSku": "2016-Datacenter",
+        "windowsPublisher": "MicrosoftWindowsServer",
+        "linuxOffer": "UbuntuServer",
+        "linuxSku": "12.04.5-LTS",
+        "linuxPublisher": "Canonical",
+        "availabilitySetName": "[concat(parameters('vmName'), '-', 'avset')]",
+        "availabilitySetId": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        },
+        "publicIPAddressId": {
+            "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('pNicName'))]"
+        },
+        "vNicName": "[concat(parameters('vmName'), '-', 'nic')]",
+        "pNicName": "[concat(parameters('vmName'), '-', 'pip')]",
+        "logAnalyticsSubscriptionId": "926ab52d-a877-4db3-b0f9-2e9f8ecbe4c4",
+        "logAnalyticsName": "bpws-hub",
+        "logAnalyticsRgName": "bpazure-mgmt",
+        "windowsMgmtType": "MicrosoftMonitoringAgent",
+        "windowsMgmtVersion": "1.0",
+        "linuxMgmtType": "OmsAgentForLinux",
+        "linuxMgmtVersion": "1.4",
+        "logAnalyticsProxy": "10.10.1.5:8080",      
+        "copy": [
+            {
+                "name": "managedDiskId",
+                "count": "[length(variables('diskSizes'))]",
+                "input": {
+                    "lun": "[copyIndex('managedDiskId')]",
+                    "createOption": "Empty",
+                    "diskSizeGB": "[variables('diskSizes')[copyIndex('managedDiskId')]]"
+                }
+            }
+        ]
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "condition": "[equals(parameters('vmType'), 'web')]",
+            "apiVersion": "2017-04-01",
+            "name": "[variables('pNicName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPallocationmethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(parameters('vmName'))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-04-01",
+            "name": "[variables('vNicName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pNicName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": "[if(equals(parameters('vmType'), 'web'), variables('publicIpAddressId'), json('null'))]",
+                            "subnet": {
+                                "id": "[variables('subnetId')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2017-03-30",
+            "name": "[variables('availabilitySetName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 3
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
+            "condition": "[equals(parameters('vmType'), 'database')]",
+            "type": "Microsoft.Compute/disks",
+            "apiVersion": "2017-03-30",
+            "name": "[concat(parameters('vmName'), '-mdisk')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Premium_LRS"
+            },
+            "properties": {
+                "creationData": {
+                    "createOption": "Empty"
+                },
+                "diskSizeGB": 200
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2017-03-30",
+            "name": "[parameters('vmName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkinterfaces/', variables('vNicName'))]",
+                "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]",
+                "[resourceId('Microsoft.Compute/disks', concat(parameters('vmName'), '-mDisk'))]"
+            ],
+            "properties": {
+                "availabilitySet": "[variables('availabilitySetId')]",
+                "hardwareprofile": {
+                    "vmsize": "Standard_DS3_v2"
+                },
+                "osProfile": {
+                    "computername": "[parameters('vmName')]",
+                    "adminusername": "[parameters('username')]",
+                    "adminpassword": "[parameters('pwdOrSsh')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[if(equals(parameters('platform'), 'WinServer'), variables('windowsPublisher'), variables('linuxPublisher'))]",
+                        "offer": "[if(equals(parameters('platform'), 'WinServer'), variables('windowsOffer'), variables('linuxOffer'))]",
+                        "version": "latest",
+                        "sku": "[if(equals(parameters('platform'), 'WinServer'), variables('windowsSku'), variables('linuxSku'))]"
+                    },
+                    "osdisk": {
+                        "name": "[concat(parameters('vmName'), '-osDisk')]",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[if(equals(parameters('vmType'), 'database'), 'Premium_LRS', 'Standard_LRS')]"
+                        },
+                        "caching": "ReadWrite"
+                    },
+                    "dataDisks": "[if(equals(parameters('vmType'), 'database'), variables('managedDiskId'), json('null'))]"
+                },
+                "networkprofile": {
+                    "networkinterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces', variables('vNicName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2017-03-30",
+            "name": "[concat(parameters('vmName'), '/OMS')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                "type": "[if(equals(parameters('platform'), 'WinServer'), variables('windowsMgmtType'), variables('linuxMgmtType'))]",
+                "typeHandlerVersion": "[if(equals(parameters('platform'), 'WinServer'), variables('windowsMgmtVersion'), variables('linuxMgmtVersion'))]",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "workspaceId": "[reference(concat('/subscriptions/', variables('logAnalyticsSubscriptionId'), '/resourceGroups/', variables('logAnalyticsRgName'), '/providers/Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsName')), '2015-11-01-preview').customerId]",
+                    "azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+                    "proxyUri": "[variables('logAnalyticsProxy')]"
+                },
+                "protectedSettings": {
+                    "workspaceKey": "[listKeys(concat('/subscriptions/', variables('logAnalyticsSubscriptionId'), '/resourceGroups/', variables('logAnalyticsRgName'), '/providers/Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsName')), '2015-11-01-preview').primarySharedKey]"
+                }
+            }
+        },        
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'), '/ServiceMap')]",
+            "apiVersion": "2017-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'), '/extensions/', '/OMS')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
+                "type": "[if(equals(parameters('platform'), 'WinServer'), 'DependencyAgentWindows', 'DependencyAgentLinux')]",
+                "typeHandlerVersion": "9.1",
+                "autoUpgradeMinorVersion": true
+            }
+        }
+    ],
+    "outputs": {
+        "platform": {
+            "type": "string",
+            "value": "[parameters('platform')]"
+        },
+        "connectionInfo": {
+            "type": "string",
+            "value": "[if(equals(parameters('platform'), 'WinServer'), 'Use RDP to connect to the VM', 'Use SSH to connect to the VM')]"
+        },
+        "vmType": {
+            "type": "string",
+            "value": "[parameters('vmType')]"
+        }
+    }
+}

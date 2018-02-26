@@ -1,0 +1,200 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmNamePrefix": {
+            "type": "string",
+            "defaultValue": "VM",
+            "metadata": {
+                "description": "Assing a prefix for the VM you will create."
+            }
+        },
+        "production": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Select whether the VM should be in production or not."
+            }
+        },
+        "platform": {
+            "type": "string",
+            "allowedValues": [
+                "WinSrv",
+                "Linux"
+            ],
+            "metadata": {
+                "description": "Select the OS type to deploy."
+            }
+        },
+        "userName": {
+            "type": "string",
+            "defaultValue": "azureadmin",
+            "metadata": {
+                "description": "Specify the OS username"
+            }
+        },
+        "pwdOrssh": {
+            "type": "securestring",
+            "metadata": {
+                "description": "If Windows, specify the password for the OS username. If Linux, provide the SSH."
+            }
+        }
+    },
+    "variables": {
+        "vNetName": "vnet01",
+        "subnetName": "subnet1",
+        "vNetAddressPrefix": "192.168.0.0/16",
+        "subnetAddressPrefix": "192.168.0.0/24",
+        "vnetID": "[resourceId('Microsoft.Network/virtualnetworks', variables('vNetName'))]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/', variables('subnetName'))]",
+        "windowsOffer": "WindowsServer",
+        "windowsSku": "2016-Datacenter",
+        "windowsPublisher": "MicrosoftWindowsServer",
+        "linuxOffer": "UbuntuServer",
+        "linuxSku": "12.04.5-LTS",
+        "linuxPublisher": "Canonical",
+        "availabilitySetName": "[concat(parameters('platform'), '-', 'avset')]",
+        "availabilitySetId": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        },
+        "vNicName": "[concat(parameters('platform'), '-', 'nic')]",
+        "pNicName": "[concat(parameters('platform'), '-', 'pip')]",
+        "vmName": "[concat(parameters('vmNamePrefix'), parameters('platform'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-04-01",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vNetName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('vNetAddressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetAddressPrefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2017-04-01",
+            "name": "[variables('pNicName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPallocationmethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[toLower(concat(parameters('vmNamePrefix')))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-04-01",
+            "name": "[variables('vNicName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pNicName'))]",
+                "[resourceId('Microsoft.network/virtualNetworks/', variables('vNetName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('pNicName'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "condition": "[equals(parameters('production'), 'Yes')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2017-03-30",
+            "name": "[variables('availabilitySetName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 3
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2017-03-30",
+            "name": "[variables('vmName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkinterfaces/', variables('vNicName'))]",
+                "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
+            ],
+            "properties": {
+                "availabilitySet": "[if(equals(parameters('production'), 'Yes'), variables('availabilitySetId'), json('null'))]",
+                "hardwareprofile": {
+                    "vmsize": "Standard_D1"
+                },
+                "osProfile": {
+                    "computername": "[parameters('vmNamePrefix')]",
+                    "adminusername": "[parameters('username')]",
+                    "adminpassword": "[parameters('pwdOrssh')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[if(equals(parameters('platform'), 'WinSrv'), variables('windowsPublisher'), variables('linuxPublisher'))]",
+                        "offer": "[if(equals(parameters('platform'), 'WinSrv'), variables('windowsOffer'), variables('linuxOffer'))]",
+                        "version": "latest",
+                        "sku": "[if(equals(parameters('platform'), 'WinSrv'), variables('windowsSku'), variables('linuxSku'))]"
+                    },
+                    "osdisk": {
+                        "name": "[concat(parameters('platform'), '-osDisk')]",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        },
+                        "caching": "ReadWrite"
+                    }
+                },
+                "networkprofile": {
+                    "networkinterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces', variables('vNicName'))]"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "vmEndpoint": {
+            "type": "string",
+            "value": "[reference(concat(variables('pNicName'))).dnsSettings.fqdn]"
+        },
+        "platform": {
+            "type": "string",
+            "value": "[parameters('platform')]"
+        },
+        "connectionInfo": {
+            "type": "string",
+            "value": "[if(equals(parameters('platform'), 'WinSrv'), 'Use RDP to connect to the VM', 'Use SSH to connect to the VM')]"
+        }
+    }
+}
