@@ -539,28 +539,6 @@
             ]
         },
         {
-            "type": "Microsoft.Automation/automationAccounts/providers/diagnosticSettings",
-            "name": "[concat(parameters('omsAutomationAccountName'), '/', 'Microsoft.Insights/service')]",
-            "apiVersion": "2018-01-15",
-            "dependsOn": [
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-            ],
-            "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
-                "logs": [
-                    {
-                        "category": "JobLogs",
-                        "enabled": true
-                    },
-                    {
-                        "category": "JobStreams",
-                        "enabled": true
-                    }
-                ]
-            }
-        },
-        {
             "name": "[parameters('omsAutomationAccountName')]",
             "type": "Microsoft.Automation/automationAccounts",
             "apiVersion": "2018-01-15",
