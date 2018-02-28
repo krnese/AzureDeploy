@@ -287,7 +287,7 @@ From your PowerShell session, run the following snippet where you change the var
 	$rgLocation = 'westeurope'
 	$vmName = 'myknvm'
 	$userName = 'knadmin'
-	$templateUri = 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/basic/declerativeIaaS.json'
+	$templateUri = 'https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/lab2/declerativeIaaS.json'
 	
 	New-AzureRmResourceGroupDeployment -Name declarative `
 	                                   -ResourceGroupName (New-AzureRmResourceGroup -Name $rgName -Location $rgLocation).ResourceGroupName `
