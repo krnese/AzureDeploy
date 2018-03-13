@@ -25,42 +25,43 @@ $AzureTenantId = Get-AutomationVariable -Name 'AzureTenantId'
 
 # Getting an overview of all ARM Deployments
 
-$ResourceGroups = Get-AzureRmResourceGroup
+$ResourceGroups = Get-AzureRmResourceGroup
 
-foreach ($resourcegroup in $ResourceGroups)
-{
-    $Deployments = Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourcegroup.ResourceGroupName
+foreach ($resourcegroup in $ResourceGroups) {
+    $Deployments = Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourcegroup.ResourceGroupName 
 
-    foreach ($Deployment in $Deployments)
-    {
-        $DeploymentTable = @()
-        $DeploymentData = new-object psobject -Property @{
-            ResourceGroupName = $Deployment.ResourceGroupName;
-            SubscriptionId = $AzureSubscriptionId;
-            TenantId = $AzureTenantId;
-            DeploymentName = $Deployment.DeploymentName;
-            ProvisioningState = $Deployment.ProvisioningState;
-            TimeStamp = $Deployment.TimeStamp.ToUniversalTime().ToString('yyyy-MM-ddtHH:mm:ss');
-            Mode = $Deployment.Mode.ToString();
-            Parameters = $deployment.Parameters.Keys + $deployment.Parameters.Values;
-            Outputs = $Deployment.Outputs.Keys + $deployment.Outputs.Values;
-            TemplateLink = $Deployment.TemplateLink;
-            CorrelationId = $Deployment.CorrelationId.ToString()
-            Log = 'Deployments'
+    $DeploymentTable = @()
+    foreach ($Deployment in $Deployments) {
+        $DeploymentData = new-object psobject -Property @{
+            ResourceGroupName = $Deployment.ResourceGroupName;
+            SubscriptionId = $AzureSubscriptionId;
+            TenantId = $AzureTenantId;
+            DeploymentName = $Deployment.DeploymentName;
+            ProvisioningState = $Deployment.ProvisioningState;
+            TimeStamp = $Deployment.TimeStamp.ToUniversalTime().ToString('yyyy-MM-ddtHH:mm:ss');
+            Mode = $Deployment.Mode.ToString();
+            Parameters = $deployment.Parameters.Keys | %{
+                @{
+                    $_ = $Deployment.Parameters.Item($_)
+                }
             }
+            Outputs = $Deployment.Outputs.Keys + $deployment.Outputs.Values;
+            TemplateLink = $Deployment.TemplateLink;
+            CorrelationId = $Deployment.CorrelationId.ToString()
+            Log = 'Deployments'
+        }
 
-        $DeploymentTable += $DeploymentData
+    $DeploymentTable += $DeploymentData
 
-        $DeploymentsJson = ConvertTo-Json -inputobject $deploymenttable
+    $DeploymentsJson = ConvertTo-Json -inputobject $deploymenttable -Depth 100
 
-        #write-output $DeploymentsJson
+    Write-Output $DeploymentsJson 
+    
+    $LogType = 'AzureManagement'
 
-        #$LogType = 'AzureManagement'
-
-        #Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $DeploymentsJson -logType $LogType
+    Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $DeploymentsJson -logType $LogType 
     }
 }
-
 # Getting an overview of all existing Azure resources
     
 $Resources = Get-AzureRmResource 
