@@ -50,7 +50,7 @@
             "psModules": {
                 "ingestionAPI": {
                     "name": "OMSIngestionAPI",
-                    "uri": "https://devopsgallerystorage.blob.core.windows.net/packages/omsingestionapi.1.5.0.nupkg"
+                    "uri": "[uri(deployment().properties.templateLink.uri, 'scripts/OMSIngestionAPI.zip')]"
                 },
                 "azureRmProfile": {
                     "name": "AzureRm.Profile",
