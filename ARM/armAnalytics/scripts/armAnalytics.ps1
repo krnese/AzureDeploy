@@ -93,39 +93,6 @@ $Resources = Get-AzureRmResource
         Send-OMSAPIIngestionData -customerId $omsworkspaceid -sharedKey $omsworkspaceKey -body $ResourcesJson -logType $LogType
     }
 
-    # Getting overview over Tags
-
-    # Getting overview over RBAC
-
-$RoleAssignments = Get-AzureRmRoleAssignment
-
-foreach ($role in $RoleAssignments)
-{
-    $RoleTable = @()
-    $RoleData = new-object psobject -property @{
-        RoleAssignmentId = $Role.RoleAssignmentId;
-        Scope = $Role.Scope;
-        DisplayName = $Role.DisplayName;
-        SignInName = $Role.SignInName;
-        RoleDefinitionName = $Role.RoleDefinitionName;
-        RoleDefinitionId = $Role.RoleDefinitionId;
-        ObjectId = $Role.ObjectId;
-        ObjectType = $Role.ObjectId;
-        Log = 'RBAC';
-        SubscriptionId = $AzureSubscriptionId;
-        TenantId = $AzureTenantId
-        }
-    $RoleTable += $RoleData
-    
-    $RoleJson = ConvertTo-Json -inputobject $RoleTable
-
-    $LogType = 'AzureManagement'
-
-    Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $RoleJson -logType $LogType
-    }
-
-# Getting overview over resource lock usage
-
     $locks = Get-AzureRmResourceLock
 
         foreach ($lock in $locks)

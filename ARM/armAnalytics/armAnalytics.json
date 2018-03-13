@@ -130,7 +130,7 @@
                     "type": "views",
                     "id": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), variables('omsSolutions').customSolution.name)]",
                     "dependson": [
-                        "[Concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+                        "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
                     ],
                     "properties": {
                         "Name": "[variables('omsSolutions').customSolution.name]",
@@ -461,67 +461,6 @@
                                 }
                             },
                             {
-                                "Id": "TwoNumberTileListBuilderBlade",
-                                "Type": "Blade",
-                                "Version": 0,
-                                "Configuration": {
-                                    "General": {
-                                        "title": "RBAC Overview",
-                                        "newGroup": false,
-                                        "icon": "",
-                                        "useIcon": false
-                                    },
-                                    "Tile": {
-                                        "Legend": "Total User Roles",
-                                        "Query": "AzureManagement_CL | where Log_s == \"RBAC\" | summarize AggregatedValue = dcount(RoleDefinitionId_g) by Name_s| count // Oql: Type:AzureManagement_CL Log_s:RBAC | measure countdistinct (RoleDefinitionId_g) by DisplayName_s"
-                                    },
-                                    "SecondTile": {
-                                        "Legend": "Resources with assigned RBAC",
-                                        "Query": "AzureManagement_CL | where Log_s == \"RBAC\" and Scope_s != \"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | summarize AggregatedValue = dcount(RoleDefinitionId_g) by DisplayName_s, Scope_s| count // Oql: Type:AzureManagement_CL Log_s:RBAC !Scope_s:\"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | measure countdistinct (RoleDefinitionId_g) by DisplayName_s, Scope_s"
-                                    },
-                                    "List": {
-                                        "Query": "AzureManagement_CL | where Log_s == \"RBAC\" and Scope_s != \"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | summarize AggregatedValue = dcount(RoleDefinitionId_g) by DisplayName_s, Scope_s | project DisplayName_s, Scope_s// Oql: Type:AzureManagement_CL Log_s:RBAC !Scope_s:\"/subscriptions/09e8ed26-7d8b-4678-a179-cfca8a0cef5c\" | measure countdistinct (RoleDefinitionId_g) by DisplayName_s, Scope_s | select DisplayName_s, Scope_s",
-                                        "HideGraph": true,
-                                        "enableSparklines": false,
-                                        "operation": "Summary",
-                                        "ColumnsTitle": {
-                                            "Name": "Assigned User Roles",
-                                            "Value": ""
-                                        },
-                                        "Color": "#0072c6",
-                                        "thresholds": {
-                                            "isEnabled": false,
-                                            "values": [
-                                                {
-                                                    "name": "Normal",
-                                                    "threshold": "Default",
-                                                    "color": "#009e49",
-                                                    "isDefault": true
-                                                },
-                                                {
-                                                    "name": "Warning",
-                                                    "threshold": "60",
-                                                    "color": "#fcd116",
-                                                    "isDefault": false
-                                                },
-                                                {
-                                                    "name": "Error",
-                                                    "threshold": "90",
-                                                    "color": "#ba141a",
-                                                    "isDefault": false
-                                                }
-                                            ]
-                                        },
-                                        "NameDSVSeparator": "",
-                                        "NavigationQuery": "search {selected item}// Oql: {selected item}",
-                                        "NavigationSelect": {}
-                                    },
-                                    "Blade": {
-                                        "NavigationSelect": {}
-                                    }
-                                }
-                            },
-                            {
                                 "Id": "NumberTileListBuilderBlade",
                                 "Type": "Blade",
                                 "Version": 0,
@@ -705,7 +644,7 @@
                     "type": "variables",
                     "apiVersion": "2018-01-15",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "tags": {},
                     "properties": {
@@ -718,7 +657,7 @@
                     "type": "variables",
                     "apiVersion": "2018-01-15",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "tags": {},
                     "properties": {
@@ -731,7 +670,7 @@
                     "type": "variables",
                     "apiVersion": "2018-01-15",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "tags": {},
                     "properties": {
@@ -744,7 +683,7 @@
                     "type": "variables",
                     "apiVersion": "2018-01-15",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "tags": {},
                     "properties": {
@@ -757,7 +696,7 @@
                     "type": "variables",
                     "apiVersion": "2018-01-15",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "tags": {},
                     "properties": {
@@ -767,13 +706,13 @@
                 },
                 {
                     "name": "[variables('assets').psModules.azureRmProfile.name]",
-                    "type": "Modules",
+                    "type": "modules",
                     "apiVersion": "2018-01-15",
                     "tags": {},
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceId.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceKey.name)]"
                     ],
                     "properties": {
                         "contentLink": {
@@ -783,14 +722,14 @@
                 },
                 {
                     "name": "[variables('assets').psModules.azureRmResources.name]",
-                    "type": "Modules",
+                    "type": "modules",
                     "apiVersion": "2018-01-15",
                     "tags": {},
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmProfile.name)]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceId.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceKey.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.azureRmProfile.name)]"
                     ],
                     "properties": {
                         "contentLink": {
@@ -800,13 +739,13 @@
                 },
                 {
                     "name": "[variables('assets').psModules.ingestionAPI.name]",
-                    "type": "Modules",
+                    "type": "modules",
                     "apiVersion": "2018-01-15",
                     "tags": {},
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceId.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceKey.name)]"
                     ],
                     "properties": {
                         "contentLink": {
@@ -820,11 +759,12 @@
                     "apiVersion": "2018-01-15",
                     "location": "[parameters('omsAutomationRegion')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.ingestionAPI.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmProfile.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.ingestionAPI.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.azureRmProfile.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.azureRmResources.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceId.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceKey.name)]"
                     ],
                     "properties": {
                         "runbookType": "[variables('assets').runbooks.armManagement.type]",
@@ -839,12 +779,12 @@
                 },
                 {
                     "name": "[concat(parameters('omsAutomationAccountName'), '/', variables('assets').runbooks.armManagement.ingestScheduleName)]",
-                    "type": "microsoft.automation/automationAccounts/schedules",
+                    "type": "Microsoft.automation/automationAccounts/schedules",
                     "apiVersion": "2018-01-15",
                     "location": "[parameters('omsAutomationRegion')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.armManagement.name)]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('omsAutomationAccountName'), variables('assets').runbooks.armManagement.name)]"
                     ],
                     "tags": {},
                     "properties": {
@@ -857,13 +797,13 @@
                 },
                 {
                     "name": "[concat(parameters('omsAutomationAccountName'), '/', parameters('jobGuid'))]",
-                    "type": "microsoft.automation/automationAccounts/jobSchedules",
+                    "type": "Microsoft.Automation/automationAccounts/jobSchedules",
                     "apiVersion": "2018-01-15",
                     "location": "[parameters('omsWorkspaceRegion')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/schedules/', variables('assets').runbooks.armManagement.ingestScheduleName)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.armManagement.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
+                        "[resourceId('Microsoft.Automation/automationAccounts/schedules/', parameters('omsAutomationAccountName'), variables('assets').runbooks.armManagement.ingestScheduleName)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('omsAutomationAccountName'), variables('assets').runbooks.armManagement.name)]",
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "tags": {},
                     "properties": {
@@ -883,10 +823,10 @@
             "apiVersion": "2015-11-01-preview",
             "location": "[parameters('omsWorkspaceRegion')]",
             "dependsOn": [
-                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
-                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/views/', variables('omsSolutions').customSolution.name)]",
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.ingestionAPI.name)]",
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.armManagement.name)]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
+                "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), variables('omsSolutions').customSolution.name)]",
+                "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.ingestionAPI.name)]",
+                "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('omsAutomationAccountName'), variables('assets').runbooks.armManagement.name)]"
             ],
             "plan": {
                 "name": "[variables('omsSolutions').customSolution.solutionName]",
