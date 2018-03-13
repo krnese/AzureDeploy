@@ -128,8 +128,9 @@
                     "apiVersion": "2015-11-01-preview",
                     "name": "[variables('omsSolutions').customSolution.name]",
                     "type": "views",
+                    "id": "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), variables('omsSolutions').customSolution.name)]",
                     "dependson": [
-                        "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+                        "[Concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
                     ],
                     "properties": {
                         "Name": "[variables('omsSolutions').customSolution.name]",
@@ -137,12 +138,12 @@
                         "Description": "[variables('omsSolutions').customSolution.description]",
                         "Author": "[variables('omsSolutions').customSolution.author]",
                         "Source": "Local",
-
+                        "Version": 2,
                         "Dashboard": [
                             {
                                 "Id": "SingleQueryDonutBuilderBladeV1",
                                 "Type": "Blade",
-                                "Version": 2,
+                                "Version": 0,
                                 "Configuration": {
                                     "General": {
                                         "title": "Azure Resource Manager",
@@ -227,7 +228,7 @@
                             {
                                 "Id": "SingleQueryDonutBuilderBladeV1",
                                 "Type": "Blade",
-                                "Version": 2,
+                                "Version": 0,
                                 "Configuration": {
                                     "General": {
                                         "title": "Custom templates",
@@ -313,7 +314,7 @@
                             {
                                 "Id": "SingleQueryDonutBuilderBladeV1",
                                 "Type": "Blade",
-                                "Version": 2,
+                                "Version": 0,
                                 "Configuration": {
                                     "General": {
                                         "title": "First-party templates",
@@ -399,7 +400,7 @@
                             {
                                 "Id": "TwoNumberTileListBuilderBlade",
                                 "Type": "Blade",
-                                "Version": 2,
+                                "Version": 0,
                                 "Configuration": {
                                     "General": {
                                         "title": "Resource Overview",
@@ -462,7 +463,7 @@
                             {
                                 "Id": "TwoNumberTileListBuilderBlade",
                                 "Type": "Blade",
-                                "Version": 2,
+                                "Version": 0,
                                 "Configuration": {
                                     "General": {
                                         "title": "RBAC Overview",
@@ -523,7 +524,7 @@
                             {
                                 "Id": "NumberTileListBuilderBlade",
                                 "Type": "Blade",
-                                "Version": 2,
+                                "Version": 0,
                                 "Configuration": {
                                     "General": {
                                         "title": "Resource Lock Overview",
@@ -580,7 +581,7 @@
                             {
                                 "Id": "TwoNumberTileListBuilderBlade",
                                 "Type": "Blade",
-                                "Version": 2,
+                                "Version": 0,
                                 "Configuration": {
                                     "General": {
                                         "title": "Subscription and Region overview",
@@ -641,7 +642,6 @@
                                 }
                             }
                         ],
-                        "Filters": [],
                         "OverviewTile": {
                             "Id": "SingleQueryDonutBuilderTileV1",
                             "Type": "OverviewTile",
