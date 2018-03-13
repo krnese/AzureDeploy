@@ -28,6 +28,12 @@
         },
         "_artifactsLocation": {
             "value": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/oms-all-deploy"
+        },
+        "pwd": {
+            "value": "abab12UNIUNI"
+        },
+        "vmResourceGroup": {
+            "value": "krnese2018"
         }
     }
 }

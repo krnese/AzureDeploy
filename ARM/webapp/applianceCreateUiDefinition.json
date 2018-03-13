@@ -59,8 +59,8 @@
                         "defaultValue": "",
                         "constraints": {
                             "required": true,
-                            "regex": "[a-z][a-z0-9-]{2,5}[a-z0-9]$",
-                            "validationMessage": "Must be 3-5 characters."
+                            "regex": "^[a-z][a-z0-5-]{1,5}[a-z0-5]$",
+                            "validationMessage": "Must be 1-5 characters."
                         }
                     },
                     {
@@ -112,7 +112,18 @@
                                 "domainNameLabel": true
                             }
                         }
-                    },
+                    }
+                ]
+            },
+            {
+                "name": "mgmtConfig",
+                "label": "Management settings",
+                "subLabel": {
+                    "preValidation": "Configure Azure management",
+                    "postValidation": "Done"
+                },
+                "bladeTitle": "Configure Azure management for web app",
+                "elements": [
                     {
                         "name": "management",
                         "type": "Microsoft.Common.OptionsGroup",
@@ -144,7 +155,7 @@
             "pwd": "[steps('credentialsConfig').adminPassword.password]",
             "dnsName": "[steps('webConfig').dnsAndPublicIP.domainNameLabel]",
             "publicIPAddressName": "[steps('webConfig').dnsAndPublicIP.name]",
-            "enablePremiumManagement": "[steps('webConfig').management]"
+            "enablePremiumManagement": "[steps('mgmtConfig').management]"
         }
     }
 }

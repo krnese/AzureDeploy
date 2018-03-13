@@ -186,6 +186,9 @@
                 "hardwareprofile": {
                     "vmsize": "Standard_D1"
                 },
+                "hardwareProfile":{
+                    "vmSize":"Standard_A0"
+                },
                 "osProfile": {
                     "computername": "[parameters('vmName')]",
                     "adminusername": "[parameters('username')]",

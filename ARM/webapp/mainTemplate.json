@@ -63,13 +63,13 @@
     "resources":  [
                       {
                           "type":  "Microsoft.Solutions/appliances",
-                          "name":  "ContosoWebApplication",
+                          "name":  "ManagedWebApplication",
                           "apiVersion":  "2016-09-01-preview",
                           "location":  "[resourceGroup().Location]",
                           "kind":  "ServiceCatalog",
                           "properties":  {
                                              "managedResourceGroupId":  "[variables('applianceInfraResourceGroupId')]",
-                                             "applianceDefinitionId":  "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/knappliancedef/providers/Microsoft.Solutions/applianceDefinitions/ContosoWebApplication')]",
+                                             "applianceDefinitionId":  "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/knappliancedef/providers/Microsoft.Solutions/applianceDefinitions/ManagedWebApplication')]",
                                              "parameters":  {
                                                                 "userName":  {
                                                                                  "value":  "[parameters('userName')]"
@@ -98,5 +98,8 @@
                                                             }
                                          }
                       }
-                  ]
+                  ],
+    "outputs":  {
+
+                }
 }

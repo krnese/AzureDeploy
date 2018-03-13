@@ -142,7 +142,7 @@
                             {
                                 "Id": "SingleQueryDonutBuilderBladeV1",
                                 "Type": "Blade",
-                                "Version": 0,
+                                "Version": 2,
                                 "Configuration": {
                                     "General": {
                                         "title": "Azure Resource Manager",
@@ -227,7 +227,7 @@
                             {
                                 "Id": "SingleQueryDonutBuilderBladeV1",
                                 "Type": "Blade",
-                                "Version": 0,
+                                "Version": 2,
                                 "Configuration": {
                                     "General": {
                                         "title": "Custom templates",
@@ -313,7 +313,7 @@
                             {
                                 "Id": "SingleQueryDonutBuilderBladeV1",
                                 "Type": "Blade",
-                                "Version": 0,
+                                "Version": 2,
                                 "Configuration": {
                                     "General": {
                                         "title": "First-party templates",
@@ -399,7 +399,7 @@
                             {
                                 "Id": "TwoNumberTileListBuilderBlade",
                                 "Type": "Blade",
-                                "Version": 0,
+                                "Version": 2,
                                 "Configuration": {
                                     "General": {
                                         "title": "Resource Overview",
@@ -462,7 +462,7 @@
                             {
                                 "Id": "TwoNumberTileListBuilderBlade",
                                 "Type": "Blade",
-                                "Version": 0,
+                                "Version": 2,
                                 "Configuration": {
                                     "General": {
                                         "title": "RBAC Overview",
@@ -523,7 +523,7 @@
                             {
                                 "Id": "NumberTileListBuilderBlade",
                                 "Type": "Blade",
-                                "Version": 0,
+                                "Version": 2,
                                 "Configuration": {
                                     "General": {
                                         "title": "Resource Lock Overview",
@@ -580,7 +580,7 @@
                             {
                                 "Id": "TwoNumberTileListBuilderBlade",
                                 "Type": "Blade",
-                                "Version": 0,
+                                "Version": 2,
                                 "Configuration": {
                                     "General": {
                                         "title": "Subscription and Region overview",
