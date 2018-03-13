@@ -28,19 +28,37 @@ Once deployed, you can navigate to your Log Analytics workspace and locate the "
 Opening the solution, you will find additional views to call out the following:
 
 * Overall deployment stats
+
+![alt text](images/armoverview.png "ARM deployments")
+
 Explore every template deployment across your subscription, to understand why some of these might be failing or are being canceled.
 
 * Custom templates
+
+![alt text](images/custom.png "Custom template overview")
+
 Get detailed information about the templates you author and bring on your own, to understand their quality, success rate and more.
 
 * First-party templates
+
+![alt text](images/firstparty.png "First-party template overview")
+
 Whenever you deploy from Azure portal, you will be invoking templates provided by Microsoft. The stats of those deployments are located here.
 
 * Resource Overview
+
+![alt text](images/resources.png "Resource overview")
+
 A quick look at this view, will give you an understanding of which resources are frequently being deployed.
 
 * Resource Locks
+
+![alt text](images/locks.png "Resource lock overview")
+
 If you use Resource Locks on your resources in production (you really should!), this view will show you which locks are applied, for which scope(s).
 
 * Subscription and Region Overview
+
+![alt text](images/subregion.png "region usage")
+
 Shows resources distributed across Azure regions
