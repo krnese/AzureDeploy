@@ -120,7 +120,7 @@
             "location": "[parameters('omsWorkspaceRegion')]",
             "properties": {
                 "sku": {
-                    "name": "pernode"
+                    "name": "[parameters('omsSku')]"
                 }
             },
             "resources": [
