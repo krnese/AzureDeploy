@@ -1,6 +1,8 @@
 # Azure Resource Manager; Turning the lights on
 >Note: This is a community solution/prototype - and is not supported. Use it "as is", and feel free to improve and iterate on these building blocks yourself :-)
 
+![alt text](images/metapoint.png "ARM Analytics")
+
 ## What is this?
 
 Have you ever wondered how many template deployments you have in your subscription? And whether these are successful or not?
