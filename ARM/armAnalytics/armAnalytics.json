@@ -54,11 +54,11 @@
                 },
                 "azureRmProfile": {
                     "name": "AzureRm.Profile",
-                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.profile.2.3.0.nupkg"
+                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.profile.4.4.0.nupkg"
                 },
                 "azureRmResources": {
                     "name": "AzureRm.Resources",
-                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.resources.3.3.0.nupkg"
+                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.resources.5.5.0.nupkg"
                 }
             },
             "aaVariables": {
