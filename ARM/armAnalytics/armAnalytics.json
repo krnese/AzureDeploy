@@ -26,6 +26,17 @@
                 "description": "Specify region for your automation account"
             }
         },
+        "omsSku": {
+            "type": "string",
+            "allowedValues": [
+                "free",
+                "standalone",
+                "pernode"
+            ],
+            "metadata": {
+                "description": "Select SKU for the Log Analytics workspace"
+            }
+        },
         "jobGuid": {
             "type": "string",
             "defaultValue": "Use Powershell and run 'New-Guid' to get the GUID",
@@ -39,7 +50,7 @@
             "psModules": {
                 "ingestionAPI": {
                     "name": "OMSIngestionAPI",
-                    "uri": "https://github.com/krnese/AzureDeploy/raw/master/OMS/MSOMS/Solutions/custom/OMSIngestionnAPI.zip"
+                    "uri": "https://github.com/krnese/AzureDeploy/raw/master/OMS/MSOMS/Solutions/custom/OMSIngestionAPI.zip"
                 },
                 "azureRmProfile": {
                     "name": "AzureRm.Profile",
@@ -48,26 +59,6 @@
                 "azureRmResources": {
                     "name": "AzureRm.Resources",
                     "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.resources.3.3.0.nupkg"
-                },
-                "azureRmRecoveryServices": {
-                    "name": "AzureRm.RecoveryServices",
-                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.recoveryservices.2.3.0.nupkg"
-                },
-                "azureRmBackup": {
-                    "name": "AzureRM.RecoveryServices.Backup",
-                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.recoveryservices.backup.2.3.0.nupkg"
-                },
-                "azureRmCompute": {
-                    "name": "AzureRm.Compute",
-                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.compute.2.3.0.nupkg"
-                },
-                "azureRmAutomation": {
-                    "name": "AzureRm.Automation",
-                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.automation.2.3.0.nupkg"
-                },
-                "azureRmInsights": {
-                    "name": "AzureRm.Insights",
-                    "url": "https://devopsgallerystorage.blob.core.windows.net/packages/azurerm.insights.2.3.0.nupkg"
                 }
             },
             "aaVariables": {
@@ -97,7 +88,7 @@
                 }
             },
             "runbooks": {
-                "vmManagement": {
+                "armManagement": {
                     "name": "azureMgmtAnalytics",
                     "url": "[uri(deployment().properties.templateLink.uri, 'scripts/armAnalytics.ps1')]",
                     "version": "1.0.0.0",
@@ -111,13 +102,8 @@
             }
         },
         "omsSolutions": {
-            "azureActivity": {
-                "name": "AzureActivity",
-                "solutionName": "[concat('AzureActivity', '(', parameters('omsWorkspaceName'), ')')]",
-                "publisher": "Microsoft"
-            },
             "customSolution": {
-                "name": "AzureManagementAnalytics",
+                "name": "AzureResourceManagerAnalytics",
                 "solutionName": "[concat('AzureResourceManagerAnalytics', '[', parameters('omsWorkspaceName'), ']')]",
                 "publisher": "krnese@microsoft.com",
                 "displayName": "Azure Resource Manager Analytics",
@@ -138,19 +124,6 @@
                 }
             },
             "resources": [
-                {
-                    "name": "AzureActivityLog",
-                    "type": "datasources",
-                    "apiVersion": "2015-11-01-preview",
-                    "dependsOn": [
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-                    ],
-                    "kind": "AzureActivityLog",
-                    "properties": {
-                        "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
-                    }
-                },
-
                 {
                     "apiVersion": "2015-11-01-preview",
                     "name": "[variables('omsSolutions').customSolution.name]",
@@ -252,6 +225,178 @@
                                 }
                             },
                             {
+                                "Id": "SingleQueryDonutBuilderBladeV1",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Custom templates",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Header": {
+                                        "Title": "",
+                                        "Subtitle": ""
+                                    },
+                                    "Donut": {
+                                        "Query": "AzureManagement_CL | where Log_s == \"Deployments\" | where DeploymentName_s !contains \"Microsoft\"  | summarize AggregatedValue = dcount(CorrelationId) by ProvisioningState_s | sort by AggregatedValue desc | where isnotempty(ProvisioningState_s) // Oql: Type:AzureManagement_CL Log_s:Deployments | measure countdistinct (CorrelationId) by ProvisioningState_s",
+                                        "CenterLegend": {
+                                            "Text": "Total",
+                                            "Operation": "Sum",
+                                            "ArcsToSelect": []
+                                        },
+                                        "Options": {
+                                            "colors": [
+                                                "#00188f",
+                                                "#0072c6",
+                                                "#00bcf2"
+                                            ],
+                                            "valueColorMapping": [
+                                                {
+                                                    "value": "Succeeded",
+                                                    "color": "#55d455"
+                                                },
+                                                {
+                                                    "value": "Failed",
+                                                    "color": "#e81123"
+                                                },
+                                                {
+                                                    "value": "Canceled",
+                                                    "color": "#fff100"
+                                                }
+                                            ]
+                                        },
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "AzureManagement_CL  | where Log_s == \"Deployments\" and (ProvisioningState_s == \"Failed\" or ProvisioningState_s == \"Canceled\") and DeploymentName_s !contains \"Microsoft\" | summarize AggregatedValue = count() by DeploymentName_s, ResourceGroupName_s, ProvisioningState_s  | project DeploymentName_s, ResourceGroupName_s, ProvisioningState_s",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Deployment Name",
+                                            "Value": ""
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | sort by TimeGenerated desc"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "SingleQueryDonutBuilderBladeV1",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "First-party templates",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Header": {
+                                        "Title": "",
+                                        "Subtitle": ""
+                                    },
+                                    "Donut": {
+                                        "Query": "AzureManagement_CL | where Log_s == \"Deployments\" | where DeploymentName_s contains \"Microsoft\"  | summarize AggregatedValue = dcount(CorrelationId) by ProvisioningState_s | sort by AggregatedValue desc | where isnotempty(ProvisioningState_s)",
+                                        "CenterLegend": {
+                                            "Text": "Total",
+                                            "Operation": "Sum",
+                                            "ArcsToSelect": []
+                                        },
+                                        "Options": {
+                                            "colors": [
+                                                "#00188f",
+                                                "#0072c6",
+                                                "#00bcf2"
+                                            ],
+                                            "valueColorMapping": [
+                                                {
+                                                    "value": "Succeeded",
+                                                    "color": "#55d455"
+                                                },
+                                                {
+                                                    "value": "Failed",
+                                                    "color": "#e81123"
+                                                },
+                                                {
+                                                    "value": "Canceled",
+                                                    "color": "#fff100"
+                                                }
+                                            ]
+                                        },
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "AzureManagement_CL  | where Log_s == \"Deployments\" and (ProvisioningState_s == \"Failed\" or ProvisioningState_s == \"Canceled\") and DeploymentName_s contains \"Microsoft\" | summarize AggregatedValue = count() by DeploymentName_s, ResourceGroupName_s, ProvisioningState_s  | project DeploymentName_s, ResourceGroupName_s, ProvisioningState_s",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Deployment Name",
+                                            "Value": ""
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | sort by TimeGenerated desc"
+                                        }
+                                    }
+                                }
+                            },
+                            {
                                 "Id": "TwoNumberTileListBuilderBlade",
                                 "Type": "Blade",
                                 "Version": 0,
@@ -264,14 +409,14 @@
                                     },
                                     "Tile": {
                                         "Legend": "Resources in total",
-                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(ResourceId) by ResourceName_s\r\n| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by ResourceName_s"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(ResourceId) by ResourceName_s| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by ResourceName_s"
                                     },
                                     "SecondTile": {
                                         "Legend": "Resource Types",
-                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = count() by ResourceType\r\n| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure count () by ResourceType"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = count() by ResourceType| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure count () by ResourceType"
                                     },
                                     "List": {
-                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(ResourceId) by ResourceType\r\n// Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by ResourceType",
+                                        "Query": "AzureManagement_CL  | where Log_s == \"Resources\"  | summarize AggregatedValue = dcount(ResourceId) by ResourceType | sort by AggregatedValue",
                                         "HideGraph": false,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -304,8 +449,10 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
-                                        "NavigationSelect": {}
+                                        "NavigationQuery": "search {selected item} | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | sort by TimeGenerated desc"
+                                        }
                                     },
                                     "Blade": {
                                         "NavigationSelect": {}
@@ -385,12 +532,12 @@
                                         "useIcon": false
                                     },
                                     "Tile": {
-                                        "Query": "AzureManagement_CL | where Log_s == \"Lock\" | summarize AggregatedValue = dcount(LockId_s) by ResourceType, ResourceName_s\r\n| count // Oql: Type:AzureManagement_CL Log_s:Lock | measure countdistinct (LockId_s) by ResourceType, ResourceName_s",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Lock\" | summarize AggregatedValue = dcount(LockId_s) by ResourceType, ResourceName_s| count // Oql: Type:AzureManagement_CL Log_s:Lock | measure countdistinct (LockId_s) by ResourceType, ResourceName_s",
                                         "Legend": "Active Resource Locks",
                                         "NavigationSelect": {}
                                     },
                                     "List": {
-                                        "Query": "AzureManagement_CL | where Log_s == \"Lock\" | summarize AggregatedValue = dcount(LockId_s) by ResourceName_s, ResourceType | project ResourceName_s, ResourceType\r\n// Oql: Type:AzureManagement_CL Log_s:Lock | measure countdistinct (LockId_s) by ResourceName_s, ResourceType | Select ResourceName_s, ResourceType",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Lock\" | summarize AggregatedValue = dcount(LockId_s) by ResourceName_s, ResourceType | project ResourceName_s, ResourceType// Oql: Type:AzureManagement_CL Log_s:Lock | measure countdistinct (LockId_s) by ResourceName_s, ResourceType | Select ResourceName_s, ResourceType",
                                         "HideGraph": true,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -423,8 +570,10 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
-                                        "NavigationSelect": {}
+                                        "NavigationQuery": "search {selected item} | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | sort by TimeGenerated desc"
+                                        }
                                     }
                                 }
                             },
@@ -441,14 +590,14 @@
                                     },
                                     "Tile": {
                                         "Legend": "Subscriptions",
-                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(SubscriptionId) by SubscriptionId\r\n| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (SubscriptionId) by SubscriptionId"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(SubscriptionId) by SubscriptionId| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (SubscriptionId) by SubscriptionId"
                                     },
                                     "SecondTile": {
                                         "Legend": "Regions in use",
-                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(Location_s) by Location_s\r\n| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (Location_s) by Location_s"
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(Location_s) by Location_s| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (Location_s) by Location_s"
                                     },
                                     "List": {
-                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(ResourceId) by Location_s, SubscriptionId\r\n// Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (ResourceId) by Location_s, SubscriptionId",
+                                        "Query": "AzureManagement_CL  | where Log_s == \"Resources\"  | summarize AggregatedValue = dcount(ResourceId) by Location_s, SubscriptionId | sort by AggregatedValue ",
                                         "HideGraph": false,
                                         "enableSparklines": false,
                                         "operation": "Summary",
@@ -481,8 +630,10 @@
                                             ]
                                         },
                                         "NameDSVSeparator": "",
-                                        "NavigationQuery": "search {selected item}\r\n// Oql: {selected item}",
-                                        "NavigationSelect": {}
+                                        "NavigationQuery": "search {selected item} | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | sort by TimeGenerated desc"
+                                        }
                                     },
                                     "Blade": {
                                         "NavigationSelect": {}
@@ -631,91 +782,6 @@
                     }
                 },
                 {
-                    "name": "[variables('assets').psModules.azureRmCompute.name]",
-                    "type": "Modules",
-                    "apiVersion": "2018-01-15",
-                    "tags": {},
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmProfile.name)]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('assets').psModules.azureRmCompute.url]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('assets').psModules.azureRmAutomation.name]",
-                    "type": "Modules",
-                    "apiVersion": "2018-01-15",
-                    "tags": {},
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmProfile.name)]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('assets').psModules.azureRmAutomation.url]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('assets').psModules.azureRmInsights.name]",
-                    "type": "Modules",
-                    "apiVersion": "2018-01-15",
-                    "tags": {},
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmProfile.name)]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('assets').psModules.azureRmInsights.url]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('assets').psModules.azureRmBackup.name]",
-                    "type": "Modules",
-                    "apiVersion": "2018-01-15",
-                    "tags": {},
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmProfile.name)]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('assets').psModules.azureRmBackup.url]"
-                        }
-                    }
-                },
-                {
-                    "name": "[variables('assets').psModules.azureRmRecoveryServices.name]",
-                    "type": "Modules",
-                    "apiVersion": "2018-01-15",
-                    "tags": {},
-                    "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmProfile.name)]"
-                    ],
-                    "properties": {
-                        "contentLink": {
-                            "uri": "[variables('assets').psModules.azureRmRecoveryServices.url]"
-                        }
-                    }
-                },
-                {
                     "name": "[variables('assets').psModules.azureRmResources.name]",
                     "type": "Modules",
                     "apiVersion": "2018-01-15",
@@ -749,49 +815,44 @@
                     }
                 },
                 {
-                    "name": "[variables('assets').runbooks.vmManagement.name]",
+                    "name": "[variables('assets').runbooks.armManagement.name]",
                     "type": "runbooks",
                     "apiVersion": "2018-01-15",
                     "location": "[parameters('omsAutomationRegion')]",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.ingestionAPI.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmRecoveryServices.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmBackup.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmInsights.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmCompute.name)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmAutomation.name)]",
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.azureRmProfile.name)]",
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceId.name)]",
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/variables/', variables('assets').aaVariables.OMSWorkspaceKey.name)]"
                     ],
                     "properties": {
-                        "runbookType": "[variables('assets').runbooks.vmManagement.type]",
+                        "runbookType": "[variables('assets').runbooks.armManagement.type]",
                         "logProgress": true,
                         "logVerbose": false,
-                        "description": "[variables('assets').runbooks.vmManagement.description]",
+                        "description": "[variables('assets').runbooks.armManagement.description]",
                         "publishContentLink": {
-                            "uri": "[variables('assets').runbooks.vmManagement.url]",
-                            "version": "[variables('assets').runbooks.vmManagement.version]"
+                            "uri": "[variables('assets').runbooks.armManagement.url]",
+                            "version": "[variables('assets').runbooks.armManagement.version]"
                         }
                     }
                 },
                 {
-                    "name": "[concat(parameters('omsAutomationAccountName'), '/', variables('assets').runbooks.vmManagement.ingestScheduleName)]",
+                    "name": "[concat(parameters('omsAutomationAccountName'), '/', variables('assets').runbooks.armManagement.ingestScheduleName)]",
                     "type": "microsoft.automation/automationAccounts/schedules",
                     "apiVersion": "2018-01-15",
                     "location": "[parameters('omsAutomationRegion')]",
                     "dependsOn": [
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.vmManagement.name)]"
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.armManagement.name)]"
                     ],
                     "tags": {},
                     "properties": {
                         "description": "OMS Ingestion API Scheduler",
                         "startTime": "",
                         "isEnabled": true,
-                        "interval": "[variables('assets').runbooks.vmManagement.ingestInterval]",
-                        "frequency": "[variables('assets').runbooks.vmManagement.ingestFrequency]"
+                        "interval": "[variables('assets').runbooks.armManagement.ingestInterval]",
+                        "frequency": "[variables('assets').runbooks.armManagement.ingestFrequency]"
                     }
                 },
                 {
@@ -800,39 +861,21 @@
                     "apiVersion": "2018-01-15",
                     "location": "[parameters('omsWorkspaceRegion')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/schedules/', variables('assets').runbooks.vmManagement.ingestScheduleName)]",
-                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.vmManagement.name)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/schedules/', variables('assets').runbooks.armManagement.ingestScheduleName)]",
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.armManagement.name)]",
                         "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'))]"
                     ],
                     "tags": {},
                     "properties": {
                         "schedule": {
-                            "name": "[variables('assets').runbooks.vmManagement.ingestScheduleName]"
+                            "name": "[variables('assets').runbooks.armManagement.ingestScheduleName]"
                         },
                         "runbook": {
-                            "name": "[variables('assets').runbooks.vmManagement.name]"
+                            "name": "[variables('assets').runbooks.armManagement.name]"
                         }
                     }
                 }
             ]
-        },
-        {
-            "name": "[variables('omsSolutions').azureActivity.solutionName]",
-            "type": "Microsoft.OperationsManagement/solutions",
-            "apiVersion": "2015-11-01-preview",
-            "location": "[parameters('omsWorkspaceRegion')]",
-            "dependsOn": [
-                "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-            ],
-            "plan": {
-                "name": "[variables('omsSolutions').azureActivity.solutionName]",
-                "product": "[concat('OMSGallery/', variables('omsSolutions').azureActivity.name)]",
-                "publisher": "[variables('omsSolutions').azureActivity.publisher]",
-                "promotionCode": ""
-            },
-            "properties": {
-                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
-            }
         },
         {
             "name": "[variables('omsSolutions').customSolution.solutionName]",
@@ -843,7 +886,7 @@
                 "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]",
                 "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/views/', variables('omsSolutions').customSolution.name)]",
                 "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/modules/', variables('assets').psModules.ingestionAPI.name)]",
-                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.vmManagement.name)]"
+                "[concat('Microsoft.Automation/automationAccounts/', parameters('omsAutomationAccountName'), '/runbooks/', variables('assets').runbooks.armManagement.name)]"
             ],
             "plan": {
                 "name": "[variables('omsSolutions').customSolution.solutionName]",
@@ -859,7 +902,7 @@
                     "[resourceId('Microsoft.Automation/automationAccounts/variables/', parameters('omsAutomationAccountName'), variables('assets').aaVariables.OMSWorkspaceKey.name)]"
                 ],
                 "containedResources": [
-                    "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('omsAutomationAccountName'), variables('assets').runbooks.vmManagement.name)]",
+                    "[resourceId('Microsoft.Automation/automationAccounts/runbooks/', parameters('omsAutomationAccountName'), variables('assets').runbooks.armManagement.name)]",
                     "[resourceId('Microsoft.Automation/automationAccounts/modules/', parameters('omsAutomationAccountName'), variables('assets').psModules.ingestionAPI.name)]",
                     "[resourceId('Microsoft.OperationalInsights/workspaces/views/', parameters('omsWorkspaceName'), variables('omsSolutions').customSolution.name)]"
                 ]
