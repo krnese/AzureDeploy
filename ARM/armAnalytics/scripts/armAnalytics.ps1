@@ -23,6 +23,10 @@ $OMSWorkspaceKey = Get-AutomationVariable -Name 'OMSWorkspaceKey'
 $AzureSubscriptionId = Get-AutomationVariable -Name 'AzureSubscriptionId'
 $AzureTenantId = Get-AutomationVariable -Name 'AzureTenantId'
 
+# It's 5 o'clock somewhere...
+
+$TimeStampfield = $([DateTime]::Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))
+
 # Getting an overview of all ARM Deployments
 
 $ResourceGroups = Get-AzureRmResourceGroup
@@ -59,7 +63,7 @@ foreach ($resourcegroup in $ResourceGroups) {
     
     $LogType = 'AzureManagement'
 
-    Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $DeploymentsJson -logType $LogType 
+    Send-OMSAPIIngestionFile -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $DeploymentsJson -logType $LogType -TimeStampField $TimeStampfield
     }
 }
 # Getting an overview of all existing Azure resources
@@ -88,7 +92,7 @@ $Resources = Get-AzureRmResource
 
         $LogType = 'AzureManagement'
 
-        Send-OMSAPIIngestionData -customerId $omsworkspaceid -sharedKey $omsworkspaceKey -body $ResourcesJson -logType $LogType
+        Send-OMSAPIIngestionFile -customerId $omsworkspaceid -sharedKey $omsworkspaceKey -body $ResourcesJson -logType $LogType -TimeStampField $TimeStampfield
     }
 
     # Getting overview over Tags
@@ -111,7 +115,7 @@ foreach ($Tag in $Tags)
 
     $LogType = 'AzureManagement'
 
-    Send-OMSAPIIngestionData -customerId $OMSWorkspaceId -sharedKey $OMSWorkspaceKey -body $TagJson -logType $LogType
+    Send-OMSAPIIngestionFile -customerId $OMSWorkspaceId -sharedKey $OMSWorkspaceKey -body $TagJson -logType $LogType -TimeStampField $TimeStampfield
     }
 
 # Getting overview over RBAC
@@ -140,7 +144,7 @@ foreach ($role in $RoleAssignments)
 
     $LogType = 'AzureManagement'
 
-    Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $RoleJson -logType $LogType
+    Send-OMSAPIIngestionFile -customerId $omsworkspaceId -sharedKey $omsworkspaceKey -body $RoleJson -logType $LogType -TimeStampField $TimeStampfield
     }
 
 # Getting overview over resource lock usage
@@ -167,5 +171,5 @@ foreach ($role in $RoleAssignments)
             
             $LogType = 'AzureManagement'
             
-            Send-OMSAPIIngestionData -customerId $omsworkspaceId -sharedKey $OMSWorkspaceKey -body $LockJson -logType $LogType    
+            Send-OMSAPIIngestionFile -customerId $omsworkspaceId -sharedKey $OMSWorkspaceKey -body $LockJson -logType $LogType -TimeStampField $TimeStampfield
         }
