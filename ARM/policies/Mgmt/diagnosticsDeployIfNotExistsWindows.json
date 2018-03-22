@@ -2,8 +2,7 @@
     "properties": {
         "displayName": "[Preview]: VM Gold state Diagnostics",
         "description": "This policy deploys Diagnostics VM extension to Windows VMs",
-        "parameters": {
-        },
+        "parameters": {},
         "policyRule": {
             "if": {
                 "allOf": [
@@ -41,7 +40,7 @@
             "then": {
                 "effect": "deployIfNotExists",
                 "details": {
-                    "name": "diagWindows",
+                    "name": "Microsoft.Azure.Diagnostics",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
                     "existenceCondition": {
                         "allOf": [
@@ -116,8 +115,10 @@
                                     }
                                 ],
                                 "outputs": {
-                                    "type": "string",
-                                    "value": "[concat('Enabled Diagnostics for Windows VM', ': ', parameters('vmName'))]"
+                                    "policy": {
+                                        "type": "string",
+                                        "value": "[concat('Enabled Diagnostics for Windows VM', ': ', parameters('vmName'))]"
+                                    }
                                 }
                             }
                         },
