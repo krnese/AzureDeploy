@@ -1,7 +1,7 @@
 {
     "properties": {
-        "displayName": "[Preview]: Deploy default OMS VM Extension for Windows VMs.",
-        "description": "This policy deploys OMS VM Extensions on Windows VMs, and connects to the selected Log Analytics workspace",
+        "displayName": "[Preview]: Deploy default DSC VM Extension for Windows VMs.",
+        "description": "This policy deploys DSC VM Extensions on Windows VMs, and connects to the selected Automation account",
         "parameters": {
             "automationAccount": {
                 "type": "string",
