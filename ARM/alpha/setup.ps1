@@ -44,7 +44,7 @@ Write-Verbose "Opening TCP firewall port 1433 for SQL."
 New-NetFirewallRule -DisplayName "SQL-in" -Name "SQL" -Direction Inbound -Protocol TCP -LocalPort 1433
 
 Write-Verbose "Opening TCP firewall port 5022 for SQL Mirror"
-New-NetFirewallRule -DisplayName "SQLMirror-in" -Name "SQL" -Direction Inbound -Protocol TCP -LocalPort 5022
+New-NetFirewallRule -DisplayName "SQLMirror-in" -Name "SQLMirror" -Direction Inbound -Protocol TCP -LocalPort 5022
 
 Write-Verbose "Opening SF ports!"
 New-NetFirewallRule -DisplayName "SF1" -Name "SF1" -Direction Inbound -Protocol TCP -LocalPort 135
