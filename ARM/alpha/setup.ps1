@@ -18,9 +18,11 @@ msiexec.exe /qn /i c:\temp\SQLNativeClient11\sqlncli.msi IACCEPTSQLNCLILICENSETE
 
 Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
+choco install sqlserver-odbcdriver -y
+
 choco install sqlserver-cmdlineutils -y
 
-choco install sqlserver-odbcdriver -y
+Write-Output "Done with choco!"
 
 # Download Service Fabric
 
@@ -35,3 +37,9 @@ Expand-Archive -Path C:\temp\servicefabric\Microsoft.Azure.ServiceFabric.Windows
 Write-Verbose "Opening TCP firewall port 445 for networking."
 Set-NetFirewallRule -Name 'FPS-SMB-In-TCP' -Enabled True
 Get-NetFirewallRule -DisplayGroup 'Network Discovery' | Set-NetFirewallRule -Profile 'Private, Public' -Enabled true
+
+Write-Verbose "Opening TCP firewall port 1433 for SQL."
+New-NetFirewallRule -DisplayName "SQL-in" -Name "SQL" -Direction Inbound -Protocol TCP -LocalPort 1433
+
+Write-Verbose "Opening TCP firewall port 5022 for SQL Mirror"
+New-NetFirewallRule -DisplayName "SQLMirror-in" -Name "SQL" -Direction Inbound -Protocol TCP -LocalPort 5022
