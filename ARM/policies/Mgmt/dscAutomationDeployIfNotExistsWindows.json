@@ -1,0 +1,209 @@
+{
+    "properties": {
+        "displayName": "[Preview]: Deploy default OMS VM Extension for Windows VMs.",
+        "description": "This policy deploys OMS VM Extensions on Windows VMs, and connects to the selected Log Analytics workspace",
+        "parameters": {
+            "automationAccount": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Automation account name",
+                    "description": "Provide the name of your automation account."
+                }
+            },
+            "automationResourceGroup": {
+                "type": "string",
+                "metadata":{
+                    "displayName": "Automation Resource Group Name",
+                    "description": "Provide the resource group name containing your automation account."
+                }
+            },
+            "automationSubscription": {
+                "type": "string",
+                "displayName": "Subscription id",
+                "description": "Provide the subscriptionId where the automation account is located."
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imagePublisher",
+                        "equals": "MicrosoftWindowsServer"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imageOffer",
+                        "equals": "WindowsServer"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imageSKU",
+                        "in": [
+                            "2008-R2-SP1",
+                            "2008-R2-SP1-smalldisk",
+                            "2012-Datacenter",
+                            "2012-Datacenter-smalldisk",
+                            "2012-R2-Datacenter",
+                            "2012-R2-Datacenter-smalldisk",
+                            "2016-Datacenter",
+                            "2016-Datacenter-Server-Core",
+                            "2016-Datacenter-Server-Core-smalldisk",
+                            "2016-Datacenter-smalldisk",
+                            "2016-Datacenter-with-Containers",
+                            "2016-Datacenter-with-RDSH"
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deployIfNotExists",
+                "details": {
+                    "name": "Microsoft.PowerShell",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Compute/virtualMachines/extensions/type",
+                                "equals": "DSC"
+                            },
+                            {
+                                "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+                                "equals": "Microsoft.PowerShell"
+                            }
+                        ]
+                    },
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "template": {                                
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {
+                                        "vmName": {
+                                            "type": "string"
+                                        },
+                                        "location": {
+                                            "type": "string"
+                                        },
+                                        "automationAccount": {
+                                            "type": "string"
+                                        },
+                                        "automationResourceGroup": {
+                                            "type": "string"
+                                        },
+                                        "automationSubscription": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "variables": {
+                                        "modulesUrl": "https://github.com/Azure/azure-quickstart-templates/raw/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip",
+                                        "configurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
+                                        "configurationMode": "ApplyAndMonitor",
+                                        "configurationModeFrequencyMins": 15,
+                                        "refreshFrequencyMins": 30,
+                                        "rebootNodeIfNeeded": true,
+                                        "actionAfterReboot": "ContinueConfiguration",
+                                        "allowModuleOverwrite": true
+                                    },
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Compute/virtualMachines/extensions",
+                                            "name": "[concat(parameters('vmName'),'/Microsoft.PowerShell')]",
+                                            "apiVersion": "2017-03-30",
+                                            "location": "[parameters('location')]",
+                                            "properties": {
+                                                "publisher": "Microsoft.PowerShell",
+                                                "type": "DSC",
+                                                "typeHandlerVersion": "2.75",
+                                                "autoUpgradeMinorVersion": true,
+                                                "protectedSettings": {
+                                                    "Items": {
+                                                        "registrationKeyPrivate": "[listKeys(concat('/subscriptions/', parameters('automationSubscription'), '/resourceGroups/', parameters('automationResourceGroup'), '/providers/Microsoft.Automation/automationAccounts/', parameters('automationAccount')), '2015-01-01-preview').Keys[0].value]"
+                                                    }
+                                                },
+                                                "settings": {
+                                                    "ModulesUrl": "[variables('modulesUrl')]",
+                                                    "SasToken": "",
+                                                    "ConfigurationFunction": "[variables('configurationFunction')]",
+                                                    "Properties": [
+                                                        {
+                                                            "Name": "RegistrationKey",
+                                                            "Value": {
+                                                                "UserName": "PLACEHOLDER_DONOTUSE",
+                                                                "Password": "PrivateSettingsRef:registrationKeyPrivate"
+                                                            },
+                                                            "TypeName": "System.Management.Automation.PSCredential"
+                                                        },
+                                                        {
+                                                            "Name": "RegistrationUrl",
+                                                            "Value": "[reference(concat('/subscriptions/', parameters('automationSubscription'), '/resourceGroups/', parameters('automationResourceGroup'), '/providers/Microsoft.Automation/automationAccounts/', parameters('automationAccount')), '2015-01-01-preview').registrationUrl]",
+                                                            "TypeName": "System.String"
+                                                        },
+                                                        {
+                                                            "Name": "ConfigurationMode",
+                                                            "Value": "[variables('configurationMode')]",
+                                                            "TypeName": "System.String"
+                                                        },
+                                                        {
+                                                            "Name": "ConfigurationModeFrequencyMins",
+                                                            "Value": "[variables('configurationModeFrequencyMins')]",
+                                                            "TypeName": "System.Int32"
+                                                        },
+                                                        {
+                                                            "Name": "RefreshFrequencyMins",
+                                                            "Value": "[variables('refreshFrequencyMins')]",
+                                                            "TypeName": "System.Int32"
+                                                        },
+                                                        {
+                                                            "Name": "RebootNodeIfNeeded",
+                                                            "Value": "[variables('rebootNodeIfNeeded')]",
+                                                            "TypeName": "System.Boolean"
+                                                        },
+                                                        {
+                                                            "Name": "ActionAfterReboot",
+                                                            "Value": "[variables('actionAfterReboot')]",
+                                                            "TypeName": "System.String"
+                                                        },
+                                                        {
+                                                            "Name": "AllowModuleOverwrite",
+                                                            "Value": "[variables('allowModuleOverwrite')]",
+                                                            "TypeName": "System.Boolean"
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "outputs": {
+                                        "policyDeployment": {
+                                            "type": "string",
+                                            "value": "[concat('DSC extension deployed successfully to ', parameters('vmName'))]"
+                                        }
+                                    }
+                                },
+                            "parameters": {
+                                "vmName": {
+                                    "value": "[field('name')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "automationAccount": {
+                                    "value": "[parameters('automationAccount')]"
+                                },
+                                "automationResourceGroup": {
+                                    "value": "[parameters('automationResourceGroup')]"
+                                },
+                                "automationSubscription": {
+                                    "value": "[parameters('automationSubscription')]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
