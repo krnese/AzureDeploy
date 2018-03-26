@@ -29,3 +29,9 @@ Invoke-WebRequest -Uri http://go.microsoft.com/fwlink/?LinkId=730690 -UseBasicPa
 # Extract Service Fabric binaries
 
 Expand-Archive -Path C:\temp\servicefabric\Microsoft.Azure.ServiceFabric.WindowsServer.6.1.472.9494.zip -DestinationPath C:\temp\servicefabric
+
+# Preparing network communication
+
+Write-Verbose "Opening TCP firewall port 445 for networking."
+Set-NetFirewallRule -Name 'FPS-SMB-In-TCP' -Enabled True
+Get-NetFirewallRule -DisplayGroup 'Network Discovery' | Set-NetFirewallRule -Profile 'Private, Public' -Enabled true
