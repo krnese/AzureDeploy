@@ -1,3 +1,9 @@
+# Installing Docker
+
+Install-Module -Name DockerMsftProvider -Repository PSGallery -Force -SkipPublisherCheck
+
+Install-package -Name docker -providername DockerMsftProvider -Confirm:$false -Force -Verbose
+
 # Pulling docker image - this will take some time
 
 docker pull dliaodocker/sqlservr
