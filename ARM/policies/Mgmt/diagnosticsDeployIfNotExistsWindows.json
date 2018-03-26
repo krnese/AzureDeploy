@@ -120,14 +120,14 @@
                                         "value": "[concat('Enabled Diagnostics for Windows VM', ': ', parameters('vmName'))]"
                                     }
                                 }
-                            }
-                        },
-                        "parameters": {
-                            "vmName": {
-                                "value": "[field('name')]"
                             },
-                            "location": {
-                                "value": "[field('location')]"
+                            "parameters": {
+                                "vmName": {
+                                    "value": "[field('name')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                }
                             }
                         }
                     }
