@@ -43,3 +43,9 @@ New-NetFirewallRule -DisplayName "SQL-in" -Name "SQL" -Direction Inbound -Protoc
 
 Write-Verbose "Opening TCP firewall port 5022 for SQL Mirror"
 New-NetFirewallRule -DisplayName "SQLMirror-in" -Name "SQL" -Direction Inbound -Protocol TCP -LocalPort 5022
+
+Write-Verbose "Opening SF ports!"
+New-NetFirewallRule -DisplayName "SF1" -Name "SF1" -Direction Inbound -Protocol TCP -LocalPort 135
+New-NetFirewallRule -DisplayName "SF2" -Name "SF2" -Direction Inbound -Protocol TCP -LocalPort 137
+New-NetFirewallRule -DisplayName "SF3" -Name "SF3" -Direction Inbound -Protocol TCP -LocalPort 138
+New-NetFirewallRule -DisplayName "SF4" -Name "SF4" -Direction Inbound -Protocol TCP -LocalPort 139
