@@ -60,7 +60,7 @@
             "then": {
                 "effect": "deployIfNotExists",
                 "details": {
-                    "name": "omsWindows",
+                    "name": "Microsoft.EnterpriseCloud.Monitoring",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
                     "existenceCondition": {
                         "allOf": [
