@@ -204,44 +204,6 @@
                     ]
                 }
             }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "apiVersion": "2017-03-30",
-            "name": "[concat(parameters('vmName'), '/OMS')]",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-                "type": "[if(equals(parameters('platform'), 'WinServer'), variables('windowsMgmtType'), variables('linuxMgmtType'))]",
-                "typeHandlerVersion": "[if(equals(parameters('platform'), 'WinServer'), variables('windowsMgmtVersion'), variables('linuxMgmtVersion'))]",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "workspaceId": "[reference(concat('/subscriptions/', variables('logAnalyticsSubscriptionId'), '/resourceGroups/', variables('logAnalyticsRgName'), '/providers/Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsName')), '2015-11-01-preview').customerId]",
-                    "azureResourceId": "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-                    "proxyUri": "[variables('logAnalyticsProxy')]"
-                },
-                "protectedSettings": {
-                    "workspaceKey": "[listKeys(concat('/subscriptions/', variables('logAnalyticsSubscriptionId'), '/resourceGroups/', variables('logAnalyticsRgName'), '/providers/Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsName')), '2015-11-01-preview').primarySharedKey]"
-                }
-            }
-        },        
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vmName'), '/ServiceMap')]",
-            "apiVersion": "2017-03-30",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'), '/extensions/', '/OMS')]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.Azure.Monitoring.DependencyAgent",
-                "type": "[if(equals(parameters('platform'), 'WinServer'), 'DependencyAgentWindows', 'DependencyAgentLinux')]",
-                "typeHandlerVersion": "9.1",
-                "autoUpgradeMinorVersion": true
-            }
         }
     ],
     "outputs": {
