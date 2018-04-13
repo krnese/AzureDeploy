@@ -1,0 +1,67 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "activityLogAlertName": {
+            "defaultValue": "resourceGroupDeletion",
+            "type": "string"
+        },
+        "actionGroupResourceGroupName": {
+            "type": "string"
+        },
+        "actionGroupName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Insights/activityLogAlerts",
+            "name": "[parameters('activityLogAlertName')]",
+            "apiVersion": "2017-04-01",
+            "location": "Global",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "scopes": [
+                    "[subscription().id]"
+                ],
+                "condition": {
+                    "allOf": [
+                        {
+                            "field": "category",
+                            "equals": "Administrative"
+                        },
+                        {
+                            "field": "resourceType",
+                            "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+                        },
+                        {
+                            "field": "operationName",
+                            "equals": "microsoft.resources/subscriptions/resourcegroups/delete"
+                        },
+                        {
+                            "field": "level",
+                            "equals": "informational"
+                        },
+                        {
+                            "field": "status",
+                            "equals": "Succeeded"
+                        }
+                    ]
+                },
+                "actions": {
+                    "actionGroups": [
+                        {
+                            "actionGroupId": "[concat(subscription().id, '/resourceGroups/', parameters('actionGroupResourceGroupName'), '/providers/microsoft.insights/actiongroups/', parameters('actionGroupName'))]",
+                            "webhookProperties": {}
+                        }
+                    ]
+                },
+                "enabled": true,
+                "description": "Fires an alert when a RG is successfully deleted"
+            },
+            "dependsOn": []
+        }
+    ]
+}
