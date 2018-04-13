@@ -1,0 +1,28 @@
+{
+    "properties": {
+        "displayName": "Govern Automation account",
+        "description": "Policy to lock down automation account child resources",
+        "parameters": {
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "in": [
+                            "Microsoft.Automation/automationAccounts/runbooks",
+                            "Microsoft.Automation/automationAccounts/variables",
+                            "Microsoft.Automation/automationAccounts/modules",
+                            "Microsoft.Automation/automationAccounts/credentials",
+                            "Microsoft.Automation/automationAccounts/connections",
+                            "Microsoft.Automation/automationAccount/certificates"
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deny"
+            }
+        }
+    }
+}

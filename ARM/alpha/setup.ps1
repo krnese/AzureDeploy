@@ -51,3 +51,22 @@ New-NetFirewallRule -DisplayName "SF1" -Name "SF1" -Direction Inbound -Protocol 
 New-NetFirewallRule -DisplayName "SF2" -Name "SF2" -Direction Inbound -Protocol TCP -LocalPort 137
 New-NetFirewallRule -DisplayName "SF3" -Name "SF3" -Direction Inbound -Protocol TCP -LocalPort 138
 New-NetFirewallRule -DisplayName "SF4" -Name "SF4" -Direction Inbound -Protocol TCP -LocalPort 139
+
+
+# Killing the broken NAT on the hosts... and rebooting the vm
+
+Get-NetNat | Remove-NetNat -Confirm:$false
+
+Write-Output "NAT removed..."
+
+# Killing the broken container network
+
+Get-ContainerNetwork | Remove-ContainerNetwork -force
+
+Write-output "Container network is gone.."
+
+# Installing Service Fabric SDK - to deploy the app
+
+choco install MicrosoftAzure-ServiceFabric-CoreSDK --source webpi --confirm
+
+Restart-Computer -Force
