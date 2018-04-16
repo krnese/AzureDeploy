@@ -52,7 +52,7 @@
             "comments": "Automation account for OMS",
             "properties": {
                 "sku": {
-                    "name": "Basic"
+                    "name": "OMS"
                 }
             },
             "resources": [
