@@ -1,0 +1,110 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "omsWorkspaceName": {
+            "type": "string",
+            "metadata": {
+                "description": "Assign a name for the Log Analytic Workspace Name"
+            }
+        },
+        "omsWorkspaceRegion": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the region for your Workspace"
+            }
+        },
+        "omsAutomationAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Assign a name for the Automation account"
+            }
+        },
+        "omsAutomationRegion": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the region for your Automation account"
+            }
+        },
+        "azureAdmin": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter your service admin user"
+            }
+        },
+        "azureAdminPwd": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Enter the pwd for the service admin user. The pwd is enrypted during runtime and in the Automation assets"
+            }
+        }
+    },
+    "variables": {
+        "nestedTemplates": {
+            "omsAutomation": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsAutomation.json')]",
+            "omsWorkspace": "[uri(deployment().properties.templateLink.uri, 'nestedtemplates/omsWorkspace.json')]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "omsWorkspace",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nestedTemplates').omsWorkspace]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsWorkspaceName": {
+                        "value": "[parameters('omsWorkspaceName')]"
+                    },
+                    "omsWorkspaceRegion": {
+                        "value": "[parameters('omsWorkspaceRegion')]"
+                    },
+                    "omsAutomationAccountName": {
+                        "value": "[parameters('omsAutomationAccountName')]"
+                    },
+                    "omsAutomationRegion": {
+                        "value": "[parameters('omsAutomationRegion')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "omsAutomation",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'omsWorkspace')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nestedTemplates').omsAutomation]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "omsAutomationAccountName": {
+                        "value": "[parameters('omsAutomationAccountName')]"
+                    },
+                    "omsAutomationRegion": {
+                        "value": "[parameters('omsAutomationRegion')]"
+                    },
+                    "omsWorkspaceName": {
+                        "value": "[parameters('omsWorkspaceName')]"
+                    },
+                    "azureAdmin": {
+                        "value": "[parameters('azureAdmin')]"
+                    },
+                    "azureAdminPwd": {
+                        "value": "[parameters('azureAdminPwd')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
