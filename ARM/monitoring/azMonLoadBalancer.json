@@ -1,0 +1,49 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lbName": {
+            "type": "string"
+        },
+        "logAnalytics": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/loadBalancers/providers/diagnosticSettings",
+            "apiVersion": "2017-05-01-preview",
+            "name": "[concat(parameters('lbName'), '/', 'Microsoft.Insights/setByPolicy')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "workspaceId": "[parameters('logAnalytics')]",
+                "metrics": [
+                    {
+                        "category": "AllMetrics",
+                        "enabled": true,
+                        "retentionPolicy": {
+                            "enabled": false,
+                            "days": 0
+                        }
+                    }
+                ],
+                "logs": [
+                    {
+                        "category": "LoadBalancerAlertEvent",
+                        "enabled": true
+                    },
+                    {
+                        "category": "LoadBalancerProbeHealthStatus",
+                        "enabled": true
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}
