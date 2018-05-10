@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "functions": [
+        {
+            "namespace": "myFunction",
+            "members": {
+                "storageName": {
+                    "parameters": [
+                        {
+                            "name": "prefix",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(toLower(parameters('prefix')), uniqueString(resourceGroup().id))]"
+                    }
+                }
+            }
+        }
+    ],
+    "parameters": {
+        "storageAccountName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "sName": "[myFunction.storageName(parameters('storageAccountName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2017-10-01",
+            "name": "[variables('sName')]",
+            "location": "West Europe",
+            "kind": "StorageV2",
+            "sku":{
+                "name": "Standard_LRS"
+            }
+        }
+    ],
+    "outputs": {
+        "functionOutput": {
+            "type": "string",
+            "value": "[variables('sName')]"
+        }
+    }
+}
