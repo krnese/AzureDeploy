@@ -35,7 +35,7 @@
             "name": "[variables('sName')]",
             "location": "West Europe",
             "kind": "StorageV2",
-            "sku":{
+            "sku": {
                 "name": "Standard_LRS"
             }
         }
