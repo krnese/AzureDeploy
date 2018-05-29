@@ -10,6 +10,9 @@
         },
         "storageAccountName": {
             "type": "string"
+        },
+        "deniedLocation": {
+            "type": "string"
         }
     },
     "variables": {
@@ -18,15 +21,17 @@
     "resources": [
         {
             "type": "Microsoft.Authorization/policyDefinitions",
-            "name": "locationDef",
-            "apiVersion": "2016-12-01",
+            "name": "locationDef01",
+            "apiVersion": "2018-03-01",
             "properties": {
                 "policyType": "Custom",
-                "parameters": {},
+                "mode": "All",
+                "parameters": {
+                },
                 "policyRule": {
                     "if": {
                         "field": "location",
-                        "equals": "northeurope"
+                        "equals": "[parameters('deniedLocation')]"
                     },
                     "then": {
                         "effect": "deny"
@@ -37,13 +42,13 @@
         {
             "type": "Microsoft.Authorization/policyAssignments",
             "name": "byTemplate-location-lock",
-            "apiVersion": "2016-12-01",
+            "apiVersion": "2018-03-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Authorization/policyDefinitions/', 'locationDef')]"
+                "[resourceId('Microsoft.Authorization/policyDefinitions/', 'locationDef01')]"
             ],
             "properties": {
                 "scope": "[subscription().id]",
-                "policyDefinitionId": "[resourceId('Microsoft.Authorization/policyDefinitions', 'locationDef')]"
+                "policyDefinitionId": "[resourceId('Microsoft.Authorization/policyDefinitions', 'locationDef01')]"
             }
         },
         {

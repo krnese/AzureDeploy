@@ -9,6 +9,9 @@
         "storagePrefix2": {
             "type": "string",
             "defaultValue": "st02"
+        },
+        "remoteRg": {
+            "type": "string"
         }
     },
     "variables": {
@@ -31,7 +34,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "name": "crossRg",
-            "resourceGroup": "localResourceGroup2",           
+            "resourceGroup": "[parameters('remoteRg')]",           
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -47,7 +50,7 @@
                             "location": "[resourceGroup().location]",
                             "kind": "Storage",
                             "sku": {
-                                "name": "Standard_LRS"
+                                "name": "[if(equals(resourceGroup().location, 'westeurope'), 'Standard_LRS', 'Standard_GRS')]"
                             }
                         }
                     ],

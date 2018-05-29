@@ -9,6 +9,12 @@
         "storagePrefix2": {
             "type": "string",
             "defaultValue": "st02"
+        },
+        "remoteRg": {
+            "type": "string"
+        },
+        "remoteSub": {
+            "type": "string"
         }
     },
     "variables": {
@@ -31,8 +37,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "name": "remoteSubscription",
-            "resourceGroup": "remoteResourceGroup",
-            "subscriptionId": "09e8ed26-7d8b-4678-a179-cfca8a0cef5c",            
+            "resourceGroup": "[parameters('remoteRg')]",
+            "subscriptionId": "[parameters('remoteSub')]",            
             "properties": {
                 "mode": "Incremental",
                 "template": {
