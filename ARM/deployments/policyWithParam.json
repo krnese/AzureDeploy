@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "deniedLocations": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "[deployment().name]",
+            "apiVersion": "2018-03-01",
+            "properties": {
+                "policyType": "Custom",
+                "mode": "All",
+                "parameters": {
+                    "deniedLocations": {
+                        "type": "array"
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "field": "location",
+                        "in": "[parameters('deniedLocations')]"
+                    },
+                    "then": {
+                        "effect": "deny"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
