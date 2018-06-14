@@ -103,11 +103,11 @@
         },
         "omsSolutions": {
             "customSolution": {
-                "name": "AzureResourceManagerAnalytics",
+                "name": "MSPAnalytics",
                 "solutionName": "[concat('AzureResourceManagerAnalytics', '[', parameters('omsWorkspaceName'), ']')]",
                 "publisher": "krnese@microsoft.com",
-                "displayName": "Azure Resource Manager Analytics",
-                "description": "Assessment of ARM data",
+                "displayName": "Multi-tenant ARM solution",
+                "description": "Multi-tenant assessment of ARM data",
                 "author": "krnese@microsoft.com"
             }
         }
@@ -140,6 +140,125 @@
                         "Source": "Local",
                         "Version": 2,
                         "Dashboard": [
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Managed tenants",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Legend": "Tenants in total",
+                                        "Query": "AzureManagement_CL  | summarize AggregatedValue = dcount(TenantId) by TenantId | count",
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "AzureManagement_CL  | summarize AggregatedValue = dcount(SubscriptionId) by TenantId | sort by AggregatedValue ",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "ColumnsTitle": {
+                                            "Name": "TenantId",
+                                            "Value": "Subscriptions"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | sort by TimeGenerated desc"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "TwoNumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Subscription and Region overview",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Legend": "Subscriptions",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(SubscriptionId) by SubscriptionId| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (SubscriptionId) by SubscriptionId"
+                                    },
+                                    "SecondTile": {
+                                        "Legend": "Regions in use",
+                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(Location_s) by Location_s| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (Location_s) by Location_s"
+                                    },
+                                    "List": {
+                                        "Query": "AzureManagement_CL  | where Log_s == \"Resources\"  | summarize AggregatedValue = dcount(ResourceId) by Location_s, SubscriptionId | sort by AggregatedValue ",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Azure Region",
+                                            "Value": "Resources"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | sort by TimeGenerated desc"
+                                        }
+                                    },
+                                    "Blade": {
+                                        "NavigationSelect": {}
+                                    }
+                                }
+                            },
                             {
                                 "Id": "SingleQueryDonutBuilderBladeV1",
                                 "Type": "Blade",
@@ -516,71 +635,9 @@
                                         }
                                     }
                                 }
-                            },
-                            {
-                                "Id": "TwoNumberTileListBuilderBlade",
-                                "Type": "Blade",
-                                "Version": 0,
-                                "Configuration": {
-                                    "General": {
-                                        "title": "Subscription and Region overview",
-                                        "newGroup": false,
-                                        "icon": "",
-                                        "useIcon": false
-                                    },
-                                    "Tile": {
-                                        "Legend": "Subscriptions",
-                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(SubscriptionId) by SubscriptionId| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (SubscriptionId) by SubscriptionId"
-                                    },
-                                    "SecondTile": {
-                                        "Legend": "Regions in use",
-                                        "Query": "AzureManagement_CL | where Log_s == \"Resources\" | summarize AggregatedValue = dcount(Location_s) by Location_s| count // Oql: Type:AzureManagement_CL Log_s:Resources | measure countdistinct (Location_s) by Location_s"
-                                    },
-                                    "List": {
-                                        "Query": "AzureManagement_CL  | where Log_s == \"Resources\"  | summarize AggregatedValue = dcount(ResourceId) by Location_s, SubscriptionId | sort by AggregatedValue ",
-                                        "HideGraph": false,
-                                        "enableSparklines": false,
-                                        "operation": "Summary",
-                                        "ColumnsTitle": {
-                                            "Name": "Azure Region",
-                                            "Value": "Resources"
-                                        },
-                                        "Color": "#0072c6",
-                                        "thresholds": {
-                                            "isEnabled": false,
-                                            "values": [
-                                                {
-                                                    "name": "Normal",
-                                                    "threshold": "Default",
-                                                    "color": "#009e49",
-                                                    "isDefault": true
-                                                },
-                                                {
-                                                    "name": "Warning",
-                                                    "threshold": "60",
-                                                    "color": "#fcd116",
-                                                    "isDefault": false
-                                                },
-                                                {
-                                                    "name": "Error",
-                                                    "threshold": "90",
-                                                    "color": "#ba141a",
-                                                    "isDefault": false
-                                                }
-                                            ]
-                                        },
-                                        "NameDSVSeparator": "",
-                                        "NavigationQuery": "search {selected item} | sort by TimeGenerated desc",
-                                        "NavigationSelect": {
-                                            "NavigationQuery": "search {selected item} | sort by TimeGenerated desc"
-                                        }
-                                    },
-                                    "Blade": {
-                                        "NavigationSelect": {}
-                                    }
-                                }
                             }
                         ],
+                        "Filters": [],
                         "OverviewTile": {
                             "Id": "SingleQueryDonutBuilderTileV1",
                             "Type": "OverviewTile",
