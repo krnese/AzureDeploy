@@ -22,8 +22,8 @@
         }
     },
     "variables": {
-        "workspaceName": "[concat(resourceGroup().id, take(parameters('omsWorkspaceName'), 5))]",
-        "automationName": "[concat(resourceGroup().id, take(parameters('omsAutomationAccountName'), 5))]",
+        "workspaceName": "[take(concat(deployment().name, 5), take(parameters('omsWorkspaceName'), 5))]",
+        "automationName": "[take(concat(deployment().name, 5), take(parameters('omsAutomationAccountName'), 5))]",
         "batch1": {
             "solutions": [
                 {
@@ -79,7 +79,7 @@
     },
     "resources": [
         {
-            "apiversion": "2015-10-31",
+            "apiVersion": "2015-10-31",
             "location": "[parameters('omsAutomationRegion')]",
             "name": "[variables('automationName')]",
             "type": "Microsoft.Automation/automationAccounts",
