@@ -23,7 +23,7 @@
     },
     "variables": {
         "workspaceName": "[concat(resourceGroup().id, take(parameters('omsWorkspaceName'), 5))]",
-        "automationName": "[concat(resourceGroup().id, take(parameters('omsWorkspaceName'), 5))]",
+        "automationName": "[concat(resourceGroup().id, take(parameters('omsAutomationAccountName'), 5))]",
         "batch1": {
             "solutions": [
                 {
