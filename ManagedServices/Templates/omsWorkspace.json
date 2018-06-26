@@ -22,8 +22,9 @@
         }
     },
     "variables": {
-        "workspaceName": "[take(concat(deployment().name, 5), take(parameters('omsWorkspaceName'), 5))]",
-        "automationName": "[take(concat(deployment().name, 5), take(parameters('omsAutomationAccountName'), 5))]",
+        "int": 5,
+        "workspaceName": "[concat(uniqueString('oms'), parameters('omsWorkspaceName'))]",
+        "automationName": "[concat(uniqueString('oms'), parameters('omsAutomationAccountName'))]",
         "batch1": {
             "solutions": [
                 {
@@ -219,7 +220,7 @@
                     "type": "datasources",
                     "name": "LogicalDisk7",
                     "dependsOn": [
-                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'))]"
+                        "[concat('Microsoft.OperationalInsights/workspaces/', variables('workspaceName'))]"
                     ],
                     "kind": "WindowsPerformanceCounter",
                     "properties": {
