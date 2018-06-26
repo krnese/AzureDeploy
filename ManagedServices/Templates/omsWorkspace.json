@@ -22,9 +22,8 @@
         }
     },
     "variables": {
-        "int": 5,
-        "workspaceName": "[concat(uniqueString('oms'), parameters('omsWorkspaceName'))]",
-        "automationName": "[concat(uniqueString('oms'), parameters('omsAutomationAccountName'))]",
+        "workspaceName": "[concat(uniqueString(deployment().name), parameters('omsWorkspaceName'))]",
+        "automationName": "[concat(uniqueString(deployment().name), parameters('omsAutomationAccountName'))]",
         "batch1": {
             "solutions": [
                 {
