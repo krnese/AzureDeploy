@@ -514,5 +514,10 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "omsWorkspaceResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('workspaceName'))]"
+        }
+    }
 }
