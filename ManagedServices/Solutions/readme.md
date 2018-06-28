@@ -1,1 +1,0 @@
-# Prototypes for Log Analytics solutions for MSP scenarios
