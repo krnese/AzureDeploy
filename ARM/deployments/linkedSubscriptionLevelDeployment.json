@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "principalId": {
+            "type": "string"
+        },
+        "roleDefinitionId": {
+            "type": "string"
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "deniedLocation": {
+            "type": "string"
+        },
+        "deploymentLocation": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "templateUri": "https://raw.githubusercontent.com/krnese/AzureDeploy/master/ARM/deployments/subscriptionLevelDeployment.json"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "foo",
+            "location": "[parameters('deploymentLocation')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('templateUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "principalId": {
+                        "value": "[parameters('principalId')]"
+                    },
+                    "roleDefinitionId": {
+                        "value": "[parameters('roleDefinitionId')]"
+                    },
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    },
+                    "deniedLocation": {
+                        "value": "[parameters('deniedLocation')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
