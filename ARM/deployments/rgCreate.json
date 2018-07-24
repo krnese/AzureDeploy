@@ -5,7 +5,7 @@
         "resourceGroupName": {
             "type": "string"
         },
-        "location": {
+        "resourceGrouplocation": {
             "type": "string"
         }
     },
@@ -13,8 +13,8 @@
     "resources": [
         {
             "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2017-05-10",
-            "location": "[parameters('location')]",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('resourceGrouplocation')]",
             "name": "[parameters('resourceGroupName')]",
             "properties": {}
         }
