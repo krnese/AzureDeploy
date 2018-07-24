@@ -9,15 +9,15 @@
             "type": "string"
         }
     },
-    "variables": {},
     "resources": [
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
-            "location": "[parameters('resourceGrouplocation')]",
+            "location": "[parameters('resourceGroupLocation')]",
             "name": "[parameters('resourceGroupName')]",
             "properties": {}
         }
     ],
-    "outputs": {}
+    "outputs":{
+    }
 }
