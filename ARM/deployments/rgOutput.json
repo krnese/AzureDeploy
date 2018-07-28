@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgName": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        
+    ],
+    "outputs": {
+        "rgId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
+        },
+        "rgObject": {
+            "type": "object",
+            "value": "[reference(concat(resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))), '2018-05-01', 'Full')]"
+        }
+    }
+}
