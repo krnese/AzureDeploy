@@ -1,0 +1,191 @@
+{
+    "properties": {
+        "displayName": "[Preview]: Enable ADE on VMSS",
+        "description": "This policy deploys ADE VM Extensions on Windows VMSS, and connects to the regional KeyVault",
+        "parameters": {
+            "recoveryVaultName": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Name of Recovery Vault",
+                    "description": "Recovery services vault name where the VMs will be backed up to. The default vaule is 'Backup-vault'."
+                }
+            },
+            "recoveryVaultResourceGroup": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Name of Resource Group containing the Recovery Vault",
+                    "description": "Select the resource group containing the recovery vault",
+                    "strongType": "existingResourceGroups"
+                }
+            },
+            "location": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Specify location for Recovery vault",
+                    "description": "Location for VM and Backup vault",
+                    "strongType": "location"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imagePublisher",
+                        "equals": "MicrosoftWindowsServer"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imageOffer",
+                        "equals": "WindowsServer"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imageSKU",
+                        "in": [
+                            "2008-R2-SP1",
+                            "2008-R2-SP1-smalldisk",
+                            "2012-Datacenter",
+                            "2012-Datacenter-smalldisk",
+                            "2012-R2-Datacenter",
+                            "2012-R2-Datacenter-smalldisk",
+                            "2016-Datacenter",
+                            "2016-Datacenter-Server-Core",
+                            "2016-Datacenter-Server-Core-smalldisk",
+                            "2016-Datacenter-smalldisk",
+                            "2016-Datacenter-with-Containers",
+                            "2016-Datacenter-with-RDSH"
+                        ]
+                    },
+                    {
+                        "field": "location",
+                        "equals": "[parameters('location')]"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deployIfNotExists",
+                "details": {
+                    "name": "VMSnapshot",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Compute/virtualMachines/extensions/type",
+                                "equals": "VMSnapshot"
+                            },
+                            {
+                                "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+                                "equals": "Microsoft.RecoveryServices"
+                            }
+                        ]
+                    },
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "template": {
+                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "vmName": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "Name of Azure Virtual Machines"
+                                        }
+                                    },
+                                    "vmRgName": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "Resource group containing the virtual machines."
+                                        }
+                                    },
+                                    "recoveryVaultName": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "Recovery services vault name where the VMs will be backed up to. The default vaule is 'Backup-vault'."
+                                        }
+                                    },
+                                    "recoveryVaultResourceGroup": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "Select the resource group containing the recovery vault"
+                                        }
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "Location for VM and Backup vault"
+                                        }
+                                    }
+                                },
+                                "variables": {
+                                    "backupFabric": "Azure",
+                                    "backupPolicy": "DefaultPolicy",
+                                    "v2VmType": "Microsoft.Compute/virtualMachines",
+                                    "v2VmContainer": "iaasvmcontainer;iaasvmcontainerv2;",
+                                    "v2Vm": "vm;iaasvmcontainerv2;"
+                                },
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.Resources/deployments",
+                                        "apiVersion": "2017-05-10",
+                                        "name": "backupSetByPolicy",
+                                        "resourceGroup": "[parameters('recoveryVaultResourceGroup')]",
+                                        "properties": {
+                                            "mode": "Incremental",
+                                            "template": {
+                                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                                "contentVersion": "1.0.0.0",
+                                                "parameters": {},
+                                                "variables": {},
+                                                "resources": [
+                                                    {
+                                                        "name": "[concat(parameters('recoveryVaultName'), '/', variables('backupFabric'), '/', variables('v2VmContainer'), concat(parameters('vmRgName'),';',parameters('vmName')), '/', variables('v2Vm'), concat(parameters('vmRgName'),';',parameters('vmName')))]",
+                                                        "apiVersion": "2016-12-01",
+                                                        "location": "[parameters('location')]",
+                                                        "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems",
+                                                        "properties": {
+                                                            "protectedItemType": "[variables('v2VmType')]",
+                                                            "policyId": "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies',parameters('recoveryVaultName'),variables('backupPolicy'))]",
+                                                            "sourceResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmRgName'), '/providers/Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+                                                        }
+                                                    }
+                                                ],
+                                                "outputs": {}
+                                            }
+                                        }
+                                    }
+                                ],
+                                "outputs": {
+                                    "status": {
+                                        "type": "string",
+                                        "value": "[concat('Backup enabled successfully for VM:', ' ', parameters('vmName'))]"
+                                    }
+                                }
+                            },
+                            "parameters": {
+                                "vmName": {
+                                    "value": "[field('name')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "recoveryVaultName": {
+                                    "value": "[parameters('recoveryVaultName')]"
+                                },
+                                "recoveryVaultResourceGroup": {
+                                    "value": "[parameters('recoveryVaultResourceGroup')]"
+                                },
+                                "vmRgName": {
+                                    "value": "[resourceGroup().name]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

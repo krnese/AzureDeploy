@@ -1,6 +1,6 @@
 {
     "properties": {
-        "displayName": "Apply diagnostic settings for CosmosDB",
+        "displayName": "Apply diagnostic settings for CosmosDB.",
         "description": "This policy automatically deploys and enable diagnostic settings to CosmosDB",
         "parameters": {
             "logAnalytics": {

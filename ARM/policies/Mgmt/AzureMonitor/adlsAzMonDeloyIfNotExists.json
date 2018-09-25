@@ -1,6 +1,6 @@
 {
     "properties": {
-        "displayName": "Apply diagnostic settings for Data Lake Store",
+        "displayName": "Apply diagnostic settings for Data Lake Store.",
         "description": "This policy automatically deploys and enable diagnostic settings to Data Lake Store",
         "parameters": {
             "logAnalytics": {

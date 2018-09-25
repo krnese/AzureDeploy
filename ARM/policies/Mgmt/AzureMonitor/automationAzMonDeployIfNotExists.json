@@ -1,6 +1,6 @@
 {
     "properties": {
-        "displayName": "Apply diagnostic settings for Automation Accounts",
+        "displayName": "Apply diagnostic settings for Automation Accounts.",
         "description": "This policy automatically deploys and enable diagnostic settings to Automation Accounts",
         "parameters": {
             "logAnalytics": {
@@ -71,7 +71,7 @@
                                                 {
                                                     "category": "DscNodeStatus",
                                                     "enabled": true
-                                                }                    
+                                                }
                                             ]
                                         }
                                     }

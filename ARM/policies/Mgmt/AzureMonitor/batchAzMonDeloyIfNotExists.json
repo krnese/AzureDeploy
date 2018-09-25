@@ -1,6 +1,6 @@
 {
     "properties": {
-        "displayName": "Apply diagnostic settings for Azure Batch",
+        "displayName": "Apply diagnostic settings for Azure Batch.",
         "description": "This policy automatically deploys and enable diagnostic settings to Azure Batch",
         "parameters": {
             "logAnalytics": {

@@ -1,6 +1,6 @@
 {
     "properties": {
-        "displayName": "Apply diagnostic settings for Recovery Services vaults",
+        "displayName": "Apply diagnostic settings for Recovery Services vaults.",
         "description": "This policy automatically deploys and enable diagnostic settings to Recovery Services vaults",
         "parameters": {
             "logAnalytics": {

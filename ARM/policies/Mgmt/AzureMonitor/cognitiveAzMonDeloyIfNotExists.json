@@ -1,6 +1,6 @@
 {
     "properties": {
-        "displayName": "Apply diagnostic settings for Cognitive Services",
+        "displayName": "Apply diagnostic settings for Cognitive Services.",
         "description": "This policy automatically deploys and enable diagnostic settings to Cognitive Services",
         "parameters": {
             "logAnalytics": {
