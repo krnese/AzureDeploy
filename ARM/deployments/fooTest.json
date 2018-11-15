@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "bar": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "barVariables": {
+            "foo": "foo",
+            "bar": "foo"
+        },
+        "fooVariables": "[variables('barVariables')[parameters('bar')]]"
+    },
+    "resources": [
+        
+    ],
+    "outputs": {
+        "testing": {
+            "type": "string",
+            "value": "[variables('fooVariables')]"
+        }
+    }
+}

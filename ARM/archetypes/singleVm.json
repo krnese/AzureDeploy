@@ -48,13 +48,13 @@
             20,
             30
         ],
-        "vNetRg": "networking",
-        "vNetName": "spoke",
+        "vNetRg": "m2-we-prod-hub1-spoke1-network-rg",
+        "vNetName": "m2-we-prod-hub1-spoke1",
         "vNetId": "[resourceId(variables('vNetRg'), 'Microsoft.Networks/virtualNetworks/', variables('vNetName'))]",
         "vmToSubnetMap": {
-            "database": "wus2-prod-db",
-            "web": "wus2-prod-web",
-            "app": "wus2-prod-app"
+            "database": "m2-we-prod-hub1-spoke1-app1",
+            "web": "m2-we-prod-hub1-spoke1-app2",
+            "app": "m2-we-prod-hub1-spoke1-app3"
         },
         "subnetMap": "[variables('vmToSubnetmap')[parameters('vmType')]]",
         "subnetId": "[concat(variables('vNetId'), '/subnets/', variables('subnetMap'))]",
