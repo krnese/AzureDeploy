@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Azure Virtual Machines"
+            }
+        },
+        "vmRgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource group containing the virtual machines."
+            }
+        },
+        "recoveryVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Recovery services vault name where the VMs will be backed up to. The default vaule is 'Backup-vault'."
+            }
+        },
+        "recoveryVaultResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Select the resource group containing the recovery vault"
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Location for VM and Backup vault"
+            }
+        }
+    },
+    "variables": {
+        "backupFabric": "Azure",
+        "backupPolicy": "DefaultPolicy",
+        "v2VmType": "Microsoft.Compute/virtualMachines",
+        "v2VmContainer": "iaasvmcontainer;iaasvmcontainerv2;",
+        "v2Vm": "vm;iaasvmcontainerv2;"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "backupSetByPolicy",
+            "resourceGroup": "[parameters('recoveryVaultResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "name": "[concat(parameters('recoveryVaultName'), '/', variables('backupFabric'), '/', variables('v2VmContainer'), concat(parameters('vmRgName'),';',parameters('vmName')), '/', variables('v2Vm'), concat(parameters('vmRgName'),';',parameters('vmName')))]",
+                            "apiVersion": "2016-12-01",
+                            "location": "[parameters('location')]",
+                            "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems",
+                            "properties": {
+                                "protectedItemType": "[variables('v2VmType')]",
+                                "policyId": "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies',parameters('recoveryVaultName'),variables('backupPolicy'))]",
+                                "sourceResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmRgName'), '/providers/Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+                            }
+                        }
+                    ],
+                    "outputs": {}
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "status": {
+            "type": "string",
+            "value": "[concat('Backup enabled successfully for VM:', ' ', parameters('vmName'))]"
+        }
+    }
+}

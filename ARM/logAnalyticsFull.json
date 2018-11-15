@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [],
+    "outputs": {
+        "workspaceFull": {
+            "type": "string",
+            "value": "[reference(concat('/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/resourceGroups/mspmgmt/providers/Microsoft.OperationalInsights/workspaces/mspworkspace01'), '2017-03-15-preview', 'Full').location]"
+        }
+    }
+}

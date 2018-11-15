@@ -1,0 +1,77 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "actionGroup": {
+            "type": "string",
+            "defaultValue": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/resourceGroups/Default-ActivityLogAlerts/providers/microsoft.insights/actionGroups/alerttest",
+            "metadata": {
+                "description": "Action group object."
+            }
+        },
+        "logAnalyticsWorkspace": {
+            "type": "string",
+            "defaultValue": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/resourceGroups/mspmgmt/providers/Microsoft.OperationalInsights/workspaces/mspworkspace01",
+            "metadata": {
+                "description": "The Log Analytics Workspace object to be referenced for the Alert."
+            }
+        },
+        "logAnalyticsWorkspaceLocation": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "metadata": {
+                "description": "The Log Analytics Workspace location."
+            }
+        }
+    },
+    "variables": {
+        "apiVersions": {
+            "scheduledQueryRules": "2018-04-16",
+            "workspaces": "2015-11-01-preview"
+        }
+    },
+    "resources": [
+        {
+            "name": "alert3",
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'logAnalyticsWorkspaceLocation' )]",
+            "properties": {
+                "description": "Notifies when Azure Backup has failed on a Virtual Machine.",
+                "enabled": "true",
+                "source": {
+                    "query": "AzureDiagnostics | where Category == 'AzureBackupReport' and OperationName == 'ProtectedServer' and State_s  == 'Active' and Level != 'Information' | summarize AggregatedValue= count(TimeGenerated) by Resource, bin(TimeGenerated, 5min), SourceSystem, SubscriptionId, ResourceGroup, ProtectedServerFriendlyName_s, ResourceType, ProtectedServerUniqueId_s, OperationName, Level",
+                    "dataSourceId": "[parameters('logAnalyticsWorkspace')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 5
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "0",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroup')]"
+                        ],
+                        "emailSubject": "A warning or failure for a VM Backup has been detected",
+                        "customWebhookPayload": "{}"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": 0,
+                        "metricTrigger": {
+                            "thresholdOperator": "GreaterThan",
+                            "threshold": 0,
+                            "metricTriggerType": "Total",
+                            "metricColumn": "AggregatedValue"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

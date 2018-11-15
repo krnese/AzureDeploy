@@ -51,6 +51,9 @@
                 "details": {
                     "name": "omsWindows",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "roleDefinitionIds": [
+                        "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"  
+                    ],
                     "existenceCondition": {
                         "allOf": [
                             {
