@@ -1,0 +1,325 @@
+{
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "parameters": {
+            "automationAccountEurope": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Automation account for Europe Region"
+                }
+            },
+            "automationAccountAmerica": {
+                "type": "string",
+                "metadata": {
+                    "displayName": "Automation account for Europe Region"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "MicrosoftWindowsServer"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "WindowsServer"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageSKU",
+                                        "in": [
+                                            "2016-Datacenter",
+                                            "2016-Datacenter-Server-Core",
+                                            "2016-Datacenter-Server-Core-smalldisk",
+                                            "2016-Datacenter-smalldisk",
+                                            "2016-Datacenter-with-Containers",
+                                            "2016-Datacenter-with-RDSH"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "MicrosoftWindowsServer"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "WindowsServerSemiAnnual"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageSKU",
+                                        "in": [
+                                            "Datacenter-Core-1709-smalldisk",
+                                            "Datacenter-Core-1709-with-Containers-smalldisk",
+                                            "Datacenter-Core-1803-with-Containers-smalldisk"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "MicrosoftWindowsServerHPCPack"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "WindowsServerHPCPack"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "MicrosoftSQLServer"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.Compute/imageOffer",
+                                                "like": "*-WS2016"
+                                            },
+                                            {
+                                                "field": "Microsoft.Compute/imageOffer",
+                                                "like": "*-WS2016-BYOL"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "MicrosoftRServer"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "MLServer-WS2016"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "MicrosoftVisualStudio"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "in": [
+                                            "VisualStudio",
+                                            "Windows"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "MicrosoftDynamicsAX"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "Dynamics"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageSKU",
+                                        "equals": "Pre-Req-AX7-Onebox-U8"
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "microsoft-ads"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "windows-data-science-vm"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deployIfNotExists",
+                "details": {
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+                    ],
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Compute/virtualMachines/extensions/type",
+                                "equals": "DSC"
+                            },
+                            {
+                                "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+                                "equals": "Microsoft.Powershell"
+                            }
+                        ]
+                    },
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "parameters": {
+                                "vmName": {
+                                    "value": "[field('name')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "automationAccountEurope": {
+                                    "value": "[parameters('automationAccountEurope')]"
+                                },
+                                "automationAccountAmerica": {
+                                    "value": "[parameters('automationAccountAmerica')]"
+                                }
+                            },
+                            "template": {
+                                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "automationAccountEurope": {
+                                        "type": "string"
+                                    },
+                                    "automationAccountAmerica": {
+                                        "type": "string"
+                                    },
+                                    "refreshFrequencyMins": {
+                                        "type": "string",
+                                        "defaultValue": "30"
+                                    },
+                                    "configurationModeFrequencyMins": {
+                                        "type": "string",
+                                        "defaultValue": "15"
+                                    },
+                                    "configurationMode": {
+                                        "type": "string",
+                                        "defaultValue": "ApplyAndAutoCorrect"
+                                    },
+                                    "configName": {
+                                        "type": "string",
+                                        "defaultValue": "SecurityBaselineConfigurationWS2016.localhost"
+                                    },
+                                    "actionAfterReboot": {
+                                        "type": "string",
+                                        "defaultValue": "continueConfiguration"
+                                    },
+                                    "vmName": {
+                                        "type": "string"
+                                    },
+                                    "RebootNodeifNeeded": {
+                                        "type": "bool",
+                                        "defaultValue": false
+                                    },
+                                    "AllowModuleOverwrite": {
+                                        "type": "bool",
+                                        "defaultValue": true
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "condition": "[equals(parameters('location'), 'northeurope')]",
+                                        "type": "Microsoft.Compute/virtualMachines/extensions",
+                                        "name": "[concat(parameters('vmName'),'/Microsoft.Powershell.DSCEU')]",
+                                        "apiVersion": "2015-06-15",
+                                        "location": "[parameters('location')]",
+                                        "properties": {
+                                            "Publisher": "Microsoft.Powershell",
+                                            "Type": "DSC",
+                                            "TypeHandlerVersion": "2.76",
+                                            "AutoUpgradeMinorVersion": "true",
+                                            "ProtectedSettings": {
+                                                "configurationArguments": {
+                                                    "registrationKey": {
+                                                        "userName": "notused",
+                                                        "Password": "[listKeys(parameters('automationAccountEurope'), '2015-01-01-preview').Keys[0].Value]"
+                                                    }
+                                                }
+                                            },
+                                            "Settings": {
+                                                "configurationArguments": {
+                                                    "RegistrationUrl": "[reference(parameters('automationAccountEurope'), '2015-01-01-preview').registrationUrl]",
+                                                    "ConfigurationMode": "[parameters('ConfigurationMode')]",
+                                                    "NodeConfigurationName": "[parameters('configName')]",
+                                                    "RebootNodeIfNeeded": "[parameters('RebootNodeIfNeeded')]",
+                                                    "ActionAfterReboot": "[parameters('ActionAfterReboot')]",
+                                                    "ConfigurationModeFrequencyMins": "[parameters('ConfigurationModeFrequencyMins')]",
+                                                    "RefreshFrequencyMins": "[parameters('RefreshFrequencyMins')]",
+                                                    "AllowModuleOverwrite": "[parameters('AllowModuleOverwrite')]"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "condition": "[equals(parameters('location'), 'southcentralus')]",
+                                        "type": "Microsoft.Compute/virtualMachines/extensions",
+                                        "name": "[concat(parameters('vmName'),'/Microsoft.Powershell.DSCUS')]",
+                                        "apiVersion": "2015-06-15",
+                                        "location": "[parameters('location')]",
+                                        "properties": {
+                                            "Publisher": "Microsoft.Powershell",
+                                            "Type": "DSC",
+                                            "TypeHandlerVersion": "2.76",
+                                            "AutoUpgradeMinorVersion": "true",
+                                            "ProtectedSettings": {
+                                                "configurationArguments": {
+                                                    "registrationKey": {
+                                                        "userName": "notused",
+                                                        "Password": "[listKeys(parameters('automationAccountAmerica'), '2015-01-01-preview').Keys[0].Value]"
+                                                    }
+                                                }
+                                            },
+                                            "Settings": {
+                                                "configurationArguments": {
+                                                    "RegistrationUrl": "[reference(parameters('automationAccountAmerica'), '2015-01-01-preview').registrationUrl]",
+                                                    "ConfigurationMode": "[parameters('ConfigurationMode')]",
+                                                    "NodeConfigurationName": "[parameters('configName')]",
+                                                    "RebootNodeIfNeeded": "[parameters('RebootNodeIfNeeded')]",
+                                                    "ActionAfterReboot": "[parameters('ActionAfterReboot')]",
+                                                    "ConfigurationModeFrequencyMins": "[parameters('ConfigurationModeFrequencyMins')]",
+                                                    "RefreshFrequencyMins": "[parameters('RefreshFrequencyMins')]",
+                                                    "AllowModuleOverwrite": "[parameters('AllowModuleOverwrite')]"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ],
+                                "outputs": {
+                                    "policyInfo": {
+                                        "type": "string",
+                                        "value": "[concat('VM: ', parameters('vmName'), ' is now connected to DSC security baseline')]"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
