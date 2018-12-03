@@ -4,6 +4,7 @@
     "parameters": {
         "vmName": {
             "type": "string",
+            "maxLength": 3,
             "metadata": {
                 "description": "Virtual machine name"
             }
@@ -24,7 +25,7 @@
         "vmType": {
             "type": "string",
             "allowedValues": [
-                "database",
+                "data",
                 "web",
                 "app"
             ],
@@ -41,6 +42,13 @@
             "metadata": {
                 "description": "Select OS platform; WinServer or Linux."
             }
+        },
+        "instances": {
+            "type": "int",
+            "maxValue": 100,
+            "metadata": {
+                "description": "Specify the amount of VM instances to create"
+            }
         }
     },
     "variables": {
@@ -52,7 +60,7 @@
         "vNetName": "m2-we-prod-hub1-spoke1",
         "vNetId": "[resourceId(variables('vNetRg'), 'Microsoft.Networks/virtualNetworks/', variables('vNetName'))]",
         "vmToSubnetMap": {
-            "database": "m2-we-prod-hub1-spoke1-app1",
+            "data": "m2-we-prod-hub1-spoke1-app1",
             "web": "m2-we-prod-hub1-spoke1-app2",
             "app": "m2-we-prod-hub1-spoke1-app3"
         },
@@ -71,6 +79,7 @@
         "publicIPAddressId": {
             "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('pNicName'))]"
         },
+        "vmNameFunction": "[concat(resourceGroup().name, '-', parameters('vmName'))]",
         "vNicName": "[concat(parameters('vmName'), '-', 'nic')]",
         "pNicName": "[concat(parameters('vmName'), '-', 'pip')]",   
         "copy": [
@@ -90,23 +99,31 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "condition": "[equals(parameters('vmType'), 'web')]",
             "apiVersion": "2017-04-01",
-            "name": "[variables('pNicName')]",
+            "name": "[concat(variables('pNicName'), copyIndex(1))]",
             "location": "[resourceGroup().location]",
+            "copy": {
+                "count": "[parameters('instances')]",
+                "name": "pNicCopy"
+            },
             "properties": {
                 "publicIPallocationmethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[toLower(parameters('vmName'))]"
+                    "domainNameLabel": "[toLower(variables('vmNameFunction'))]"
                 }
             }
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2017-04-01",
-            "name": "[variables('vNicName')]",
+            "name": "[concat(variables('vNicName'), copyIndex(1))]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses/', variables('pNicName'))]"
+                "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('pNicName'), copyIndex(1)))]"
             ],
+            "copy": {
+                "count": "[parameters('instances')]",
+                "name": "vNicCopy"
+            },
             "properties": {
                 "ipConfigurations": [
                     {
@@ -136,11 +153,15 @@
             }
         },
         {
-            "condition": "[equals(parameters('vmType'), 'database')]",
+            "condition": "[equals(parameters('vmType'), 'data')]",
             "type": "Microsoft.Compute/disks",
             "apiVersion": "2017-03-30",
-            "name": "[concat(parameters('vmName'), '-mdisk')]",
+            "name": "[concat(variables('vmNameFunction'), '-mdisk', copyIndex(1))]",
             "location": "[resourceGroup().location]",
+            "copy": {
+                "count": "[parameters('instances')]",
+                "name": "diskCopy"
+            },
             "sku": {
                 "name": "Premium_LRS"
             },
@@ -154,20 +175,24 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2017-03-30",
-            "name": "[parameters('vmName')]",
+            "name": "[concat(variables('vmNameFunction'), copyIndex(1))]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkinterfaces/', variables('vNicName'))]",
+                "[resourceId('Microsoft.Network/networkinterfaces/', concat(variables('vNicName'), copyIndex(1)))]",
                 "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]",
-                "[resourceId('Microsoft.Compute/disks', concat(parameters('vmName'), '-mDisk'))]"
+                "[resourceId('Microsoft.Compute/disks/', concat(variables('vmNameFunction'), '-mDisk', copyIndex(1)))]"
             ],
+            "copy": {
+                "count": "[parameters('instances')]",
+                "name": "vmCopy"
+            },
             "properties": {
                 "availabilitySet": "[variables('availabilitySetId')]",
                 "hardwareprofile": {
                     "vmsize": "Standard_DS3_v2"
                 },
                 "osProfile": {
-                    "computername": "[parameters('vmName')]",
+                    "computername": "[concat(variables('vmNameFunction'), copyIndex(1))]",
                     "adminusername": "[parameters('username')]",
                     "adminpassword": "[parameters('pwdOrSsh')]"
                 },
@@ -179,19 +204,19 @@
                         "sku": "[if(equals(parameters('platform'), 'WinServer'), variables('windowsSku'), variables('linuxSku'))]"
                     },
                     "osdisk": {
-                        "name": "[concat(parameters('vmName'), '-osDisk')]",
+                        "name": "[concat(variables('vmNameFunction'), '-osDisk', copyIndex(1))]",
                         "createOption": "FromImage",
                         "managedDisk": {
-                            "storageAccountType": "[if(equals(parameters('vmType'), 'database'), 'Premium_LRS', 'Standard_LRS')]"
+                            "storageAccountType": "[if(equals(parameters('vmType'), 'data'), 'Premium_LRS', 'Standard_LRS')]"
                         },
                         "caching": "ReadWrite"
                     },
-                    "dataDisks": "[if(equals(parameters('vmType'), 'database'), variables('managedDiskId'), json('null'))]"
+                    "dataDisks": "[if(equals(parameters('vmType'), 'data'), variables('managedDiskId'), json('null'))]"
                 },
                 "networkprofile": {
                     "networkinterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkinterfaces', variables('vNicName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkinterfaces', concat(variables('vNicName'), copyIndex(1)))]"
                         }
                     ]
                 }
@@ -210,6 +235,10 @@
         "vmType": {
             "type": "string",
             "value": "[parameters('vmType')]"
+        },
+        "vmName": {
+            "type": "string",
+            "value": "[variables('vmNameFunction')]"
         }
     }
 }

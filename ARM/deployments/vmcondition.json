@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmNamePrefix": {
@@ -180,6 +180,25 @@
                         }
                     ]
                 }
+            }
+        },
+        {
+            "condition": "[equals(parameters('production'), 'Yes')]",
+            "type": "Microsoft.Compute/snapshots",
+            "apiVersion": "2018-04-01",
+            "name": "[concat(parameters('vmNamePrefix'), 'snapshot')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+            ],
+            "properties": {
+                "creationData": {
+                    "createOption": "Copy",
+                    "sourceResourceId": "[resourceId('Microsoft.Compute/disks/', concat(parameters('platform'), '-osDisk'))]"
+                }
+            },
+            "sku": {
+                "name": "Standard_LRS"
             }
         }
     ],
