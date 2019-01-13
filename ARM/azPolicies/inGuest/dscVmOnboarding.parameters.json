@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "accountResourceId": {
+            "value": "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b/resourceGroups/m2-oms-europe/providers/Microsoft.Automation/automationAccounts/m2-oms-westeurope-azureaa"
+        },
+        "registrationUrl": {
+            "value": "https://we-agentservice-prod-1.azure-automation.net/accounts/b1a226a1-bed6-41b6-a86b-91a1c59ff269"
+        },
+        "refreshFrequencyMins": {
+            "value": "30"
+        },
+        "configurationModeFrequencyMins": {
+            "value": "15"
+        },
+        "configurationMode": {
+            "value": "applyAndMonitor"
+        },
+        "actionAfterReboot": {
+            "value": "continueConfiguration"
+        },
+        "vmName": {
+            "value": "dsc0123WinSrv"
+        },
+        "vmLocation": {
+            "value": "westeurope"
+        },
+        "rebootNodeifNeeded": {
+            "value": false
+        },
+        "allowModuleOverwrite": {
+            "value": true
+        },
+        "accountLocation": {
+            "value": "west europe"
+        },
+        "automationAccountName": {
+            "value": "m2-oms-westeurope-azureaa"
+        },
+        "accountResourceGroup": {
+            "value": "m2-oms-europe"
+        },
+        "deploymentName": {
+            "value": "AutomationControl.1380487056.4"
+        },
+        "dscSecurityBaselineType": {
+            "value": ""
+        }
+    }
+}

@@ -1,0 +1,193 @@
+{
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "parameters": {
+            "customData": {
+                "type": "string",
+                "description": "Provide the custom data (cloud-init) config",
+                "displayName": "Custom Data for cloud init"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                        "anyOf": [
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "RedHat"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "in": [
+                                            "RHEL",
+                                            "RHEL-SAP-HANA"
+                                        ]
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "6.*"
+                                            },
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "7*"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "SUSE"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "in": [
+                                            "SLES",
+                                            "SLES-HPC",
+                                            "SLES-HPC-Priority",
+                                            "SLES-SAP",
+                                            "SLES-SAP-BYOS",
+                                            "SLES-Priority",
+                                            "SLES-BYOS",
+                                            "SLES-SAPCAL",
+                                            "SLES-Standard"
+                                        ]
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "12*"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "Canonical"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "UbuntuServer"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "14.04*LTS"
+                                            },
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "16.04*LTS"
+                                            },
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "18.04*LTS"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "Oracle"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "Oracle-Linux"
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "6.*"
+                                            },
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "7.*"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "OpenLogic"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "in": [
+                                            "CentOS",
+                                            "Centos-LVM",
+                                            "CentOS-SRIOV"
+                                        ]
+                                    },
+                                    {
+                                        "anyOf": [
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "6.*"
+                                            },
+                                            {
+                                                "field": "Microsoft.Compute/imageSKU",
+                                                "like": "7*"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Compute/imagePublisher",
+                                        "equals": "cloudera"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageOffer",
+                                        "equals": "cloudera-centos-os"
+                                    },
+                                    {
+                                        "field": "Microsoft.Compute/imageSKU",
+                                        "like": "7*"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "field": "Microsoft.Compute/virtualMachines/osProfile.customData",
+                        "notEquals": "[parameters('customData')]"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "append",
+                "details": [
+                    {
+                        "field": "Microsoft.Compute/virtualMachines/osProfile.customData",
+                        "value": "[parameters('customData')]"
+                    }
+                ]
+            }
+        }
+    }
+}
