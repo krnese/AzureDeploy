@@ -58,7 +58,7 @@
         ],
         "vNetRg": "m2-we-prod-hub1-spoke1-network-rg",
         "vNetName": "m2-we-prod-hub1-spoke1",
-        "vNetId": "[resourceId(variables('vNetRg'), 'Microsoft.Networks/virtualNetworks/', variables('vNetName'))]",
+        "vNetId": "[resourceId(variables('vNetRg'), 'Microsoft.Network/virtualNetworks/', variables('vNetName'))]",
         "vmToSubnetMap": {
             "data": "m2-we-prod-hub1-spoke1-app1",
             "web": "m2-we-prod-hub1-spoke1-app2",

@@ -1,0 +1,26 @@
+{
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "parameters": {},
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+                    },
+                    {
+                        "not": {
+                            "field": "name",
+                            "like": "[concat(subscription().displayName, '-', '*')]"
+                        }
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deny"
+            }
+        }
+    }
+}

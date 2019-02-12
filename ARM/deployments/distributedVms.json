@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "rgNamePrefix": {
@@ -25,7 +25,7 @@
             "type": "string"
         },
         "pwdOrSsh": {
-            "type": "securestring",
+            "type": "securestring"
         }
     },
     "variables": {
@@ -36,8 +36,8 @@
             "vNetAddress": "192.168.0.0/16",
             "subnetAddress": "192.168.16.0/24"
         },
-        "vnetId": "[resourceId('Microsoft.Network/virtualnetworks', concat(variables('vNet').vNetName))]",
-        "subnetRef": "[concat(variables('vnetID'),'/subnets/', concat(variables('vNet').subnetName))]",
+        "vnetId": "[resourceId('Microsoft.Network/virtualnetworks', variables('vNet').vNetName)]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/', variables('vNet').subnetName)]",
         "windowsOffer": "WindowsServer",
         "windowsSku": "2016-Datacenter",
         "windowsPublisher": "MicrosoftWindowsServer",
@@ -94,7 +94,7 @@
                                 },
                                 "subnets": [
                                     {
-                                        "name": "[variables('vNet').subnetName]",
+                                        "name": "[concat(variables('vNet').subnetName, copyIndex())]",
                                         "properties": {
                                             "addressPrefix": "[variables('vNet').subnetAddress]"
                                         }
@@ -116,7 +116,7 @@
                         },
                         {
                             "type": "Microsoft.Network/networkInterfaces",
-                            "apiVersion": "2017-10-01",
+                            "apiVersion": "2018-08-01",
                             "name": "[concat(variables('vNicName'), copyIndex())]",
                             "location": "[parameters('rglocation')]",
                             "dependsOn": [
@@ -133,7 +133,7 @@
                                                 "id": "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('pNicName'), copyIndex()))]"
                                             },
                                             "subnet": {
-                                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', concat(variables('vNet').vNetName,copyIndex()), variables('vNet').subnetName)]" 
+                                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', concat(variables('vNet').vNetName,copyIndex()), concat(variables('vNet').subnetName, copyIndex()))]" 
                                             }
                                         }
                                     }

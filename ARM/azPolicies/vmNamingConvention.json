@@ -1,0 +1,26 @@
+{
+    "properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "parameters": {},
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                        "not": {
+                            "field": "name",
+                            "like": "[concat(last(split(resourceGroup().name, '-')),'*')]"
+                        }
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deny"
+            }
+        }
+    }
+}
