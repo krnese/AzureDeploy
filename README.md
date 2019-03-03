@@ -1,54 +1,6 @@
 # Azure Resource Manager
 
-	{
-	    "theIntentionOfThisRepository": {
-	        "type": "string",
-	        "allowedValues": [
-	            "learning",
-	            "havingFun",
-	            "exploring",
-	            "shareWithCommunity"
-	        ]
-	    },
-	    "technologiesCovered": [
-	        {
-	            "name": "azureLogAnalytics"
-	        },
-	        {
-	            "name": "azureAutomation"
-	        },
-	        {
-	            "name": "azureSiteRecovery"
-	        },
-	        {
-	            "name": "azureBackup"
-	        },
-	        {
-	            "name": "everythingAzureResourceManager"
-	        },
-	        {
-	            "name": "azureManagedApplication"
-	        }
-	    ],
-	    "howToGetInTouch": {
-	        "channels": [
-	            {
-	                "twitter": "@KristianNese"
-	            },
-	            {
-	                "linkedId": "Kristian Nese"
-	            },
-	            {
-	                "eMail": "krnese@microsoft.com"
-	            }
-	        ]
-	    }
-	}
-
-
-#### Kristian Nese
-
-##### Senior Program Manager, AzureCAT
+This is my personal repo where I tend to put stuff I am working on, which may include samples, prototypes, and other experiments.
 
 Twitter: [KristianNese](http://twitter.com/KristianNese)
 
