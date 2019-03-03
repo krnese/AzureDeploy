@@ -3,29 +3,51 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "rgNamePrefix": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Provide prefix for the resource groups"
+            }
         },
         "vmNamePrefix": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Provide prefix for the virtual machines"
+            }
         },
         "instances": {
-            "type": "int"
+            "type": "int",
+            "metadata": {
+                "description": "Select the number of instances to be deployed"
+            }
         },
         "rglocation": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Provide the location for the resource groups"
+            }
         },
         "platform": {
             "type": "string",
             "allowedValues": [
                 "WinSrv",
                 "Linux"
-            ]
+            ],
+            "metadata":{
+                "description": "Select Linux or Windows Server"
+            }
         },
         "userName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "azureadmin",
+            "metadata": {
+                "description": "Provide a user name for the VM login"
+            }
         },
         "pwdOrSsh": {
-            "type": "securestring"
+            "type": "securestring",
+            "metadata": {
+                "description": "Provide the password or ssh as secure string"
+            }
         }
     },
     "variables": {
