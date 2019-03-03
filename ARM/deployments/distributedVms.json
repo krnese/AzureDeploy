@@ -130,10 +130,10 @@
                                         "properties": {
                                             "privateIPAllocationMethod": "Dynamic",
                                             "publicIPAddress": {
-                                                "id": "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('pNicName'), copyIndex()))]"
+                                                "id": "[concat(subscription().id, '/resourceGroups/', parameters('rgNamePrefix'), copyIndex(), '/providers/Microsoft.Network/publicIPAddresses/', variables('pNicName'), copyIndex())]"
                                             },
                                             "subnet": {
-                                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', concat(variables('vNet').vNetName,copyIndex()), concat(variables('vNet').subnetName, copyIndex()))]" 
+                                                "id": "[concat(subscription().id, '/resourceGroups/', parameters('rgNamePrefix'), copyIndex(), '/providers/Microsoft.Network/virtualNetworks/', variables('vNet').vNetName,copyIndex(), '/subnets/', variables('vNet').subnetName, copyIndex())]" 
                                             }
                                         }
                                     }
@@ -176,7 +176,7 @@
                                 "networkprofile": {
                                     "networkinterfaces": [
                                         {
-                                            "id": "[resourceId('Microsoft.Network/networkinterfaces', concat(variables('vNicName'), copyIndex()))]"
+                                            "id": "[concat(subscription().id, '/resourceGroups/', parameters('rgNamePrefix'), copyIndex(), '/providers/Microsoft.Network/networkinterfaces/', variables('vNicName'), copyIndex())]"
                                         }
                                     ]
                                 }
