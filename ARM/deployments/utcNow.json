@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "utc": {
+            "type": "string",
+            "defaultValue": "[utcNow()]"
+        },
+        "utcShort": {
+            "type": "string",
+            "defaultValue": "[utcNow('d')]"
+        },
+        "utcCustom": {
+            "type": "string",
+            "defaultValue": "[utcNow('d M y')]"
+        }
+    },
+    "resources": [],
+    "outputs": {
+        "utc": {
+            "type": "string",
+            "value": "[parameters('utc')]"
+        },
+        "utcShort": {
+            "type": "string",
+            "value": "[parameters('utcShort')]"
+        },
+        "utcCustomUs": {
+            "type": "string",
+            "value": "[parameters('utcCustom')]"
+        }
+    }
+}
