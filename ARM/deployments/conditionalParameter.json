@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "conditionalParam": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "rgName": "myRg"
+    },
+    "resources": [
+        {
+            "condition": "[greater(parameters('conditionalParam'), '0')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "westeurope",
+            "name": "[variables('rgName')]",
+            "properties":{}
+        }
+    ],
+    "outputs": {}
+}
