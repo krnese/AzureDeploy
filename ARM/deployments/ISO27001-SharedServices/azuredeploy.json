@@ -71,7 +71,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "[concat(deployment().name, 'nsgPolicy')]",
-            "location": "[deployment().loction]",
+            "location": "[deployment().location]",
             "dependsOn": [
                 "mgmtDeployment"
             ],
