@@ -47,6 +47,12 @@
             "metadata": {
                 "description": "Location for all resources."
             }
+        },
+        "vNetRg": {
+            "type": "string",
+            "metadata": {
+                "description": "RG containing vNet resources"
+            }
         }
     },
     "variables": {
@@ -63,9 +69,9 @@
         "adLBBE": "LBBE",
         "adPDCRDPNAT": "adPDCRDP",
         "adBDCRDPNAT": "adBDCRDP",
-        "virtualNetworkName": "adVNET",
+        "virtualNetworkName": "isoVNET",
         "virtualNetworkAddressRange": "10.0.0.0/16",
-        "adSubnetName": "adSubnet",
+        "adSubnetName": "isoSubnet",
         "adSubnet": "10.0.0.0/24",
         "adPDCNicName": "adPDCNic",
         "adPDCNicIPAddress": "10.0.0.4",
@@ -119,7 +125,8 @@
         {
             "name": "VNet",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('vNetRg')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -357,7 +364,8 @@
         {
             "name": "UpdateVNetDNS1",
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('vNetRg')]",
             "dependsOn": [
                 "[concat('Microsoft.Compute/virtualMachines/', variables('adPDCVMName'),'/extensions/CreateADForest')]"
             ],
