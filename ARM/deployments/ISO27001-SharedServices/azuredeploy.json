@@ -58,7 +58,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "name": "[concat(deployment().name, 'ASC')]",
-            "location": "[deployment().loction]",
+            "location": "[deployment().location]",
             "properties":{
                 "mode": "Incremental",
                 "templateLink":{
