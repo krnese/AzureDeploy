@@ -1,0 +1,178 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rbacGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        },
+        "logAnalyticsId": {
+            "type": "string",
+            "defaultValue": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/resourceGroups/isomgmt1000/providers/Microsoft.OperationalInsights/workspaces/isows1000"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2018-05-01",
+            "name": "DINE-AzMon-NSG",
+            "properties": {
+                "description": "Policy to enforce AzMon on NSGs",
+                "displayName": "DINE-AzMon-NSG",
+                "parameters": {
+                    "logAnalyticsWorkspace": {
+                        "type": "string",
+                        "metadata": {
+                            "displayName": "Log Analytics workspace resourceId",
+                            "description": "Select the Log Analyitcs workspace from dropdown list",
+                            "strongType": "omsWorkspace"
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.Network/networkSecurityGroups"
+                    },
+                    "then": {
+                        "effect": "deployIfNotExists",
+                        "details": {
+                            "type": "Microsoft.Insights/diagnosticSettings",
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.Insights/diagnosticSettings/logs.enabled",
+                                        "equals": "true"
+                                    },
+                                    {
+                                        "field": "Microsoft.Insights/diagnosticSettings/workspaceId",
+                                        "equals": "[[parameters('logAnalyticsWorkspace')]"
+                                    }
+                                ]
+                            },
+                            "deployment": {
+                                "properties": {
+                                    "parameters": {
+                                        "logAnalyticsWorkspace": {
+                                            "value": "[[parameters('logAnalyticsWorkspace')]"
+                                        },
+                                        "location": {
+                                            "value": "[[field('location')]"
+                                        },
+                                        "nsgName": {
+                                            "value": "[[field('name')]"
+                                        }
+                                    },
+                                    "mode": "incremental",
+                                    "template": {
+                                        "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                        "contentVersion": "1.0.0.0",
+                                        "parameters": {
+                                            "nsgName": {
+                                                "type": "string"
+                                            },
+                                            "logAnalyticsWorkspace": {
+                                                "type": "string"
+                                            },
+                                            "location": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "variables": {},
+                                        "resources": [
+                                            {
+                                                "type": "Microsoft.Network/networkSecurityGroups/providers/diagnosticSettings",
+                                                "apiVersion": "2017-05-01-preview",
+                                                "name": "[[concat(parameters('nsgName'), '/', 'Microsoft.Insights/setByPolicy')]",
+                                                "location": "[[parameters('location')]",
+                                                "dependsOn": [],
+                                                "properties": {
+                                                    "workspaceId": "[[parameters('logAnalyticsWorkspace')]",
+                                                    "logs": [
+                                                        {
+                                                            "category": "NetworkSecurityGroupEvent",
+                                                            "enabled": true
+                                                        },
+                                                        {
+                                                            "category": "NetworkSecurityGroupRuleCounter",
+                                                            "enabled": true
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ],
+                                        "outputs": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "DINE-AzMon-NSG-assignment",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyDefinitions/', 'DINE-AzMon-NSG')]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "displayName": "Policy to enforce NSG monitoring",
+                "description": "Policy to enforce NSG monitoring",
+                "metadata": {
+                    "assignedBy": "krnese"
+                },
+                "scope": "[subscription().id]",
+                "policyDefinitionId": "[resourceId('Microsoft.Authorization/policyDefinitions', 'Dine-AzMon-NSG')]",
+                "parameters": {
+                    "logAnalyticsWorkspace": {
+                        "value": "[parameters('logAnalyticsId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "delay",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policyAssignments/', 'DINE-AzMon-NSG-assignment')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [],
+                    "outputs": {}
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2017-09-01",
+            "name": "[parameters('rbacGuid')]",
+            "dependsOn": [
+                "delay",
+                "[resourceId('Microsoft.Authorization/policyAssignments/', 'DINE-AzMon-NSG-assignment')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                "principalId": "[reference('DINE-AzMon-NSG-assignment', '2018-05-01', 'Full' ).identity.principalId]",
+                "assignableScopes": [
+                    "[subscription().id]"
+                ]
+            }
+        }
+    ],
+    "outputs": {}
+}

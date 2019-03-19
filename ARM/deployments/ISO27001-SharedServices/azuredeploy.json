@@ -48,10 +48,46 @@
     },
     "variables": {
         "omsTemplateLink": "[uri(deployment().properties.templateLink.uri, 'azureMgmt/omsWorkspace.json')]",
+        "ascTemplateLink": "[uri(deployment().properties.templateLink.uri, 'azureMgmt/deployASC.json')]",
+        "nsgPolicyTemplateLink": "[uri(deployment().properties.templateLink.uri, 'policies/DINE-AzMon-NSG.json')]",
         "vNetTemplateLink": "[uri(deployment().properties.templateLink.uri, 'vNet/vnet.json')]",
         "dcTemplateLink": "[uri(deployment().properties.templateLink.uri, 'active-directory-new-domain-ha-2-dc/azuredeploy.json')]"
     },
     "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[concat(deployment().name, 'ASC')]",
+            "location": "[deployment().loction]",
+            "properties":{
+                "mode": "Incremental",
+                "templateLink":{
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('ascTemplateLink')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[concat(deployment().name, 'nsgPolicy')]",
+            "location": "[deployment().loction]",
+            "dependsOn": [
+                "mgmtDeployment"
+            ],
+            "properties":{
+                "mode": "Incremental",
+                "templateLink":{
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('nsgPolicyTemplateLink')]"
+                },
+                "parameters":{
+                    "logAnalyticsId": {
+                        "value": "[reference('mgmtDeployment').outputs.logAnalyticsResourceId.value]"
+                    }
+                }
+            }
+        },
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
