@@ -1,0 +1,114 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "string"
+        },
+        "workspaceLocation": {
+            "type": "string"
+        },
+        "automationAccountName": {
+            "type": "string"
+        },
+        "automationLocation": {
+            "type": "string"
+        },
+        "mgmtRgName": {
+            "type": "string"
+        },
+        "vNetRgName": {
+            "type": "string"
+        },
+        "dcRgName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "omsTemplateLink": "[uri(deployment().properties.templateLink.uri, 'azureMgmt/omsWorkspace.json')]",
+        "vNetTemplateLink": "[uri(deployment().properties.templateLink.uri, 'vNet/vnet.json')]",
+        "dcTemplateLink": "[uri(deployment().properties.templateLink.uri, 'active-directory-new-domain-ha-2-dc/azuredeploy.json')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "[parameters('mgmtRgName')]",
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "mgmtDeployment",
+            "resourceGroup": "[parameters('mgmtRgName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('mgmtRgName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('omsTemplateLink')]"
+                },
+                "parameters": {
+                    "workspaceName": {
+                        "value": "[parameters('workspaceName')]"
+                    },
+                    "workspaceRegion": {
+                        "value": "[parameters('workspaceLocation')]"
+                    },
+                    "automationAccountName": {
+                        "value": "[parameters('automationAccountName')]"
+                    },
+                    "automationRegion": {
+                        "value": "[parameters('automationLocation')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "[parameters('vNetRgName')]",
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "vNetDeployment",
+            "resourceGroup": "[parameters('vNetRgName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('vNetRgName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('vNetTemplateLink')]"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "isoVNET"
+                    },
+                    "virtualNetworkAddressRange": {
+                        "value": "10.0.0.0/16"
+                    },
+                    "subnetName": {
+                        "value": "isoSubnet"
+                    },
+                    "subnetRange": {
+                        "value": "10.0.0.0/24"
+                    },
+                    "location": {
+                        "value": "[deployment().location]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
