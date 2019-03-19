@@ -3,37 +3,47 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "workspaceName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "isows1000"
         },
         "workspaceLocation": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "westeurope"
         },
         "automationAccountName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "isoaa1000"
         },
         "automationLocation": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "westeurope"
         },
         "mgmtRgName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "isomgmt1000"
         },
         "vNetRgName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "isovnet1000"
         },
         "dcRgName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "isodc1000"
         },
         "adminUsername": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "adazadmin"
         },
         "adminPassword": {
             "type": "securestring"
         },
         "domainName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "isoaddomain1000.local"
         },
         "dnsPrefix": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "isoaddomain1000"
         }
     },
     "variables": {
@@ -135,8 +145,8 @@
             "name": "dcDeployment",
             "resourceGroup": "[parameters('dcRgName')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'vNetDeployment')]",
-                "[resourceId('Microsoft.Resources/deployments', 'mgmtDeployment')]",
+                "[resourceId('Microsoft.Resources/deployments/', 'vNetDeployment')]",
+                "[resourceId('Microsoft.Resources/deployments/', 'mgmtDeployment')]",
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('dcRgName'))]"
             ],
             "properties": {
