@@ -1,0 +1,82 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "rbacName": "[newGuid()]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/roleDefinitions",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[variables('rbacName')]",
+            "properties": {
+                "description": "NetOps",
+                "roleName": "NetOps",
+                "assignableScopes": [
+                    "[subscription().id]"
+                ],
+                "permissions": [
+                    {
+                        "Actions": [
+                            "*/read",
+                    "Microsoft.Resources/subscriptions/resourcegroups/*",
+                    "Microsoft.Resources/subscriptions/resourcegroups/deployments/write",
+                    "Microsoft.Resources/deployments/*",
+                    "Microsoft.Network/*",
+                    "Microsoft.Network/virtualNetworks/virtualNetworkPeerings/*",
+                    "Microsoft.Network/expressRouteCircuits/*",
+                    "Microsoft.Network/dnszones/*/delete",
+                    "Microsoft.Network/dnszones/*/write",
+                    "Microsoft.Network/publicIPAddresses/write",
+                    "Microsoft.Network/publicIPAddresses/delete",
+                    "Microsoft.Network/publicIPAddresses/join/action",
+                    "Microsoft.Network/securegateways/*",
+                    "Microsoft.Network/routeFilters/delete",
+                    "Microsoft.Network/routeFilters/write",
+                    "Microsoft.Network/networkWatchers/*",
+                    "Microsoft.Network/virtualNetworkTaps/*",
+                    "Microsoft.Network/virtualNetworkGateways/*",
+                    "Microsoft.Network/vpnsites/*",
+                    "Microsoft.Network/virtualNetworks/write",
+                    "Microsoft.Network/virtualNetworks/delete",
+                    "Microsoft.Network/virtualNetworks/peer/action",
+                    "Microsoft.Network/localnetworkgateways/*",
+                    "Microsoft.Network/vpnGateways/*",
+                    "Microsoft.Network/connections/*",
+                    "Microsoft.Network/routeTables/write",
+                    "Microsoft.Network/routeTables/delete",
+                    "Microsoft.Network/routeTables/routes/write",
+                    "Microsoft.Network/routeTables/routes/delete",
+                    "Microsoft.Network/virtualwans/*",
+                    "Microsoft.Network/virtualHubs/*",
+                    "Microsoft.Network/virtualNetworks/subnets/write",
+                    "Microsoft.Network/virtualNetworks/subnets/delete",
+                    "Microsoft.Network/applicationGateways/backendAddressPools/join/action",
+                    "Microsoft.Network/loadBalancers/backendAddressPools/join/action",
+                    "Microsoft.Network/loadBalancers/inboundNatPools/join/action",
+                    "Microsoft.Network/loadBalancers/inboundNatRules/join/action",
+                    "Microsoft.Network/loadBalancers/probes/join/action",
+                    "Microsoft.Network/loadBalancers/read",
+                    "Microsoft.Network/locations/*",
+                    "Microsoft.Network/networkInterfaces/*",
+                    "Microsoft.Network/networkSecurityGroups/join/action",
+                    "Microsoft.Network/networkSecurityGroups/read",
+                    "Microsoft.Network/publicIPAddresses/join/action",
+                    "Microsoft.Network/publicIPAddresses/read",
+                    "Microsoft.Network/virtualNetworks/read",
+                    "Microsoft.Network/virtualNetworks/subnets/join/action",
+                    "Microsoft.Network/networkSecurityGroups/write/*",
+                    "Microsoft.Network/virtualNetworks/subnets/*",
+                    "Microsoft.Network/applicationSecurityGroups/*",
+                    "Microsoft.Network/loadBalancers/*"
+                        ],
+                        "NotActions": [],
+                        "DataActions": [],
+                        "NotDataActions": []
+                    }
+                ]
+            }
+        }
+    ]
+}
