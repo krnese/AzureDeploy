@@ -145,8 +145,8 @@
             "name": "dcDeployment",
             "resourceGroup": "[parameters('dcRgName')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments/', 'vNetDeployment')]",
-                "[resourceId('Microsoft.Resources/deployments/', 'mgmtDeployment')]",
+                "vNetDeployment",
+                "mgmtDeployment",
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('dcRgName'))]"
             ],
             "properties": {
