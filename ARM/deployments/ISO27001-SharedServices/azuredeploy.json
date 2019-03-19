@@ -22,6 +22,18 @@
         },
         "dcRgName": {
             "type": "string"
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "domainName": {
+            "type": "string"
+        },
+        "dnsPrefix": {
+            "type": "string"
         }
     },
     "variables": {
@@ -105,6 +117,46 @@
                     },
                     "location": {
                         "value": "[deployment().location]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "[parameters('dcRgName')]",
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "dcDeployment",
+            "resourceGroup": "[parameters('dcRgName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'vNetDeployment')]",
+                "[resourceId('Microsoft.Resources/deployments', 'mgmtDeployment')]",
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('dcRgName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('vNetTemplateLink')]"
+                },
+                "parameters": {
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "domainName": {
+                        "value": "[parameters('domainName')]"
+                    },
+                    "dnsPrefix": {
+                        "value": "[parameters('dnsPrefix')]"
                     }
                 }
             }
