@@ -155,6 +155,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
+            "name": "kvDeployment",
             "resourceGroup": "[parameters('keyVaultRgName')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/resourceGroups/', parameters('keyVaultRgName')]"
