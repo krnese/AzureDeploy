@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "logAnalyticsId": {
+            "type": "string"
+        },
+        "rbacGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        }
+    },
+    "variables": {
+        "policies": {
+            "builtIns": [
+                {
+                    "assignmentName": "DINE-For-Linux",
+                    "resourceId": "/providers/Microsoft.Authorization/policyDefinitions/053d3325-282c-4e5c-b944-24faffd30d77"
+                }
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "[variables('policies').builtIns[copyIndex()].assignmentName]",
+            "location": "[deployment().location]",
+            "identity":{
+                "type": "SystemAssigned"
+            },
+            "copy": {
+                "name": "policyCopy",
+                "count": "[length(variables('policies').builtIns)]"
+            },
+            "properties":{
+                "description": "DINE policies for Log Analytics VM extension",
+                "displayName": "[variables('policies').builtIns[copyIndex()].assignmentName]",
+                "scope": "[subscription().id]",
+                "policyDefinitionId": "[variables('policies').builtIns[copyIndex()].resourceId]",
+                "parameters": {
+                    "logAnalytics": {
+                        "value": "[parameters('logAnalyticsId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "builtInDelay",
+            "dependsOn": [
+                "policyCopy"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [],
+                    "outputs": {}
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2017-09-01",
+            "name": "[parameters('rbacGuid')]",
+            "dependsOn": [
+                "builtInDelay"                
+            ],
+            "copy": {
+                "name": "rbacCopy",
+                "count": "[length(variables('policies').builtIns)]"
+            },
+            "properties": {
+                "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                "principalId": "[reference(variables('policies').builtIns[copyIndex()].assignmentName, '2018-05-01', 'Full' ).identity.principalId]",
+                "assignableScopes": [
+                    "[subscription().id]"
+                ]
+            }
+        }        
+    ]
+}

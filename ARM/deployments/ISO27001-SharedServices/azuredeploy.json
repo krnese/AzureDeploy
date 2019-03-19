@@ -30,6 +30,14 @@
             "type": "string",
             "defaultValue": "isodc1000"
         },
+        "keyVaultRgName": {
+            "type": "string",
+            "defaultValue": "isokeyvault1000"
+        },
+        "keyVaultName": {
+            "type": "string",
+            "defaultValue": "isokv1000"
+        },
         "adminUsername": {
             "type": "string",
             "defaultValue": "adazadmin"
@@ -44,14 +52,21 @@
         "dnsPrefix": {
             "type": "string",
             "defaultValue": "isoaddomain1000"
+        },
+        "objectId": {
+            "type": "string",
+            "defaultValue": "8414a158-d79d-4682-a0d3-b036663e76af"
         }
     },
     "variables": {
         "omsTemplateLink": "[uri(deployment().properties.templateLink.uri, 'azureMgmt/omsWorkspace.json')]",
         "ascTemplateLink": "[uri(deployment().properties.templateLink.uri, 'azureMgmt/deployASC.json')]",
         "nsgPolicyTemplateLink": "[uri(deployment().properties.templateLink.uri, 'policies/DINE-AzMon-NSG.json')]",
+        "windowsLaPolicyTemplateLink": "[uri(deployment().properties.templateLink.uri, 'policies/built-in-DINE-LA-Windows.json')]",
+        "linuxLaPolicyTemplateLink": "[uri(deployment().properties.templateLink.uri, 'policies/built-In-DINE-LA-Linux.json')]",
         "vNetTemplateLink": "[uri(deployment().properties.templateLink.uri, 'vNet/vnet.json')]",
-        "dcTemplateLink": "[uri(deployment().properties.templateLink.uri, 'active-directory-new-domain-ha-2-dc/azuredeploy.json')]"
+        "dcTemplateLink": "[uri(deployment().properties.templateLink.uri, 'active-directory-new-domain-ha-2-dc/azuredeploy.json')]",
+        "keyVaultTemplateLink": "[uri(deployment().properties.templateLink.uri, 'security/keyVault.json')]"
     },
     "resources": [
         {
@@ -67,6 +82,48 @@
                 }
             }
         },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[concat(deployment().name, 'laWindowsPolicy')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "mgmtDeployment"
+            ],
+            "properties":{
+                "mode": "Incremental",
+                "templateLink":{
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('windowsLaPolicyTemplateLink')]"
+                },
+                "parameters":{
+                    "logAnalyticsId": {
+                        "value": "[reference('mgmtDeployment').outputs.logAnalyticsResourceId.value]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[concat(deployment().name, 'laLinuxPolicy')]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "mgmtDeployment"
+            ],
+            "properties":{
+                "mode": "Incremental",
+                "templateLink":{
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('linuxLaPolicyTemplateLink')]"
+                },
+                "parameters":{
+                    "logAnalyticsId": {
+                        "value": "[reference('mgmtDeployment').outputs.logAnalyticsResourceId.value]"
+                    }
+                }
+            }
+        },        
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
@@ -88,6 +145,36 @@
                 }
             }
         },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "[parameters('keyVaultRgName')]",
+            "properties":{}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[parameters('keyVaultRgName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('keyVaultRgName')]"
+            ],
+            "properties":{
+                "mode": "Incremental",
+                "templateLink":{
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[variables('keyVaultTemplateLink')]"
+                },
+                "parameters":{
+                    "objectId": {
+                        "value": "[parameters('objectId')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[parameters('keyVaultName')]"
+                    }
+                }
+            }
+        },        
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",

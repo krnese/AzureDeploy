@@ -7,8 +7,7 @@
             "defaultValue": "[newGuid()]"
         },
         "logAnalyticsId": {
-            "type": "string",
-            "defaultValue": "/subscriptions/0a938bc2-0bb8-4688-bd37-9964427fe0b0/resourceGroups/isomgmt1000/providers/Microsoft.OperationalInsights/workspaces/isows1000"
+            "type": "string"
         }
     },
     "variables": {},
