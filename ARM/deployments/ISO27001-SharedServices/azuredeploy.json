@@ -167,6 +167,9 @@
                     },
                     "dnsPrefix": {
                         "value": "[parameters('dnsPrefix')]"
+                    },
+                    "vNetRg": {
+                        "value": "[parameters('vNetRgName')]"
                     }
                 }
             }
