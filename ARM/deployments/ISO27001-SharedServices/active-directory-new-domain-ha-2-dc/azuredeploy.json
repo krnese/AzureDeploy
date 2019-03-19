@@ -77,7 +77,8 @@
         "adPDCNicIPAddress": "10.0.0.4",
         "adBDCNicName": "adBDCNic",
         "adBDCNicIPAddress": "10.0.0.5",
-        "adSubnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('adSubnetName'))]",
+        "isovNetName": "[resourceId(parameters('vNetRg'), 'Microsoft.Networks/virtualNetworks/', variables('virtualNetworkName'))]",
+        "productionSubnetId": "[concat(variables('isovNetName'), '/subnets/', variables('adsubnetName'))]",
         "adLBName": "adLoadBalancer",
         "adlbID": "[resourceId('Microsoft.Network/loadBalancers',variables('adLBName'))]",
         "adlbFEConfigID": "[concat(variables('adlbID'),'/frontendIPConfigurations/',variables('adLBFE'))]",
@@ -218,7 +219,7 @@
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[variables('adPDCNicIPAddress')]",
                             "subnet": {
-                                "id": "[variables('adSubnetRef')]"
+                                "id": "[variables('productionSubnetId')]"
                             },
                             "loadBalancerBackendAddressPools": [
                                 {
@@ -252,7 +253,7 @@
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[variables('adBDCNicIPAddress')]",
                             "subnet": {
-                                "id": "[variables('adSubnetRef')]"
+                                "id": "[variables('productionSubnetId')]"
                             },
                             "loadBalancerBackendAddressPools": [
                                 {
@@ -422,7 +423,7 @@
                                     "privateIPAllocationMethod": "Static",
                                     "privateIPAddress": "[variables('adBDCNicIPAddress')]",
                                     "subnet": {
-                                        "id": "[variables('adSubnetRef')]"
+                                        "id": "[variables('productionSubnetId')]"
                                     },
                                     "loadBalancerBackendAddressPools": [
                                         {
