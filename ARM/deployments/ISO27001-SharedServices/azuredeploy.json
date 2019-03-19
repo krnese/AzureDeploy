@@ -153,7 +153,7 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[variables('vNetTemplateLink')]"
+                    "uri": "[variables('dcTemplateLink')]"
                 },
                 "parameters": {
                     "adminUsername": {
