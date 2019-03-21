@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "undeterministicGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        },
+        "deterministicGuid": {
+            "type": "string",
+            "defaultValue": "[guid('persist')]"
+        }
+    },
+    "resources": [
+
+    ],
+    "outputs": {
+        "undeterministicGuid": {
+            "type": "string",
+            "value": "[parameters('undeterministicGuid')]"
+        },
+        "deterministicGuid": {
+            "type": "string",
+            "value": "[parameters('deterministicGuid')]"
+        }
+    }
+}
