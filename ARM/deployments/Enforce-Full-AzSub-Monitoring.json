@@ -37,7 +37,7 @@
     "variables": {
         "policyDefinitionName": "Enable-Full-AzSubscription-Monitoring-Definition",
         "policyAssignmentName": "Enable-Full-AzSub-Monitoring-Assignment",
-        "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c"
+        "rbacContributor": "8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
     },
     "resources": [
         {
@@ -159,7 +159,7 @@
                                                 "resourceId": "/providers/Microsoft.Authorization/policyDefinitions/0868462e-646c-4fe3-9ced-a733534b6a2c"
                                             },
                                             "linLaPolicy": {
-                                                "assignmentName": "DINE-For-Linux",
+                                                "assignmentName": "Enforce-LA-VM-Extension-Linux",
                                                 "resourceId": "/providers/Microsoft.Authorization/policyDefinitions/053d3325-282c-4e5c-b944-24faffd30d77"
                                             }
                                         },
