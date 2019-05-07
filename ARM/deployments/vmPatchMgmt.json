@@ -1,0 +1,71 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "defaultValue": "Windows-VM-Name",
+            "type": "string"
+        },
+        "vmLocation": {
+            "defaultValue": "southcentralus",
+            "type": "string"
+        },
+        "configurationName": {
+            "defaultValue": "WindowsSoftwareUpdates",
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines/providers/guestConfigurationAssignments",
+            "name": "[concat(parameters('vmName'), '/Microsoft.GuestConfiguration/', parameters('configurationName'))]",
+            "apiVersion": "2018-06-30-preview",
+            "location": "[parameters('vmLocation')]",
+            "properties": {
+                "guestConfiguration": {
+                    "name": "[parameters('configurationName')]",
+                    "version": "1.*"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/softwareUpdateDeployments",
+            "name": "[concat(parameters('vmName'), '/foobar')]",
+            "apiVersion": "2019-01-01-preview",
+            "location": "[parameters('vmLocation')]",
+            "properties": {
+                "windows": {
+                    "includedUpdateClassifications": "FeaturePack, Critical, Security, UpdateRollUp, Definition, Updates"
+                },
+                "maximumDuration": "PT30M",
+                "rebootSetting": "IfRequired"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vmName')]",
+            "apiVersion": "2017-03-30",
+            "location": "[parameters('vmLocation')]",
+            "identity": {
+                "type": "SystemAssigned"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'), '/AzurePolicyforWindows')]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[parameters('vmLocation')]",
+            "properties": {
+                "publisher": "Microsoft.GuestConfiguration.edp",
+                "type": "configurationForWindows",
+                "typeHandlerVersion": "1.5",
+                "autoUpgradeMinorVersion": true,
+                "settings": {},
+                "protectedSettings": {}
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'),'/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/',parameters('configurationName'))]"
+            ]
+        }
+    ]
+}

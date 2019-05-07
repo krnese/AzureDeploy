@@ -1,0 +1,224 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide prefix for the resource groups"
+            }
+        },
+        "vmNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide prefix for the virtual machines"
+            }
+        },
+        "instances": {
+            "type": "int",
+            "metadata": {
+                "description": "Select the number of instances to be deployed"
+            }
+        },
+        "rglocation": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide the location for the resource groups"
+            }
+        },
+        "platform": {
+            "type": "string",
+            "allowedValues": [
+                "WinSrv",
+                "Linux"
+            ],
+            "metadata":{
+                "description": "Select Linux or Windows Server"
+            }
+        },
+        "userName": {
+            "type": "string",
+            "defaultValue": "azureadmin",
+            "metadata": {
+                "description": "Provide a user name for the VM login"
+            }
+        },
+        "pwdOrSsh": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Provide the password or ssh as secure string"
+            }
+        },
+        "mgmtRgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide name for resource group containing the mgmt. services"
+            }
+        }
+    },
+    "variables": {
+        "vmDeploymentName": "vmDeployment",
+        "vNet": {
+            "vNetName": "vmVnet",
+            "subnetName": "vmSubnet",
+            "vNetAddress": "192.168.0.0/16",
+            "subnetAddress": "192.168.16.0/24"
+        },
+        "vnetId": "[resourceId('Microsoft.Network/virtualnetworks', variables('vNet').vNetName)]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/', variables('vNet').subnetName)]",
+        "windowsOffer": "WindowsServer",
+        "windowsSku": "2016-Datacenter",
+        "windowsPublisher": "MicrosoftWindowsServer",
+        "linuxOffer": "UbuntuServer",
+        "linuxSku": "12.04.5-LTS",
+        "linuxPublisher": "Canonical",
+        "vNicName": "[concat(parameters('platform'), '-', 'nic')]",
+        "pNicName": "[concat(parameters('platform'), '-', 'pip')]",
+        "vmName": "[concat(parameters('vmNamePrefix'), parameters('platform'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "name": "[concat(parameters('rgNamePrefix'), copyIndex())]",
+            "location": "[parameters('rglocation')]",
+            "copy": {
+                "name": "rgCopy",
+                "count": "[parameters('instances')]"
+            },
+            "properties": {
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resource"
+        }
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[concat(variables('vmDeploymentName'), copyIndex())]",
+            "resourceGroup": "[concat(parameters('rgNamePrefix'), copyIndex())]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', concat(parameters('rgNamePrefix'), copyIndex()))]"
+            ],
+            "copy": {
+                "name": "vmCopy",
+                "count": "[parameters('instances')]"
+            },
+            "properties": {
+                "mode":"Incremental",
+                "template":{
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-04-01",
+                            "type": "Microsoft.Network/virtualNetworks",
+                            "name": "[concat(variables('vNet').vNetName, copyIndex())]",
+                            "location": "[parameters('rglocation')]",
+                            "properties": {
+                                "addressSpace": {
+                                    "addressPrefixes": [
+                                        "[variables('vNet').vNetAddress]"
+                                    ]
+                                },
+                                "subnets": [
+                                    {
+                                        "name": "[concat(variables('vNet').subnetName, copyIndex())]",
+                                        "properties": {
+                                            "addressPrefix": "[variables('vNet').subnetAddress]"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/publicIPAddresses",
+                            "apiVersion": "2017-04-01",
+                            "name": "[concat(variables('pNicName'), copyIndex())]",
+                            "location": "[parameters('rglocation')]",
+                            "properties": {
+                                "publicIPallocationmethod": "Dynamic",
+                                "dnsSettings": {
+                                    "domainNameLabel": "[toLower(concat(parameters('rgNamePrefix'), copyIndex()))]"
+                                }
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Network/networkInterfaces",
+                            "apiVersion": "2018-08-01",
+                            "name": "[concat(variables('vNicName'), copyIndex())]",
+                            "location": "[parameters('rglocation')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/publicIPAddresses/', concat(variables('pNicName'), copyIndex()))]",
+                                "[resourceId('Microsoft.Network/virtualNetworks/', concat(variables('vNet').vNetName, copyIndex()))]"
+                            ],
+                            "properties": {
+                                "ipConfigurations": [
+                                    {
+                                        "name": "[concat('ipconfig1', copyIndex())]",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "publicIPAddress": {
+                                                "id": "[concat(subscription().id, '/resourceGroups/', parameters('rgNamePrefix'), copyIndex(), '/providers/Microsoft.Network/publicIPAddresses/', variables('pNicName'), copyIndex())]"
+                                            },
+                                            "subnet": {
+                                                "id": "[concat(subscription().id, '/resourceGroups/', parameters('rgNamePrefix'), copyIndex(), '/providers/Microsoft.Network/virtualNetworks/', variables('vNet').vNetName,copyIndex(), '/subnets/', variables('vNet').subnetName, copyIndex())]" 
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Compute/virtualMachines",
+                            "apiVersion": "2017-03-30",
+                            "name": "[variables('vmName')]",
+                            "location": "[parameters('rglocation')]",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Network/networkinterfaces/', concat(variables('vNicName'), copyIndex()))]"
+                            ],
+                            "properties": {
+                                "hardwareprofile": {
+                                    "vmsize": "Standard_F1"
+                                },
+                                "osProfile": {
+                                    "computername": "[concat(variables('vmName'), copyIndex())]",
+                                    "adminusername": "[parameters('username')]",
+                                    "adminpassword": "[parameters('pwdOrssh')]"
+                                },
+                                "storageProfile": {
+                                    "imageReference": {
+                                        "publisher": "[if(equals(parameters('platform'), 'WinSrv'), variables('windowsPublisher'), variables('linuxPublisher'))]",
+                                        "offer": "[if(equals(parameters('platform'), 'WinSrv'), variables('windowsOffer'), variables('linuxOffer'))]",
+                                        "version": "latest",
+                                        "sku": "[if(equals(parameters('platform'), 'WinSrv'), variables('windowsSku'), variables('linuxSku'))]"
+                                    },
+                                    "osdisk": {
+                                        "name": "[concat(parameters('platform'), '-osDisk')]",
+                                        "createOption": "FromImage",
+                                        "managedDisk": {
+                                            "storageAccountType": "Standard_LRS"
+                                        },
+                                        "caching": "ReadWrite"
+                                    }
+                                },
+                                "networkprofile": {
+                                    "networkinterfaces": [
+                                        {
+                                            "id": "[concat(subscription().id, '/resourceGroups/', parameters('rgNamePrefix'), copyIndex(), '/providers/Microsoft.Network/networkinterfaces/', variables('vNicName'), copyIndex())]"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        
+    }
+}

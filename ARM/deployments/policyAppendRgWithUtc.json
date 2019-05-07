@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "tagName": {
+            "type": "string",
+            "defaultValue": "createdDate"
+        },
+        "createdDate": {
+            "type": "string",
+            "defaultValue": "[utcNow('d')]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2018-05-01",
+            "name": "Append-UTC-to-Rgs",
+            "properties": {
+                "description": "Policy to append UTC for created date on RGs",
+                "displayName": "UTC created dates on RGs",
+                "parameters": {
+                    "createdDate": {
+                        "type:": "string",
+                        "defaultValue": "[[parameters('createdDate')]"
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                                "exists": "false"
+                            },
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "append",
+                        "details": [
+                            {
+                                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                                "value": "[[parameters('createdDate')]"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

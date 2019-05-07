@@ -1,0 +1,249 @@
+{
+    "properties": {
+        "policyType": "custom",
+        "parameters": {
+            "workspaceName": {
+                "type": "string",
+                "metadata": {
+                    "description": "email address of the contact, in the form of john@doe.com"
+                }
+            },
+            "automationAccountName": {
+                "type": "string",
+                "metadata": {
+                    "description": "phone number of the Security Contact"
+                }
+            },
+            "workspaceRegion":{
+                "type": "string"
+            },
+            "automationRegion":{
+                "type": "string"
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deployIfNotExists",
+                "details": {
+                    "type": "Microsoft.Resources/resourceGroups",
+                    "deploymentScope": "Subscription",
+                    "existenceScope": "Subscription",
+                    "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                    ],
+                    "existenceCondition": {
+                        "allOf": [
+                            {
+                                "field": "name",
+                                "like": "[concat(subscription().displayName, '-mgmt')]"
+                            },
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+                            }
+                        ]
+                    },
+                    "deployment": {
+                        "location": "westeurope",
+                        "properties": {
+                            "mode": "incremental",
+                            "parameters": {
+                                "rgName": {
+                                    "value": "[concat(subscription().displayName, 'mgmt')]"
+                                },
+                                "workspaceName": {
+                                    "value": "[concat(subscription().displayName, parameters('workspaceName'))]"
+                                },
+                                "workspaceRegion": {
+                                    "value": "[parameters('workspaceRegion')]"
+                                },
+                                "automationAccountName": {
+                                    "value": "[concat(subscription().displayName, parameters('automationAccountName'))]"
+                                },
+                                "automationRegion": {
+                                    "value": "[parameters('automationRegion')]"
+                                }
+                            },
+                            "template": {
+                                "$schema": "http://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "rgName": {
+                                        "type": "string"
+                                    },
+                                    "workspaceName": {
+                                        "type": "string"
+                                    },
+                                    "workspaceRegion": {
+                                        "type": "string"
+                                    },
+                                    "automationAccountName": {
+                                        "type": "string"
+                                    },
+                                    "automationRegion": {
+                                        "type": "string"
+                                    },
+                                    "rbacGuid": {
+                                        "type": "string",
+                                        "defaultValue": "[newGuid()]"
+                                    }
+                                },
+                                "variables": {
+                                    "policies": {
+                                        "assignmentName": "Enforce-LA-VM-Extension-Windows",
+                                        "resourceId": "/providers/Microsoft.Authorization/policyDefinitions/0868462e-646c-4fe3-9ced-a733534b6a2c"
+                                    }
+                                },
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.Resources/resourceGroups",
+                                        "apiVersion": "2018-05-01",
+                                        "name": "[parameters('rgName')]",
+                                        "location": "[deployment().location]",
+                                        "properties": {}
+                                    },
+                                    {
+                                        "type": "Microsoft.Resources/deployments",
+                                        "apiVersion": "2018-05-01",
+                                        "name": "[concat('mgmt', uniqueString('foo'))]",
+                                        "resourceGroup": "[parameters('rgName')]",
+                                        "dependsOn": [
+                                            "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
+                                        ],
+                                        "properties": {
+                                            "mode": "Incremental",
+                                            "template": {
+                                                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                                                "contentVersion": "1.0.0.0",
+                                                "parameters": {},
+                                                "variables": {},
+                                                "resources": [
+                                                    {
+                                                        "apiversion": "2015-10-31",
+                                                        "location": "[parameters('AutomationRegion')]",
+                                                        "name": "[parameters('AutomationAccountName')]",
+                                                        "type": "Microsoft.Automation/automationAccounts",
+                                                        "comments": "Automation account for ",
+                                                        "properties": {
+                                                            "sku": {
+                                                                "name": "OMS"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "apiVersion": "2017-03-15-preview",
+                                                        "location": "[parameters('workspaceRegion')]",
+                                                        "name": "[parameters('workspaceName')]",
+                                                        "type": "Microsoft.OperationalInsights/workspaces",
+                                                        "properties": {
+                                                            "sku": {
+                                                                "name": "pernode"
+                                                            }
+                                                        },
+                                                        "resources": [
+                                                            {
+                                                                "name": "AzureActivityLog",
+                                                                "type": "datasources",
+                                                                "apiVersion": "2015-11-01-preview",
+                                                                "dependsOn": [
+                                                                    "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                                                                ],
+                                                                "kind": "AzureActivityLog",
+                                                                "properties": {
+                                                                    "linkedResourceId": "[concat(subscription().id, '/providers/Microsoft.Insights/eventTypes/management')]"
+                                                                }
+                                                            },
+                                                            {
+                                                                "name": "Automation",
+                                                                "type": "linkedServices",
+                                                                "apiVersion": "2015-11-01-preview",
+                                                                "dependsOn": [
+                                                                    "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]",
+                                                                    "[resourceId('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+                                                                ],
+                                                                "properties": {
+                                                                    "resourceId": "[concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "outputs": {}
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "Microsoft.Authorization/policyAssignments",
+                                        "apiVersion": "2018-05-01",
+                                        "name": "[variables('policies').assignmentName]",
+                                        "location": "[deployment().location]",
+                                        "identity": {
+                                            "type": "SystemAssigned"
+                                        },
+                                        "properties": {
+                                            "description": "DINE policies for Log Analytics VM extension",
+                                            "displayName": "[variables('policies').assignmentName]",
+                                            "scope": "[subscription().id]",
+                                            "policyDefinitionId": "[variables('policies').resourceId]",
+                                            "parameters": {
+                                                "logAnalytics": {
+                                                    "value": "[toLower(concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')))]"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "Microsoft.Resources/deployments",
+                                        "apiVersion": "2018-05-01",
+                                        "location": "[deployment().location]",
+                                        "name": "[concat('builtInDelay', copyIndex())]",
+                                        "dependsOn": [
+                                            "[variables('policies').assignmentName]",
+                                            "[concat('mgmt', uniqueString('foo'))]"
+                                        ],
+                                        "copy": {
+                                            "name": "builtInDelayCopy",
+                                            "count": 5
+                                        },
+                                        "properties": {
+                                            "mode": "Incremental",
+                                            "template": {
+                                                "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                                                "contentVersion": "1.0.0.0",
+                                                "parameters": {},
+                                                "variables": {},
+                                                "resources": [],
+                                                "outputs": {}
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "Microsoft.Authorization/roleAssignments",
+                                        "apiVersion": "2017-09-01",
+                                        "name": "[parameters('rbacGuid')]",
+                                        "dependsOn": [
+                                            "builtInDelayCopy"
+                                        ],
+                                        "properties": {
+                                            "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293')]",
+                                            "principalId": "[toLower(reference(variables('policies').assignmentName, '2018-05-01', 'Full' ).identity.principalId)]"
+                                        }
+                                    }
+                                ],
+                                "outputs": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

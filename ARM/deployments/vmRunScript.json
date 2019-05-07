@@ -1,0 +1,203 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Username for the Virtual Machine."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "VirtualMachineName": {
+            "type": "string",
+            "metadata": {
+                "description": "VM Name"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "South Central US",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        }
+    },
+    "variables": {
+        "scripts": {
+          "iis": "Add-WindowsFeature Web-Server; Add-Content -Path 'C:\\inetpub\\wwwroot\\Default.htm' -Value 'IIS App installed via Azure RunScripts'",
+          "ftp": "Add-WindowsFeature -Name Web-Ftp-Server"
+        },
+        "nicName": "[concat(parameters('VirtualMachineName'), 'Nic')]",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetName": "Subnet",
+        "subnetPrefix": "10.0.0.0/24",
+        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]",
+        "virtualNetworkName": "[concat(parameters('VirtualMachineName'), 'vNet')]",
+        "publicIPAddressName": "publicip",
+        "dnsNameForPublicIP": "[parameters('VirtualMachineName')]",
+        "vmName": "[parameters('VirtualMachineName')]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-06-01",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[variables('dnsNameForPublicIP')]"
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('virtualNetworkName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('subnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetPrefix')]"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('nicName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('publicIPAddressName')]",
+                "[variables('virtualNetworkName')]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+                            },
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2018-04-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName')]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "dependsOn": [
+                "[variables('nicName')]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D1_v2"
+                },
+                "osProfile": {
+                    "computerName": "[variables('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "GuestActionForWindows",
+                    "apiVersion": "2018-10-01",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[variables('vmName')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Azure.Extensions",
+                        "type": "GuestActionForWindows",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true
+                    }
+                },
+                {
+                    "name": "[concat(parameters('VirtualMachineName'), 'iis')]",
+                    "type": "scriptJobs",
+                    "apiVersion": "2019-01-01-preview",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[variables('vmName')]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), 'GuestActionForWindows')]"
+                    ],
+                    "properties": {
+                        "script": {
+                            "content": "[variables('scripts').iis]",
+                            "scriptType": "PowerShell"
+                        }
+                    }
+                },
+                {
+                    "name": "[concat(parameters('VirtualMachineName'), 'ftp')]",
+                    "type": "scriptJobs",
+                    "apiVersion": "2019-01-01-preview",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[variables('vmName')]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/extensions', variables('vmName'), 'GuestActionForWindows')]",
+                        "[resourceId('Microsoft.Compute/virtualMachines/scriptJobs', variables('vmName'), concat(parameters('VirtualMachineName'), 'iis'))]"
+                    ],
+                    "properties": {
+                        "script": {
+                            "content": "[variables('scripts').ftp]",
+                            "scriptType": "PowerShell"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "vm-fqdn": {
+            "type": "string",
+            "value": "[reference(variables('publicIPAddressName'), '2016-03-30').dnsSettings.fqdn]"
+        }
+    }
+}

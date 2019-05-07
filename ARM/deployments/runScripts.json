@@ -1,0 +1,87 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "VM name"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "South Central US",
+            "metadata": {
+                "description": "VM location"
+            }
+        }
+    },
+    "variables": {
+        "scripts": {
+            "iis": "Add-WindowsFeature Web-Server; Add-Content -Path 'C:\\inetpub\\wwwroot\\Default.htm' -Value 'IIS App installed via Azure RunScripts'",
+            "ftp": "Add-WindowsFeature -Name Web-Ftp-Server"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('vmName'), '/GuestActionForWindows')]",
+            "apiVersion": "2018-10-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "GuestActionForWindows",
+                "typeHandlerVersion": "1.0",
+                "autoUpgradeMinorVersion": true
+            }
+        },
+        {
+            "name": "[concat(parameters('vmName'), '/iis')]",
+            "type": "Microsoft.Compute/virtualMachines/scriptJobs",
+            "apiVersion": "2019-01-01-preview",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'GuestActionForWindows')]"
+            ],
+            "properties": {
+                "script": {
+                    "content": "[variables('scripts').iis]",
+                    "scriptType": "PowerShell"
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('vmName'), '/ftp')]",
+            "type": "Microsoft.Compute/virtualMachines/scriptJobs",
+            "apiVersion": "2019-01-01-preview",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'GuestActionForWindows')]",
+                "[resourceId('Microsoft.Compute/virtualMachines/scriptJobs', parameters('vmName'), 'iis')]"
+            ],
+            "properties": {
+                "script": {
+                    "content": "[variables('scripts').ftp]",
+                    "scriptType": "PowerShell"
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('vmName'), '/azurermfoo')]",
+            "type": "Microsoft.Compute/virtualMachines/scriptJobs",
+            "apiVersion": "2019-01-01-preview",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'GuestActionForWindows')]"
+            ],
+            "properties": {
+                "script": {
+                    "content": "Find-Module -Name AzureRm.Resources* | install-module -Force",
+                    "scriptType": "PowerShell"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
