@@ -35,8 +35,8 @@
         }
     },
     "variables": {
-        "policyDefinitionName": "Enable-Full-AzSubscription-Monitoring",
-        "policyAssignmentName": "Enable-Full-AzSub-Assignment",
+        "policyDefinitionName": "Enable-Full-AzSubscription-Monitoring-Definition",
+        "policyAssignmentName": "Enable-Full-AzSub-Monitoring-Assignment",
         "rbacContributor": "b24988ac-6180-42a0-ab88-20f7382dd24c"
     },
     "resources": [
@@ -144,15 +144,23 @@
                                             "automationRegion": {
                                                 "type": "string"
                                             },
-                                            "rbacGuid": {
+                                            "winRbacGuid": {
+                                                "type": "string",
+                                                "defaultValue": "[[newGuid()]"
+                                            },
+                                            "linRbacGuid": {
                                                 "type": "string",
                                                 "defaultValue": "[[newGuid()]"
                                             }
                                         },
                                         "variables": {
-                                            "policies": {
+                                            "winLaPolicy": {
                                                 "assignmentName": "Enforce-LA-VM-Extension-Windows",
                                                 "resourceId": "/providers/Microsoft.Authorization/policyDefinitions/0868462e-646c-4fe3-9ced-a733534b6a2c"
+                                            },
+                                            "linLaPolicy": {
+                                                "assignmentName": "DINE-For-Linux",
+                                                "resourceId": "/providers/Microsoft.Authorization/policyDefinitions/053d3325-282c-4e5c-b944-24faffd30d77"
                                             }
                                         },
                                         "resources": [
@@ -236,16 +244,36 @@
                                             {
                                                 "type": "Microsoft.Authorization/policyAssignments",
                                                 "apiVersion": "2018-05-01",
-                                                "name": "[[variables('policies').assignmentName]",
+                                                "name": "[[variables('winLaPolicy').assignmentName]",
                                                 "location": "[[deployment().location]",
                                                 "identity": {
                                                     "type": "SystemAssigned"
                                                 },
                                                 "properties": {
-                                                    "description": "DINE policies for Log Analytics VM extension",
-                                                    "displayName": "[[variables('policies').assignmentName]",
+                                                    "description": "DINE policies for Windows Log Analytics VM extension",
+                                                    "displayName": "[[variables('winLaPolicy').assignmentName]",
                                                     "scope": "[[subscription().id]",
-                                                    "policyDefinitionId": "[[variables('policies').resourceId]",
+                                                    "policyDefinitionId": "[[variables('winLaPolicy').resourceId]",
+                                                    "parameters": {
+                                                        "logAnalytics": {
+                                                            "value": "[[toLower(concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')))]"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "type": "Microsoft.Authorization/policyAssignments",
+                                                "apiVersion": "2018-05-01",
+                                                "name": "[[variables('linLaPolicy').assignmentName]",
+                                                "location": "[[deployment().location]",
+                                                "identity": {
+                                                    "type": "SystemAssigned"
+                                                },
+                                                "properties": {
+                                                    "description": "DINE policies for Linux Log Analytics VM extension",
+                                                    "displayName": "[[variables('linLaPolicy').assignmentName]",
+                                                    "scope": "[[subscription().id]",
+                                                    "policyDefinitionId": "[[variables('linLaPolicy').resourceId]",
                                                     "parameters": {
                                                         "logAnalytics": {
                                                             "value": "[[toLower(concat(subscription().id, '/resourceGroups/', parameters('rgName'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')))]"
@@ -259,12 +287,15 @@
                                                 "location": "[[deployment().location]",
                                                 "name": "[[concat('builtInDelay', copyIndex())]",
                                                 "dependsOn": [
-                                                    "[[variables('policies').assignmentName]",
+                                                    "[[variables('winLaPolicy').assignmentName]",
+                                                    "[[variables('linLaPolicy').assignmentName]",
                                                     "[[concat('mgmt', uniqueString('foo'))]"
                                                 ],
                                                 "copy": {
                                                     "name": "builtInDelayCopy",
-                                                    "count": 5
+                                                    "count": 5,
+                                                    "mode": "Serial",
+                                                    "batchSize": 1
                                                 },
                                                 "properties": {
                                                     "mode": "Incremental",
@@ -281,13 +312,25 @@
                                             {
                                                 "type": "Microsoft.Authorization/roleAssignments",
                                                 "apiVersion": "2017-09-01",
-                                                "name": "[[parameters('rbacGuid')]",
+                                                "name": "[[parameters('winRbacGuid')]",
                                                 "dependsOn": [
                                                     "builtInDelayCopy"
                                                 ],
                                                 "properties": {
                                                     "roleDefinitionId": "[[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293')]",
-                                                    "principalId": "[[toLower(reference(variables('policies').assignmentName, '2018-05-01', 'Full' ).identity.principalId)]"
+                                                    "principalId": "[[toLower(reference(variables('winLaPolicy').assignmentName, '2018-05-01', 'Full' ).identity.principalId)]"
+                                                }
+                                            },
+                                            {
+                                                "type": "Microsoft.Authorization/roleAssignments",
+                                                "apiVersion": "2017-09-01",
+                                                "name": "[[parameters('linRbacGuid')]",
+                                                "dependsOn": [
+                                                    "builtInDelayCopy"
+                                                ],
+                                                "properties": {
+                                                    "roleDefinitionId": "[[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293')]",
+                                                    "principalId": "[[toLower(reference(variables('linLaPolicy').assignmentName, '2018-05-01', 'Full' ).identity.principalId)]"
                                                 }
                                             }
                                         ],
@@ -342,7 +385,9 @@
             ],
             "copy": {
                 "name": "builtInDelayCopy",
-                "count": 5
+                "count": 5,
+                "mode": "Serial",
+                "batchSize": 1
             },
             "properties": {
                 "mode": "Incremental",
