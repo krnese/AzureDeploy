@@ -110,7 +110,7 @@
                                     "mode": "incremental",
                                     "parameters": {
                                         "rgName": {
-                                            "value": "[[concat(subscription().displayName, 'mgmt')]"
+                                            "value": "[[concat(subscription().displayName, '-mgmt')]"
                                         },
                                         "workspaceName": {
                                             "value": "[[concat(subscription().displayName, parameters('workspaceName'))]"
