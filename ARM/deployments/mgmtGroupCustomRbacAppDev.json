@@ -1,0 +1,104 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rbacName": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        },
+        "rbacAssignmentName": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        },
+        "mgmtGroupId": {
+            "type": "string",
+            "defaultValue": "armmsp"
+        },
+        "principalId": {
+            "type": "string",
+            "defaultValue": "8414a158-d79d-4682-a0d3-b036663e76af"
+        }
+    },
+    "variables": {
+        },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/roleDefinitions",
+            "apiVersion": "2018-01-01-preview",
+            "name": "[parameters('rbacName')]",
+            "properties": {
+                "description": "DevOps RBAC definition",
+                "roleName": "DevOpsRBAC",
+                "assignableScopes": [
+                    "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'))]"
+                ],
+                "permissions": [
+                    {
+                        "Actions": [
+                            "*/read",
+                            "Microsoft.Insights/*/read",
+                            "Microsoft.Authorization/*/read",
+                            "Microsoft.Compute/availabilitySets/*",
+                            "Microsoft.Compute/locations/*",
+                            "Microsoft.Compute/virtualMachines/*",
+                            "Microsoft.Compute/virtualMachineScaleSets/*",
+                            "Microsoft.DevTestLab/schedules/*",
+                            "Microsoft.Insights/alertRules/*",
+                            "Microsoft.Network/applicationGateways/backendAddressPools/join/action",
+                            "Microsoft.Network/loadBalancers/backendAddressPools/join/action",
+                            "Microsoft.Network/loadBalancers/inboundNatPools/join/action",
+                            "Microsoft.Network/loadBalancers/inboundNatRules/join/action",
+                            "Microsoft.Network/loadBalancers/probes/join/action",
+                            "Microsoft.Network/loadBalancers/read",
+                            "Microsoft.Network/locations/*",
+                            "Microsoft.Network/networkInterfaces/*",
+                            "Microsoft.Network/networkSecurityGroups/join/action",
+                            "Microsoft.Network/networkSecurityGroups/read",
+                            "Microsoft.Network/publicIPAddresses/join/action",
+                            "Microsoft.Network/publicIPAddresses/read",
+                            "Microsoft.Network/virtualNetworks/read",
+                            "Microsoft.Network/virtualNetworks/subnets/join/action",
+                            "Microsoft.RecoveryServices/locations/*",
+                            "Microsoft.RecoveryServices/Vaults/backupFabrics/protectionContainers/protectedItems/*/read",
+                            "Microsoft.RecoveryServices/Vaults/backupFabrics/protectionContainers/protectedItems/read",
+                            "Microsoft.RecoveryServices/Vaults/backupFabrics/protectionContainers/protectedItems/write",
+                            "Microsoft.RecoveryServices/Vaults/backupFabrics/backupProtectionIntent/write",
+                            "Microsoft.RecoveryServices/Vaults/backupPolicies/read",
+                            "Microsoft.RecoveryServices/Vaults/backupPolicies/write",
+                            "Microsoft.RecoveryServices/Vaults/read",
+                            "Microsoft.RecoveryServices/Vaults/usages/read",
+                            "Microsoft.RecoveryServices/Vaults/write",
+                            "Microsoft.ResourceHealth/availabilityStatuses/read",
+                            "Microsoft.Resources/deployments/*",
+                            "Microsoft.Resources/subscriptions/resourceGroups/read",
+                            "Microsoft.Storage/storageAccounts/listKeys/action",
+                            "Microsoft.Storage/storageAccounts/read",
+                            "Microsoft.Support/*",
+                            "Microsoft.Storage/storageAccounts/write/*",
+                            "Microsoft.Network/networkSecurityGroups/write/*",
+                            "Microsoft.Network/virtualNetworks/subnets/*",
+                            "Microsoft.Network/applicationSecurityGroups/*",
+                            "Microsoft.Network/loadBalancers/*"
+                        ],
+                        "NotActions": [],
+                        "DataActions": [],
+                        "NotDataActions": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2017-09-01",
+            "name": "[parameters('rbacAssignmentName')]",
+            "dependsOn": [
+                "[parameters('rbacName')]"
+            ],
+            "properties": {
+                "principalId": "[parameters('principalId')]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'), '/providers/Microsoft.Authorization/policyDefinitions/', parameters('rbacName'))]"
+            }
+        }
+    ],
+    "outputs": {}
+}

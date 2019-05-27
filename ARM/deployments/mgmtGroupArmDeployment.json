@@ -1,0 +1,118 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "policyDefinitionName": {
+            "type": "string",
+            "defaultValue": "deny-location"
+        },
+        "policyAssignmentName": {
+            "type": "string",
+            "defaultValue": "deny-location-assignment"
+        },
+        "storageAccountName": {
+            "type": "string",
+            "defaultValue": "[toLower(concat(deployment().name, uniqueString('bar')))]"
+        },
+        "rgName": {
+            "type": "string",
+            "defaultValue": "RgCreatedFromMg"
+        },
+        "mgmtGroupId": {
+            "type": "string",
+            "defaultValue": "ARMMSP"
+        },
+        "subscriptionId": {
+            "type": "string",
+            "defaultValue": "0a938bc2-0bb8-4688-bd37-9964427fe0b0"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "[parameters('policyDefinitionName')]",
+            "apiVersion": "2016-12-01",
+            "properties": {
+                "policyType": "Custom",
+                "parameters": {},
+                "policyRule": {
+                    "if": {
+                        "field": "location",
+                        "equals": "northeurope"
+                    },
+                    "then": {
+                        "effect": "deny"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "name": "[parameters('policyAssignmentName')]",
+            "apiVersion": "2016-12-01",
+            "dependsOn": [
+                "[parameters('policyDefinitionName')]"
+            ],
+            "properties": {
+                "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'))]",
+                "policyDefinitionId": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'), 'providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyDefinitionName'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat(deployment().name, 'sub')]",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('subscriptionId')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "name": "[parameters('rgName')]",
+                            "apiVersion": "2018-05-01",
+                            "location": "[deployment().location]",
+                            "properties": {}
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "name": "rg-nested",
+                            "apiVersion": "2017-05-10",
+                            "resourceGroup": "rg-001",
+                            "dependsOn": [
+                                "[parameters('rgName')]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "variables": {},
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Storage/storageAccounts",
+                                            "name": "[parameters('storageAccountName')]",
+                                            "apiVersion": "2015-06-15",
+                                            "location": "[deployment().location]",
+                                            "properties": {
+                                                "accountType": "Standard_LRS"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
