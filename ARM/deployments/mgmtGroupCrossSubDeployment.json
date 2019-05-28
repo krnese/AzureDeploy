@@ -1,0 +1,68 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sub1": {
+            "type": "string",
+            "defaultValue": "0a938bc2-0bb8-4688-bd37-9964427fe0b0"
+        },
+        "sub2": {
+            "type": "string",
+            "defaultValue": "2a7f935e-fb49-4433-8d5d-5595b2090b45"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "sub1deployment",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('sub1')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "name": "rg00001",
+                            "apiVersion": "2018-05-01",
+                            "location": "[deployment().location]",
+                            "properties": {}
+                        }
+                    ],
+                    "outputs": {}
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "sub2deployment",
+            "location": "[deployment().location]",
+            "subscriptionId": "[parameters('sub2')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "name": "rg00002",
+                            "apiVersion": "2018-05-01",
+                            "location": "[deployment().location]",
+                            "properties": {}
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
