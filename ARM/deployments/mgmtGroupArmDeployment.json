@@ -56,7 +56,7 @@
             ],
             "properties": {
                 "scope": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'))]",
-                "policyDefinitionId": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'), 'providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyDefinitionName'))]"
+                "policyDefinitionId": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'), '/providers/', 'Microsoft.Authorization/policyDefinitions/', parameters('policyDefinitionName'))]"
             }
         },
         {
