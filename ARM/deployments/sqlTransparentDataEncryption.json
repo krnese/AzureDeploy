@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "serverName": {
+            "type": "string"
+        },
+        "dbName": {
+            "type": "string"
+        },
+        "transparentDataEncryption": {
+            "type": "string",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ],
+            "defaultValue": "Enabled"
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('serverName'), '/', parameters('dbName'), '/', 'current')]",
+            "type": "Microsoft.SQL/servers/databases/transparentDataEncryption",
+            "apiVersion": "2017-03-01-preview",
+            "properties": {
+                "status": "[parameters('transparentDataEncryption')]"
+            }
+        }
+    ],
+    "outputs": {}
+}

@@ -4,24 +4,28 @@
     "parameters": {
         "workspaceName": {
             "type": "string",
+            "defaultValue": "knmgmt",
             "metadata": {
                 "description": "Provide suffix for Log Analytics workspace that will be created per subscription"
             }
         },
         "automationAccountName": {
             "type": "string",
+            "defaultValue": "knaamgmt",
             "metadata": {
                 "description": "Provide suffix for Automation account that will be crated per subscription"
             }
         },
         "workspaceRegion": {
             "type": "string",
+            "defaultValue": "westeurope",
             "metadata": {
                 "description": "Select Azure region for Log Analytics"
             }
         },
         "automationRegion": {
             "type": "string",
+            "defaultValue": "westeurope",
             "metadata": {
                 "description": "Select Azure region for Automation account"
             }

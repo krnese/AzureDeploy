@@ -1,0 +1,31 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "audit-AAD-admin-SQL",
+            "apiVersion": "2018-05-01",
+            "properties":{
+                "description": "Deploys AAD Administrator account if not present",
+                "displayName": "Enforce AAD Admin on SQL",
+                "mode":"All",
+                "policyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.SQL/servers"
+                    },
+                    "then": {
+                        "effect": "auditIfNotExists",
+                        "details": {
+                            "type": "Microsoft.SQL/servers/administrators"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

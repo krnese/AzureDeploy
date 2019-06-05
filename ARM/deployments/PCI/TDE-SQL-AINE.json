@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "audit-tde-sql",
+            "apiVersion": "2018-05-01",
+            "properties": {
+                "description": "Audit transparent data encryption status for SQL databases",
+                "displayName": "Audit transparent data encryption status",
+                "mode": "All",
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.SQL/servers/databases"
+                            },
+                            {
+                                "field": "name",
+                                "notEquals": "master"
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "auditIfNotExists",
+                        "details": {
+                            "type": "Microsoft.SQL/servers/databases/transparentDataEncryption",
+                            "name": "current",
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.SQL/transparentDataEncryption.status",
+                                        "equals": "enabled"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

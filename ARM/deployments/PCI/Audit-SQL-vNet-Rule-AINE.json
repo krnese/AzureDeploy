@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "audit-sql-vnet-rule",
+            "apiVersion": "2018-05-01",
+            "properties": {
+                "description": "Audits the existence of a rule that enables traffic from a SQL Server to a specific subnet.",
+                "displayName": "Audit SQL Server virtual network rule",
+                "mode": "All",
+                "parameters": {
+                    "subnetId": {
+                        "type": "string",
+                        "metadata": {
+                            "displayName": "Subnet resourceId",
+                            "description": "The resource ID of the virtual network subnet that has the rule enabled."
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "field": "type",
+                        "equals": "Microsoft.SQL/servers"
+                    },
+                    "then": {
+                        "effect": "auditIfNotExists",
+                        "details": {
+                            "type": "Microsoft.SQL/servers/virtualNetworkRules",
+                            "existenceCondition": {
+                                "field": "Microsoft.SQL/servers/virtualNetworkRules/virtualNetworkSubnetId",
+                                "equals": "[[parameters('subnetId')]"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

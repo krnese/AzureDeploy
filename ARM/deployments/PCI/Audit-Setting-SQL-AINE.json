@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "name": "audit-settings-sql",
+            "apiVersion": "2018-05-01",
+            "properties": {
+                "description": "Audit DB level audit setting for SQL databases",
+                "displayName": "Audit SQL DB Level Audit Setting",
+                "mode": "All",
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.SQL/servers/databases"
+                            },
+                            {
+                                "field": "name",
+                                "notEquals": "master"
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "auditIfNotExists",
+                        "details": {
+                            "type": "Microsoft.SQL/servers/databases/auditingSettings",
+                            "name": "default",
+                            "existenceCondition": {
+                                "allOf": [
+                                    {
+                                        "field": "Microsoft.SQL/auditingSettings.state",
+                                        "equals": "enabled"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

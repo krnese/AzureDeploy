@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2018-05-01",
+            "name": "deny-subnet-without-nsg",
+            "properties": {
+                "policyType": "Custom",
+                "mode": "All",
+                "parameters": {
+                    "nsgId": {
+                        "type": "String",
+                        "metadata": {
+                            "description": "Resource Id of the Network Security Group",
+                            "displayName": "NSG Id"
+                        }
+                    }
+                },
+                "policyRule": {
+                    "if": {
+                        "anyOf": [
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.Network/virtualNetworks"
+                                    },
+                                    {
+                                        "not": {
+                                            "field": "Microsoft.Network/virtualNetworks/subnets[*].networkSecurityGroup.id",
+                                            "equals": "[[parameters('nsgId')]"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "allOf": [
+                                    {
+                                        "field": "type",
+                                        "equals": "Microsoft.Network/virtualNetworks/subnets"
+                                    },
+                                    {
+                                        "not": {
+                                            "field": "Microsoft.Network/virtualNetworks/subnets/networkSecurityGroup.id",
+                                            "equals": "[[parameters('nsgId')]"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "deny"
+                    }
+                }
+            }
+        }
+    ]
+}
