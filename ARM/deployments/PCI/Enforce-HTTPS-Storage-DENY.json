@@ -19,7 +19,7 @@
                             },
                             {
                                 "not": {
-                                    "field": "Microsoft.Storage/storageAccounts/supportHttpsTrafficOnly",
+                                    "field": "Microsoft.Storage/storageAccounts/supportsHttpsTrafficOnly",
                                     "equals": "true"
                                 }
                             }
@@ -30,6 +30,20 @@
                     }
                 }
             }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "apiVersion": "2018-05-01",
+            "name": "enforce-https-storage-assignment",
+            "dependsOn": [
+                "enforce-https-storage"
+            ],
+            "properties":{
+                "description": "Enforce https traffic only for storage account",
+                "displayName": "Enforce https traffic only for storage account",
+                "policyDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/policyDefinitions/', 'enforce-https-storage')]"
+            }
         }
-    ]
+    ],
+    "outputs": {}
 }
