@@ -1,13 +1,13 @@
 function New-AzMgmtGroupDeploymentValidation {
     <#
         5/27/2019 - Kristian Nese, AzureCAT
-        In anticipation of updated SDKs, this function can be used to target ARM deployments to a management group
+        In anticipation of updated SDKs, this function can be used to target ARM deployment validation at the management group scope
         
         .Synopsis
-        Deploys Azure Resource Manager template to a Management Group
+        Validates Azure Resource Manager template at Management Group scope
 
         .Example
-        New-AzMgmtGroupDeployment -Name <name> -Location <location> -MgmtGroupId <id> -TemplateFile <path> -ParameterFile <path>
+        New-AzMgmtGroupDeploymentValidation -Name <name> -Location <location> -MgmtGroupId <id> -TemplateFile <path> -ParameterFile <path>
     #>
 
     [cmdletbinding()]
