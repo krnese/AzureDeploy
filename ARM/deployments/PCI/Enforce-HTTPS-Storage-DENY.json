@@ -8,8 +8,8 @@
             "apiVersion": "2018-05-01",
             "name": "enforce-https-storage",
             "properties":{
-                "description": "Enforce https traffic only for storage account",
-                "displayName": "Enforce https traffic only for storage account",
+                "description": "Enforce https traffic-only for storage account",
+                "displayName": "Enforce https traffic-only for storage account",
                 "policyRule": {
                     "if": {
                         "allOf": [

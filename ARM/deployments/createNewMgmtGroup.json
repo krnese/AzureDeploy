@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "mgmtGroupParentId": {
+            "type": "string",
+            "defaultValue": "/providers/Microsoft.Management/managementGroups/ARMMSP"
+        },
+        "mgmtGroupName": {
+            "type": "string",
+            "defaultValue": "childARMMSP"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[parameters('mgmtGroupName')]",
+            "properties": {
+                "displayName": "[parameters('mgmtGroupName')]",
+                "details": {
+                    "parent": {
+                        "id": "[parameters('mgmtGroupParentId')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,38 @@
+{
+    "condition": "[greater(deployment().contentVersion, '1.0.0.1')]",
+    "type": "Microsoft.Resources/deployments",
+    "apiVersion": "2019-05-01",
+    "name": "[concat(deployment().name, 'foo')]",
+    "resourceGroup": "//optional",
+    "subscription": "//optional",
+    "managementGroup": "//optional",
+    "tenantId": "//optional",
+    "location": "[deployment().location]",
+    "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments/, 'first')]"
+    ],
+    "properties": {
+        "mode": "Incremental/Complete/armManaged/Stage",
+        "delayFor": {
+            "handle": {
+                "reference": "// future investments"
+            },
+            "timeOut": 15
+        },
+        "rollBack": {
+            "lastDeployment": true,
+            "deploymentUri": {
+                "templateUri": "[variables('rollbackDeploymentTemplate')]",
+                "parametersUri": "[variables('rollbackDeploymentParams')]"
+            },
+            "deploymentResourceId": "[resourceId('Microsoft.Resources/deployments/', 'bar')]"
+        },
+        "templateLink": {
+            "contentVersion": "[deployment().contentVersion]",
+            "uri": "[variables('templateLink')]"
+        },
+        "template": {},
+        "parameters": {},
+        "parametersLink": {}
+    }
+}

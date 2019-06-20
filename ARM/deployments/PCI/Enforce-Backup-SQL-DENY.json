@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policyDefinitions",
+            "apiVersion": "2018-05-01",
+            "name": "Deny-SQLRetention",
+            "properties": {
+                "parameters": {
+                    "denySQLRetentionDays": {
+                        "type": "string",
+                        "metadata": {
+                            "displayName": "SQL retention",
+                            "description": "Specify SQL retention"
+                        }
+                    }
+                },
+                "description": "Deny retention day policies if it doesn't match the value",
+                "displayName": "Deny-SQLRetention",
+                "policyType": "Custom",
+                "policyRule": {
+                    "if": {
+                        "allOf": [
+                            {
+                                "field": "type",
+                                "equals": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies"
+                            },
+                            {
+                                "anyof": [
+                                    {
+                                        "field": "Microsoft.Sql/servers/databases/backupShortTermRetentionPolicies.retentionDays",
+                                        "notEquals": "[[parameters('denySQLRetentionDays')]"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "then": {
+                        "effect": "deny"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

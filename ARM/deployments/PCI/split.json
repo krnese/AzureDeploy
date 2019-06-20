@@ -1,0 +1,17 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceId": {
+            "type": "string",
+            "defaultValue": "/subscriptions/2bb3c706-993b-41e8-9212-3a199105f5f5/resourceGroups/Policy/providers/Microsoft.EventHub/namespaces/EHEASTUS2/eventhubs/eheastus2"
+        }
+    },
+    "resources": [],
+    "outputs": {
+        "eventHub": {
+            "type": "string",
+            "value": "[last(split(parameters('resourceId'), '/'))]"
+        }
+    }
+}
