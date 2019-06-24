@@ -13,6 +13,14 @@
         "mgmtGroupId": {
             "type": "string",
             "defaultValue": "armmsp"
+        },
+        "principalId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "rbacAssignmentGuid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
         }
     },
     "variables": {
@@ -77,6 +85,19 @@
                 "AssignableScopes": [
                     "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'))]"
                 ]
+            }
+        },
+        {
+            "condition": "[not(empty(parameters('principalId')))]",
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2017-09-01",
+            "name": "[parameters('rbacAssignmentGuid')]",
+            "dependsOn": [
+                "[variables('rbacGuid')]"
+            ],
+            "properties":{
+                "principalId": "[parameters('principalId')]",
+                "roleDefinitionId": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('mgmtGroupId'), '/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacGuid'))]"
             }
         }
     ],
