@@ -1,6 +1,6 @@
 # Using Resource Graph to detect storage accounts not being secured by https
 
-Search-AzGraph -Query "summarize count() by tenantId"
+Search-AzGraph -Query "summarize count() by tenantId" | ConvertTo-Json
 
 Search-AzGraph -Query "where type =~ 'Microsoft.Storage/storageAccounts' | project name, location, subscriptionId, tenantId, properties.supportsHttpsTrafficOnly" | convertto-json
 
