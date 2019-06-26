@@ -61,7 +61,6 @@
         },
         "vNicName": "[concat(parameters('vmName'), '-', 'nic')]",
         "pNicName": "[concat(parameters('vmName'), '-', 'pip')]",
-        "vmName": "[concat(parameters('vmName'))]",
         "copy": [
             {
                 "name": "managedDiskId",
@@ -158,7 +157,7 @@
             "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
             "type": "Microsoft.Compute/disks",
             "apiVersion": "2017-03-30",
-            "name": "[concat(variables('vmName'), '-mdisk')]",
+            "name": "[concat(parameters('vmName'), '-mdisk')]",
             "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Standard_LRS"
@@ -174,12 +173,12 @@
             "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2017-03-30",
-            "name": "[concat(variables('vmName'))]",
+            "name": "[parameters('vmName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkinterfaces/', variables('vNicName'))]",
                 "[resourceId('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]",
-                "[resourceId('Microsoft.Compute/disks', concat(variables('vmName'), '-mDisk'))]"
+                "[resourceId('Microsoft.Compute/disks', concat(parameters('vmName'), '-mDisk'))]"
             ],
             "properties": {
                 "availabilitySet": "[if(equals(parameters('trialOrProduction'), 'Production'), variables('availabilitySetId'), json('null'))]",
@@ -226,7 +225,7 @@
             "name": "[concat(parameters('vmName'), '/app')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+                "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
             ],
             "properties": {
                 "autoUpgradeMinorVersion": true,
