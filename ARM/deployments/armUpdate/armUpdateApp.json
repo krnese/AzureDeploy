@@ -113,7 +113,6 @@
             }
         },
         {
-            "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2017-04-01",
             "name": "[variables('vNicName')]",
