@@ -170,7 +170,6 @@
             }
         },
         {
-            "condition": "[equals(parameters('trialOrProduction'), 'Production')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2017-03-30",
             "name": "[parameters('vmName')]",
