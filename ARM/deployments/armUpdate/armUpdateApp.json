@@ -182,7 +182,7 @@
             "properties": {
                 "availabilitySet": "[if(equals(parameters('trialOrProduction'), 'Production'), variables('availabilitySetId'), json('null'))]",
                 "hardwareprofile": {
-                    "vmsize": "Standard_D1"
+                    "vmsize": "Standard_F1"
                 },
                 "osProfile": {
                     "computername": "[parameters('vmName')]",
