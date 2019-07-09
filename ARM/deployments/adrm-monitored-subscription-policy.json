@@ -293,7 +293,7 @@
                                                 ],
                                                 "properties": {
                                                     "roleDefinitionId": "[[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293')]",
-                                                    "delegatedManagedIdentityResourceId": "[[concat(subscription().id, '/providers/Microsoft.Authorization/policyDefinitions/', variables('policySet').assignmentName)]",
+                                                    "delegatedManagedIdentityResourceId": "[[concat(subscription().id, '/providers/Microsoft.Authorization/policyAssignments/', variables('policySet').assignmentName)]",
                                                     "principalId": "[[toLower(reference(variables('policySet').assignmentName, '2018-05-01', 'Full' ).identity.principalId)]"
                                                 }
                                             }
@@ -375,7 +375,7 @@
             ],
             "properties": {
                 "roleDefinitionId": "[concat(subscription().id, '/providers/Microsoft.Authorization/roleDefinitions/', variables('rbacContributor'))]",
-                "delegatedManagedIdentityResourceId": "[concat(subscription().id, '/providers/Microsoft.Authorization/policyDefinitions/', variables('policyAssignmentName'))]",
+                "delegatedManagedIdentityResourceId": "[concat(subscription().id, '/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentName'))]",
                 "principalId": "[toLower(reference(concat('/providers/Microsoft.Authorization/policyAssignments/', variables('policyAssignmentName')), '2018-05-01', 'Full' ).identity.principalId)]"
             }
         }
