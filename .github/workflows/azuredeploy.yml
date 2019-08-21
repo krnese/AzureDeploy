@@ -7,10 +7,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v1
-      shell: pwsh
       env:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
        tenant: ${{ secrets.TENANT }}
     - name: Executing Pipeline Script
+      shell: pwsh
       run: pwsh -command "Write-host $env:user"
