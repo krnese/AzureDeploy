@@ -7,12 +7,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Installing Az Modules
       shell: pwsh
       env:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
        tenant: ${{ secrets.TENANT }}
-      #run: pwsh -command "Install-Module -Name Az -Force -AllowClobber -Verbose"
     - name: Executing Pipeline Script
       run: pwsh -command "Write-host $env:user"
