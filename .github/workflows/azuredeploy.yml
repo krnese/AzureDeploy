@@ -18,4 +18,4 @@ jobs:
         user: ${{ secrets.USER }}
         pwd: ${{ secrets.PWD }}
         tenant: ${{ secrets.TENANT }}
-       run: "[string]$changestart = 'HEAD'; [string]$changeend = 'HEAD~1'; $changeset = (git diff --name-only $changestart $changeend); Write-Host 'The change set is:'$changeset"
+       run: "[string]$changestart = 'HEAD'; [string]$changeend = 'HEAD~1'; $changeset = (git diff --name-only origin/master $changestart $changeend); Write-Host 'The change set is:'$changeset"
