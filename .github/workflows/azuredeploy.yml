@@ -21,4 +21,5 @@ jobs:
        run: |
        $newpwd = ConvertTo-SecureString $env:pwd -AsPlainText -Force 
        $credential = New-Object System.Management.Automation.PSCredential($env:user, $newpwd) 
-       Connect-AzAccount -credential $credential -tenant $env:tenant -serviceprincipal; Get-AzSubscription
+       Connect-AzAccount -credential $credential -tenant $env:tenant -serviceprincipal 
+       Get-AzSubscription
