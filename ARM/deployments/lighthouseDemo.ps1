@@ -1,3 +1,33 @@
+# Query all tenants
+
+$currentContext = Get-AzContext
+$token = $currentContext.TokenCache.ReadItems() | ? {$_.tenantid -eq $currentContext.Tenant.Id}
+
+# ARM Request
+    $ARMRequest = @{
+        Uri = "https://management.azure.com/tenants?api-version=2019-03-01&includeAllTenantCategories=true"
+        Headers = @{
+            Authorization = "Bearer $($token.AccessToken)"
+            'Content-Type' = 'application/json'
+        }
+        Method = 'Get'
+    }
+    $Query = Invoke-WebRequest @ARMRequest
+    #prettify
+    [Newtonsoft.Json.Linq.JObject]::Parse($Query.Content).ToString()
+
+    $ARMRequest2 = @{
+        Uri = "https://management.azure.com/subscriptions/74903176-3e4e-492d-9d18-9afab69a0cf8/providers/Microsoft.ManagedServices/registrationDefinitions?api-version=2019-06-01"
+        Headers = @{
+            Authorization = "Bearer $($token.AccessToken)"
+            'Content-Type' = 'application/json'
+        }
+        Method = 'Get'
+    }
+    $Query2 = Invoke-WebRequest @ARMRequest2
+    #prettify
+    [Newtonsoft.Json.Linq.JObject]::Parse($Query2.Content).ToString()
+
 # Using Resource Graph to detect storage accounts not being secured by https
 
 Search-AzGraph -Query "summarize count() by tenantId" | ConvertTo-Json

@@ -1,0 +1,19 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rpNamespace": {
+            "type": "string"
+        },
+        "resourceType": {
+            "type": "string"
+        }
+    },
+    "resources": [],
+    "outputs": {
+        "rp": {
+            "type": "object",
+            "value": "[providers(parameters('rpNamespace'), parameters('resourceType'))]"
+        }
+    }
+}
