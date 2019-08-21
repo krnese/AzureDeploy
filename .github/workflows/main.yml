@@ -14,3 +14,4 @@ jobs:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
        tenant: ${{ secrets.TENANT }}
+      run: echo Hello ${TENANT}
