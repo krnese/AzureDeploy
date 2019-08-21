@@ -11,11 +11,11 @@ jobs:
        run: "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
      - name: Get Az Ps Modules
        shell: pwsh
-       run: Get-Module -listavailable
+       run: "Get-Module -listavailable"
      - name: Checking variables
        shell: pwsh
        env:
         user: ${{ secrets.USER }}
         pwd: ${{ secrets.PWD }}
         tenant: ${{ secrets.TENANT }}
-       run: "ls; get-location; .\pipeline.ps1"
+       run: "ls; get-location"
