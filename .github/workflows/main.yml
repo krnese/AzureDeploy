@@ -12,4 +12,6 @@ jobs:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
        tenant: ${{ secrets.TENANT }}
-      run: pwsh -command "write-host $env.tenant"
+      run: pwsh -command "write-host $env:tenant"
+    - name: running another line
+      run: "Get-Modules -ListAvailable"
