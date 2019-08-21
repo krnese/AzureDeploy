@@ -18,4 +18,4 @@ jobs:
         user: ${{ secrets.USER }}
         pwd: ${{ secrets.PWD }}
         tenant: ${{ secrets.TENANT }}
-       run: "ls; get-location"
+       run: "ls; cd ..\pipeline.ps1"
