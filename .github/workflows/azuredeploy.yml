@@ -13,6 +13,6 @@ jobs:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
        tenant: ${{ secrets.TENANT }}
-      run: pwsh -command "Install-Module -Name Az -Force -AllowClobber -Verbose"
+      #run: pwsh -command "Install-Module -Name Az -Force -AllowClobber -Verbose"
     - name: Executing Pipeline Script
-      run: pwsh -command ".\pipeline.ps1"
+      run: pwsh -command "Write-host $env:user"
