@@ -12,6 +12,6 @@ jobs:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
        tenant: ${{ secrets.TENANT }}
-      run: pwsh -command "Install-Module Az"
+      run: pwsh -command "Install-Module -Name Az -Force -Verbose"
     - name: running another line
       run: pwsh -command "Get-Module -ListAvailable"
