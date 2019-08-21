@@ -4,14 +4,14 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: windows-latest
     steps:
-    - uses: docker://alpine:3.8
-    - name: Firing pwsh script in Docker container
+    - name: checking shell
+    shell: powershell
       env:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
        tenant: ${{ secrets.TENANT }}
-      run: pwsh -command "Install-Module -Name Az -Force -Verbose"
+      run: powershell -command "Install-Module -Name Az -Force -AllowClobber -Verbose"
     - name: running another line
-      run: pwsh -File "https://raw.githubusercontent.com/krnese/AzureDeploy/master/pipeline.ps1"
+      run: powershell -File -Filepath "https://raw.githubusercontent.com/krnese/AzureDeploy/master/pipeline.ps1"
