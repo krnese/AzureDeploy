@@ -13,7 +13,7 @@ jobs:
       env:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
-      run: powershell -command "write-host $env:user"
+      run: powershell -command "Get-Module -ListAvailable"
     - name: Run a multi-line script
       run: |
         echo Add other actions to build,
