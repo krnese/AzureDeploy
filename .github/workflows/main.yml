@@ -5,11 +5,11 @@ on: [push]
 jobs:
   build:
 
-    runs-on: docker://alpine/git:latest
+    runs-on: ubuntu-18.04
     
     steps:
-    - uses: ./.github/AzureDeploy
-    - name: Run a one-line script
+    - uses: ./.github/actions/AzureDeploy
+    - name: Firing pwsh script in Docker container
       env:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
