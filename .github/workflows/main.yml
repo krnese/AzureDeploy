@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: docker://alpine/git:latest
     
     steps:
     - uses: actions/checkout@v1
@@ -13,6 +13,7 @@ jobs:
       env:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
+       tenant: ${{ secrets.TENANT }}
       run: powershell -command "Get-Module -ListAvailable"
     - name: Run a multi-line script
       run: |
