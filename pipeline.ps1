@@ -7,8 +7,8 @@ $changeset = (git diff --name-only $changestart $changeend)
 Write-Host "The change set is: $($changeset)"
 
 # Current credentials for testing
-$pwd = Convertto-SecureString $env:pwd -AsPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential($user,$pwd)
-Connect-AzAccount -credential $credential -tenant $env:tenant -serviceprincipal
+$pwd = Convertto-SecureString $env:PWD -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential($env:USER, $pwd)
+Connect-AzAccount -credential $credential -tenant $env:TENANT -serviceprincipal
 
 Get-AzSubscription
