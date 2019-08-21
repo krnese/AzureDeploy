@@ -12,3 +12,10 @@ jobs:
      - name: Get Az Ps Modules
        shell: pwsh
        run: Get-Module -listavailable
+     - name: Checking variables
+       shell: pwsh
+       env:
+        user: ${{ secrets.USER }}
+        pwd: ${{ secrets.PWD }}
+        tenant: ${{ secrets.TENANT }}
+       run: $Env:user ; $env:pwd ; $env:tenant
