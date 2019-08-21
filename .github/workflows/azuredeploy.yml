@@ -7,12 +7,12 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v1
-    - name: checking shell
-      shell: powershell
+    - name: Installing Az Modules
+      shell: pwsh
       env:
        user: ${{ secrets.USER }}
        pwd: ${{ secrets.PWD }}
        tenant: ${{ secrets.TENANT }}
       run: powershell -command "Install-Module -Name Az -Force -AllowClobber -Verbose"
-    - name: running another line
-      run: powershell -File -Filepath "https://raw.githubusercontent.com/krnese/AzureDeploy/master/pipeline.ps1"
+    - name: Executing Pipeline Script
+      run: powershell -File -Filepath https://raw.githubusercontent.com/krnese/AzureDeploy/master/pipeline.ps1
