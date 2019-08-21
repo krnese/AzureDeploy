@@ -14,4 +14,4 @@ jobs:
        tenant: ${{ secrets.TENANT }}
       run: pwsh -command "write-host $ENV:tenant"
     - name: running another line
-      run: "Get-Module -ListAvailable"
+      run: pwsh -command "Get-Module -ListAvailable"
