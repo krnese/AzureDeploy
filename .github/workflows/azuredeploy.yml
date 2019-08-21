@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - name: Install Az
-     shell: pwsh
-     run: "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
+       shell: pwsh
+       run: "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
      - name: Get Az Ps Modules
-     run: Get-Module -listavailable
+       shell: pwsh
+       run: Get-Module -listavailable
