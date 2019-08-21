@@ -18,4 +18,4 @@ jobs:
         user: ${{ secrets.USER }}
         pwd: ${{ secrets.PWD }}
         tenant: ${{ secrets.TENANT }}
-       run: "[string]$changestart ='HEAD'; [string]changeend = 'HEAD~1'; $changeset = (git diff --name-only $changestart $changeend);Write-Output 'Change set is:' $changeset; $newpwd = ConvertTo-SecureString $env:pwd -AsPlainText -Force; $newpwd; $credential = New-Object System.Management.Automation.PSCredential($env:user, $newpwd); Connect-AzAccount -credential $credential -tenant $env:tenant -serviceprincipal; Get-AzSubscription"
+       run: "[string]$changestart ='HEAD'; [string]changeend = 'HEAD~1'; $changeset = (git diff --name-only origin/master $changestart $changeend);Write-Output 'Change set is:' $changeset; $newpwd = ConvertTo-SecureString $env:pwd -AsPlainText -Force; $newpwd; $credential = New-Object System.Management.Automation.PSCredential($env:user, $newpwd); Connect-AzAccount -credential $credential -tenant $env:tenant -serviceprincipal; Get-AzSubscription"
