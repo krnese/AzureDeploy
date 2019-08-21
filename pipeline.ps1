@@ -2,7 +2,7 @@
 [string]$changestart = "HEAD"
 [string]$changeend = "HEAD~1"
 
-$changeset = (git diff --name-only $changestart $changeend)
+$changeset = (git diff --name-only origin/master $changestart $changeend)
 
 Write-Host "The change set is: $($changeset)"
 
@@ -12,3 +12,4 @@ $credential = New-Object System.Management.Automation.PSCredential($env:USER, $p
 Connect-AzAccount -credential $credential -tenant $env:TENANT -serviceprincipal
 
 Get-AzSubscription
+
