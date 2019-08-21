@@ -10,8 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Run a one-line script
-      run: 
-      - powershell -command "write-host 'testing'"
+      run: powershell -command "write-host 'testing'"
     - name: Run a multi-line script
       run: |
         echo Add other actions to build,
