@@ -18,4 +18,4 @@ jobs:
         user: ${{ secrets.USER }}
         pwd: ${{ secrets.PWD }}
         tenant: ${{ secrets.TENANT }}
-       run: $pwd = Convertto-SecureString $env:PWD -AsPlainText -Force; Write-output $env:PWD; $credential = New-Object System.Management.Automation.PSCredential($env:USER, $pwd); Connect-AzAccount -credential $credential -tenant $env:TENANT -serviceprincipal; Get-AzSubscription
+       run: "$env:user; $env:pwd; $env:tenant"
