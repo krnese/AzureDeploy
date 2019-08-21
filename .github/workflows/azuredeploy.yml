@@ -4,13 +4,10 @@ on: [push]
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-      env:
-       user: ${{ secrets.USER }}
-       pwd: ${{ secrets.PWD }}
-       tenant: ${{ secrets.TENANT }}
-    - name: Executing Pipeline Script
-      shell: pwsh
-      run: pwsh -command "Write-host $env:user"
+     - name: Install Az
+     shell: pwsh
+     run: "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
+     - name: Get Az Ps Modules
+     run: Get-Module -listavailable
