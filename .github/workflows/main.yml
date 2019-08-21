@@ -7,6 +7,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: checking shell
+    uses: actions/checkout@v1
     shell: powershell
       env:
        user: ${{ secrets.USER }}
