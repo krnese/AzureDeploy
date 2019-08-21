@@ -18,4 +18,4 @@ jobs:
         user: ${{ secrets.USER }}
         pwd: ${{ secrets.PWD }}
         tenant: ${{ secrets.TENANT }}
-       run: .\lighthouse.ps1
+       run: .\pipeline.ps1
