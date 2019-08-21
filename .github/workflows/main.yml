@@ -8,7 +8,7 @@ jobs:
     runs-on: docker://alpine/git:latest
     
     steps:
-    - uses: ./.github/actions/AzureDeploy
+    - uses: ./.github/AzureDeploy
     - name: Run a one-line script
       env:
        user: ${{ secrets.USER }}
