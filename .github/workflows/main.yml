@@ -10,7 +10,10 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Run a one-line script
-      run: powershell -command "write-host 'testing'"
+      env:
+       user: ${{ secrets.USER }}
+       pwd: ${{ secrets.PWD }}
+      run: powershell -command "write-host '$($env:user)'"
     - name: Run a multi-line script
       run: |
         echo Add other actions to build,
