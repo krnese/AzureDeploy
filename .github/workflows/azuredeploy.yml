@@ -15,4 +15,7 @@ jobs:
        tenant: ${{ secrets.TENANT }}
       run: pwsh -command "Install-Module -Name Az -Force -AllowClobber -Verbose"
     - name: Executing Pipeline Script
-      run: pwsh -command "cd ..\pipeline.ps1"
+      run: |
+      pwsh -command "ls",
+      pwsh -command "cd ..\",
+      pwsh -command "ls"
