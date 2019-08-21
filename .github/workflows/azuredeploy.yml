@@ -18,4 +18,4 @@ jobs:
         user: ${{ secrets.USER }}
         pwd: ${{ secrets.PWD }}
         tenant: ${{ secrets.TENANT }}
-       run: "cd ..\pipeline.ps1"
+       run: "$location = Get-Location; $split = Split-path $location; Set-Location $split; .\pipeline.ps1"
