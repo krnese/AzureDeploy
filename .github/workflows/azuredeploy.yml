@@ -1,7 +1,5 @@
 name: AzureDeploy
-
 on: [push]
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,4 +16,4 @@ jobs:
         user: ${{ secrets.USER }}
         pwd: ${{ secrets.PWD }}
         tenant: ${{ secrets.TENANT }}
-       run: "cd ..; env -i git reset --hard; [string]$changestart ='HEAD'; [string]$changeend = 'HEAD~1'; $changeset = (git diff --name-only origin/master $changestart $changeend);Write-Output 'Change set is:' $changeset; $newpwd = ConvertTo-SecureString $env:pwd -AsPlainText -Force; $newpwd; $credential = New-Object System.Management.Automation.PSCredential($env:user, $newpwd); Connect-AzAccount -credential $credential -tenant $env:tenant -serviceprincipal; Get-AzSubscription"
+       run: "Get-Location; ls; cd ..; Get-Location; ls; [string]$changestart ='HEAD'; [string]$changeend = 'HEAD~1'; $changeset = (git diff --name-only origin/master $changestart $changeend);Write-Output 'Change set is:' $changeset; $newpwd = ConvertTo-SecureString $env:pwd -AsPlainText -Force; $newpwd; $credential = New-Object System.Management.Automation.PSCredential($env:user, $newpwd); Connect-AzAccount -credential $credential -tenant $env:tenant -serviceprincipal; Get-AzSubscription"
