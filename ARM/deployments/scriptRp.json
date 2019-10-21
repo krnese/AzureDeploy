@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "rpEndpoint": "https://scriptrp.azurewebsites.net/api/"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.CustomProviders/resourceProviders",
+            "apiVersion": "2018-09-01-preview",
+            "name": "armScripts",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "resourceTypes": [
+                    {
+                        "name": "associations",
+                        "routingType": "Proxy,Cache,Extension",
+                        "endpoint": "[concat(variables('rpEndpoint'), '{RequestPath}')]"
+                    }
+                ]
+            }
+        }
+    ]
+}

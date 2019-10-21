@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema/management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+        "targetResourceId": "/subscriptions/4b1a121f-fd0e-4a21-94ef-1d246437a7ca/resourceGroups/script/providers/Microsoft.CustomProviders/resourceProviders/armScripts",
+        "providerName": "armScripts"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines/providers/associations",
+            "apiVersion": "2018-09-01-preview",
+            "location": "westeurope",
+            "name": "[concat('rmgmtWinSrv', '/Microsoft.CustomProviders/', variables('providerName'), '-', uniqueString(variables('providerName')))]",
+            "properties": {
+                "targetResourceId": "[variables('targetResourceId')]",
+                "psScript": "New-AzResourceGroup -Name 'footest' -Location 'westeurope'"
+            }
+        }
+    ]
+}
