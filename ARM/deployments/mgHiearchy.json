@@ -1,0 +1,104 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "mgmtGroupParentId": {
+            "type": "string",
+            "defaultValue": "/providers/Microsoft.Management/managementGroups/ARMMSP"
+        },
+        "coreMgName": {
+            "type": "string",
+            "defaultValue": "Core"
+        },
+        "applicationPortfolioMgName": {
+            "type": "string",
+            "defaultValue": "RiskMgmt"
+        },
+        "sharedServicesMgName": {
+            "type": "string",
+            "defaultValue": "SharedServices"
+        },
+        "managedMgName": {
+            "type": "string",
+            "defaultValue": "ManagedProduction"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[parameters('coreMgName')]",
+            "properties": {
+                "displayName": "[parameters('coreMgName')]",
+                "details": {
+                    "parent": {
+                        "id": "[parameters('mgmtGroupParentId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[parameters('sharedServicesMgName')]",
+            "properties": {
+                "displayName": "[parameters('sharedServicesMgName')]",
+                "details": {
+                    "parent": {
+                        "id": "[parameters('mgmtGroupParentId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-08-01",
+            "name": "nestedMgDeployment",
+            "scope": "[concat('Microsoft.Management/managementGroups/', parameters('managedMgName'))]",
+            "location": "[deployment().location]",
+            "dependsOn": [
+                "[parameters('managedMgName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/managementGroupDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Management/managementGroups",
+                            "apiVersion": "2018-03-01-preview",
+                            "name": "[parameters('applicationPortfolioMgName')]",
+                            "dependsOn": [
+                                "[parameters('managedMgName')]"
+                            ],
+                            "properties": {
+                                "displayName": "[parameters('applicationPortfolioMgName')]",
+                                "details": {
+                                    "parent": {
+                                        "id": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('managedMgName'))]"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[parameters('managedMgName')]",
+            "properties": {
+                "displayName": "[parameters('managedMgName')]",
+                "details": {
+                    "parent": {
+                        "id": "[parameters('mgmtGroupParentId')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

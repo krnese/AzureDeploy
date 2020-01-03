@@ -1,23 +1,31 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "mgmtGroupParentId": {
             "type": "string",
             "defaultValue": "/providers/Microsoft.Management/managementGroups/ARMMSP"
         },
-        "mgmtGroupName": {
-            "type": "string",
-            "defaultValue": "childARMMSP12"
+        "mgNames": {
+            "type": "array",
+            "defaultValue": [
+                "Core",
+                "ManagedProduction",
+                "SharedServices"
+            ]
         }
     },
     "resources": [
         {
             "type": "Microsoft.Management/managementGroups",
             "apiVersion": "2018-03-01-preview",
-            "name": "[parameters('mgmtGroupName')]",
+            "name": "[parameters('mgNames')[copyIndex()]]",
+            "copy": {
+                "name": "mgcopy",
+                "count": "[length(parameters('mgNames'))]"
+            },
             "properties": {
-                "displayName": "[parameters('mgmtGroupName')]",
+                "displayName": "[parameters('mgNames')[copyIndex()]]",
                 "details": {
                     "parent": {
                         "id": "[parameters('mgmtGroupParentId')]"

@@ -32,7 +32,9 @@ function New-AzMgmtGroupDeployment {
     )
     begin {
         $currentContext = Get-AzContext
-        $token = $currentContext.TokenCache.ReadItems() | ? {$_.tenantid -eq $currentContext.Tenant.Id}
+        $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+        $profileClient = [Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient]::new($azureRmProfile)
+        $token = $profileClient.AcquireAccessToken($currentContext.Subscription.TenantId)
     }
     process {
         if(!([string]::IsNullOrEmpty($ParameterFile)))

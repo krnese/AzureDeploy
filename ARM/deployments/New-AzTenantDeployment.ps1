@@ -1,6 +1,6 @@
 function New-AzTenantDeployment {
     <#
-        5/27/2019 - Kristian Nese, AzureCAT
+        1/1/2020 - Kristian Nese
         In anticipation of updated SDKs, this function can be used to target ARM deployments to tenant scope
         
         .Synopsis
@@ -28,7 +28,9 @@ function New-AzTenantDeployment {
     )
     begin {
         $currentContext = Get-AzContext
-        $token = $currentContext.TokenCache.ReadItems() | ? {$_.tenantid -eq $currentContext.Tenant.Id}
+        $azureRmProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
+        $profileClient = [Microsoft.Azure.Commands.ResourceManager.Common.RMProfileClient]::new($azureRmProfile)
+        $token = $profileClient.AcquireAccessToken($currentContext.Subscription.TenantId)
     }
     process {
         if(!([string]::IsNullOrEmpty($ParameterFile)))
@@ -50,7 +52,7 @@ function New-AzTenantDeployment {
 
     # ARM Request
     $ARMRequest = @{
-        Uri = "https://management.azure.com/providers/Microsoft.Resources/deployments/$($Name)?api-version=2019-07-01"
+        Uri = "https://management.azure.com/providers/Microsoft.Resources/deployments/$($Name)?api-version=2019-08-01"
         Headers = @{
             Authorization = "Bearer $($token.AccessToken)"
             'Content-Type' = 'application/json'

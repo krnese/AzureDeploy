@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "foo": {
+            "type": "string",
+            "defaultValue": "bang"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-07-01",
+            "name": "rgdeployment",
+            "location": "westeurope",
+            "subscriptionId": "0a938bc2-0bb8-4688-bd37-9964427fe0b0",
+            "properties": {
+                "mode":"Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "apiVersion": "2018-05-01",
+                            "name": "anotherrg",
+                            "location": "westeurope",
+                            "properties": {}
+                        }
+                    ],
+                    "outputs": {}
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "bar": {
+            "type": "string",
+            "value": "[parameters('foo')]"
+        }
+    }
+}
