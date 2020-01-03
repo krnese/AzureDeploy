@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {},
+    "resources": [
+    ],
+    "outputs": {
+        "subscriptionObject": {
+            "type": "object",
+            // using the subscription() function to retrieve the sub object
+            "value": "[subscription()]"
+        },
+        "isThisSubBeingManagedTrueOrFalse": {
+            "type": "bool",
+            // use not() and empty () to check the subscription() object of it is being managed or not
+            "value": "[not(empty(subscription().managedByTenants[0]))]"
+        },
+        "isThisSubBeingManaged": {
+            "type": "string",
+            // complex function spanning multiple lines
+            "value": "[if(not(empty(subscription().managedByTenants[0].tenantId)), 
+            concat('this subscription is being managed by :', subscription().managedByTenants[0].tenantId), 
+            'this sub is not being managed')]"
+        }
+    }
+}
