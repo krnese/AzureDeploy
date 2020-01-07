@@ -1,0 +1,94 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rootGroupParentId": {
+            "type": "string",
+            "defaultValue": "/providers/Microsoft.Management/managementGroups/ARMMSP",
+            "metadata": {
+                "description": "This is the root management group, and all management groups will be child to this one."
+            }
+        },
+        "platformMgs": {
+            "type": "array",
+            "defaultValue": [
+                "Core",
+                "SharedServices"
+            ],
+            "metadata": {
+                "description": "This is one or more management groups for platform specific purposes, such as container for policy, rbac, management logs."
+            }
+        },
+        "landingZoneMg": {
+            "type": "string",
+            "defaultValue": "ManagedProduction",
+            "metadata": {
+                "description": "This is the top level management group for application portfolios to migrate/net new deploy to Azure."
+            }
+        },
+        "landingZonePortfolioMgs": {
+            "type": "array",
+            "defaultValue": [
+                "RiskMgmt",
+                "Aqua",
+                "Daidalos"
+            ],
+            "metadata": {
+                "description": "Child management groups for app portfolios in landing zone"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[parameters('platformMgs')[copyIndex()]]",
+            "copy": {
+                "name": "mgCopy",
+                "count": "[length(parameters('platformMgs'))]"
+            },
+            "properties": {
+                "displayName": "[parameters('platformMgs')[copyIndex()]]",
+                "details": {
+                    "parent": {
+                        "id": "[parameters('rootGroupParentId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[parameters('landingZoneMg')]",
+            "properties": {
+                "displayName": "[parameters('landingZoneMg')]",
+                "details": {
+                    "parent": {
+                        "id": "[parameters('rootGroupParentId')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Management/managementGroups",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[parameters('landingZonePortfolioMgs')[copyIndex()]]",
+            "dependsOn": [
+                "[parameters('landingZoneMg')]"
+            ],
+            "copy": {
+                "name": "portfolioCopy",
+                "count": "[length(parameters('landingZonePortfolioMgs'))]"
+            },
+            "properties": {
+                "displayName": "[parameters('landingZonePortfolioMgs')[copyIndex()]]",
+                "details": {
+                    "parent": {
+                        "id": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('landingZoneMg'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
