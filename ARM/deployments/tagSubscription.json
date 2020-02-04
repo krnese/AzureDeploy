@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "tagName": {
+            "type": "string",
+            "defaultValue": "LandingZoneType"
+        },
+        "tagValue": {
+            "type": "string",
+            "defaultValue": "SAP"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/tags",
+            "name": "default",
+            "apiVersion": "2019-10-01",
+            "dependsOn": [],
+            "properties": {
+                "tags": {
+                    "[parameters('tagName')]": "[parameters('tagValue')]"
+                }
+            }
+        }
+    ]
+}
