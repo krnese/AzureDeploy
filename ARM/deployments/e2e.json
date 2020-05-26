@@ -1,0 +1,91 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "topLevelManagementGroupPrefix": {
+            "type": "string",
+            "defaultValue": "ES1",
+            "maxLength": 5
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/uday31in/AzOps/master/"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "topLevelManagementGroupPrefix" : "[parameters('topLevelManagementGroupPrefix')]",
+        "nestedTemplatesLocation": {
+            "tenantTemplate": "[uri(parameters('_artifactsLocation'), concat('src/tenant.json', parameters('_artifactsLocationSasToken')))]", 
+            "tenantTemplateParameters": "[uri(parameters('_artifactsLocation'), concat('example/e2e-landing-zone-orchestration.parameters.json', parameters('_artifactsLocationSasToken')))]",
+            "resourceTemplate": "[uri(parameters('_artifactsLocation'), concat('src/template.json', parameters('_artifactsLocationSasToken')))]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",
+            "name": "Enterprise-Scale-Template-Resolver",
+            "properties": {
+                "mode": "Incremental",                
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "input": {
+                            "type": "object",
+                            "metadata": {
+                                "description": "input parameter for RESTful representation"
+                            }
+                        }                        
+                    },
+                    "variables": {
+                        "topLevelManagementGroupPrefix" : "[parameters('topLevelManagementGroupPrefix')]"
+                    },
+                    "resources": [
+                    ],
+                    "outputs": {
+                        "deploymentJson": {
+                            "condition": "[bool('true')]",
+                            "type": "object",
+                            "value": "[[json(replace(string(parameters('input')),'Tailspin',variables('topLevelManagementGroupPrefix')))]"
+                        }
+                    }
+                },
+                "parametersLink": {
+                    "uri": "[variables('nestedTemplatesLocation').tenantTemplateParameters]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-10-01",
+            "location": "[deployment().location]",            
+            "name": "Enterprise-Scale-Template-Deployment",            
+            "properties": {
+                "mode": "Incremental",
+                
+                "templateLink": {
+                    "uri": "[variables('nestedTemplatesLocation').tenantTemplate]",
+                    "contentVersion": "1.0.0.0"
+                },                
+                "parameters": {
+                    "input": {
+                        "value": "[reference('Enterprise-Scale-Template-Resolver').outputs.deploymentJson.Value]"
+                    }
+                }
+            }
+        }      
+    ],
+    "outputs": {       
+        "deploymentJson": {
+            "condition": "[bool('true')]",
+            "type": "object",
+            "value": "[reference('Enterprise-Scale-Template-Resolver').outputs.deploymentJson]"
+        }
+    }
+}
