@@ -543,9 +543,7 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policyassignmentloop",
-                "count": "[length(variables('policyAssignments'))]",
-                "mode": "Serial",
-                "batchSize": 1
+                "count": "[length(variables('policyAssignments'))]"
             },
             "dependsOn": [
                 "policydefinitionloop",
@@ -611,9 +609,7 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policyassignmentloop-subscription",
-                "count": "[length(variables('policyAssignments'))]",
-                "mode": "Serial",
-                "batchSize": 3
+                "count": "[length(variables('policyAssignments'))]"
             },
             "dependsOn": [
                 "policydefinitionloop",
