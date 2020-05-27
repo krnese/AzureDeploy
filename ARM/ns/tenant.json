@@ -399,7 +399,7 @@
                 "name": "policydefinitionloop-subscription",
                 "count": "[length(variables('policyDefinitions'))]",
                 "mode": "Serial",
-                "batchSize": 5
+                "batchSize": 3
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-sub-', variables('policyDefinitions')[copyIndex()].Name), 'na-sub-policydefinition')]",
             "dependsOn": [
@@ -451,7 +451,7 @@
                 "name": "policySetDefinitions",
                 "count": "[length(variables('policySetDefinitions'))]",
                 "mode": "Serial",
-                "batchSize": 3
+                "batchSize": 1
             },
             "name": "[if(not(empty(variables('policySetDefinitions'))), concat('PolicySetDefinitions-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policySetDefinitions')]",
             "dependsOn": [
