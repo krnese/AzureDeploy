@@ -75,8 +75,23 @@
         "roleDefinitions": "[if(and(contains(parameters('input'), 'properties'),contains(parameters('input').properties, 'roleDefinitions'),not(empty(parameters('input').properties.roleDefinitions))),parameters('input').properties.roleDefinitions,json('[]'))]",
         "policyAssignments": "[if(and(contains(parameters('input'), 'properties'),contains(parameters('input').properties, 'policyAssignments'),not(empty(parameters('input').properties.policyAssignments))),parameters('input').properties.policyAssignments,json('[]'))]",
 
-        "blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}"
-    },
+        "blankTemplateEscaped": "{\"$schema\":\"https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#\",\"contentVersion\":\"1.0.0.0\",\"parameters\":{},\"variables\":{},\"resources\":[],\"outputs\":{}}",
+        /*
+            Determining parallelism or serialism for copy iterations
+        */
+            "iterationLoops": "[if(greater(length(variables('policyDefinitions')), 3), variables('serialCopy'), variables('parallelCopy'))]",
+            "serialCopy": {
+                "name": "policydefinitionloop-subscription",
+                "count": "[length(variables('policyDefinitions'))]",
+                "mode": "Serial",
+                "batchSize": 3
+            },
+            "parallelCopy": {
+                "name": "policydefinitionloop-subscription",
+                "count": "[length(variables('policyDefinitions'))]",
+                "mode": "Parallel"
+            }
+    },  
     "resources": [
         {
             /*
@@ -348,7 +363,7 @@
                 "name": "policydefinitionloop",
                 "count": "[length(variables('policyDefinitions'))]",
                 "mode": "[if(greater(length(variables('policyDefinitions')), 3), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(length(variables('policyDefinitions')), 3), 2, json('null'))]"
+                "batchSize": "[if(greater(length(variables('policyDefinitions')), 3), 2, json(0))]"
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policydefinition')]",
             "dependsOn": [
@@ -399,7 +414,7 @@
                 "name": "policydefinitionloop-subscription",
                 "count": "[length(variables('policyDefinitions'))]",
                 "mode": "[if(greater(length(variables('policyDefinitions')), 3), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(length(variables('policyDefinitions')), 3), 2, json('null'))]"
+                "batchSize": "[if(greater(length(variables('policyDefinitions')), 3), 2, json(0))]"
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-sub-', variables('policyDefinitions')[copyIndex()].Name), 'na-sub-policydefinition')]",
             "dependsOn": [
