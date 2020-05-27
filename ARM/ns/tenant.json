@@ -450,8 +450,8 @@
             "copy": {
                 "name": "policySetDefinitions",
                 "count": "[length(variables('policySetDefinitions'))]",
-                "mode": "[if(greater(variables('policySetDefinitions'), '3'), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(variables('policySetDefinitions'), '3'), 2, 0)]"
+                "mode": "[if(greater(length(variables('policySetDefinitions')), 3), 'Serial', 'Parallel')]",
+                "batchSize": "[if(greater(length(variables('policySetDefinitions')), 3), 2, 0)]"
             },
             "name": "[if(not(empty(variables('policySetDefinitions'))), concat('PolicySetDefinitions-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policySetDefinitions')]",
             "dependsOn": [
@@ -503,8 +503,8 @@
             "copy": {
                 "name": "policySetDefinitions-subscription",
                 "count": "[length(variables('policySetDefinitions'))]",
-                "mode": "[if(greater(variables('policySetDefinitions'), '3'), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(variables('policySetDefinitions'), '3'), 2, 0)]"
+                "mode": "[if(greater(length(variables('policySetDefinitions')), 3), 'Serial', 'Parallel')]",
+                "batchSize": "[if(greater(length(variables('policySetDefinitions')), 3), 2, 0)]"
             },
             "name": "[if(not(empty(variables('policySetDefinitions'))), concat('PolicySetDefinitions-sub-', variables('policySetDefinitions')[copyIndex()].Name), 'na-sub-policySetDefinitions')]",
             "dependsOn": [
