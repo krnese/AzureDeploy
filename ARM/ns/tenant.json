@@ -398,8 +398,8 @@
             "copy": {
                 "name": "policydefinitionloop-subscription",
                 "count": "[length(variables('policyDefinitions'))]",
-                "mode": "[if(greater(variables('policyDefinitions'), '3'), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(variables('policyDefinitions'), '3'), 2, 0)]"
+                "mode": "[if(greater(length(variables('policyDefinitions')), 3), 'Serial', 'Parallel')]",
+                "batchSize": "[if(greater(length(variables('policyDefinitions')), 3), 2, 0)]"
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-sub-', variables('policyDefinitions')[copyIndex()].Name), 'na-sub-policydefinition')]",
             "dependsOn": [
