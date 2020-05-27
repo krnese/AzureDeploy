@@ -346,7 +346,9 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policydefinitionloop",
-                "count": "[length(variables('policyDefinitions'))]"
+                "count": "[length(variables('policyDefinitions'))]",
+                "mode": "Serial",
+                "batchSize": 5
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policydefinition')]",
             "dependsOn": [
@@ -395,7 +397,9 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policydefinitionloop-subscription",
-                "count": "[length(variables('policyDefinitions'))]"
+                "count": "[length(variables('policyDefinitions'))]",
+                "mode": "Serial",
+                "batchSize": 5
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-sub-', variables('policyDefinitions')[copyIndex()].Name), 'na-sub-policydefinition')]",
             "dependsOn": [
@@ -498,7 +502,9 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policySetDefinitions-subscription",
-                "count": "[length(variables('policySetDefinitions'))]"
+                "count": "[length(variables('policySetDefinitions'))]",
+                "mode": "Serial",
+                "batchSize": 3
             },
             "name": "[if(not(empty(variables('policySetDefinitions'))), concat('PolicySetDefinitions-sub-', variables('policySetDefinitions')[copyIndex()].Name), 'na-sub-policySetDefinitions')]",
             "dependsOn": [
@@ -537,7 +543,9 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policyassignmentloop",
-                "count": "[length(variables('policyAssignments'))]"
+                "count": "[length(variables('policyAssignments'))]",
+                "mode": "Serial",
+                "batchSize": 1
             },
             "dependsOn": [
                 "policydefinitionloop",
@@ -603,7 +611,9 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policyassignmentloop-subscription",
-                "count": "[length(variables('policyAssignments'))]"
+                "count": "[length(variables('policyAssignments'))]",
+                "mode": "Serial",
+                "batchSize": 3
             },
             "dependsOn": [
                 "policydefinitionloop",
