@@ -447,7 +447,7 @@
                 "name": "policySetDefinitions",
                 "count": "[length(variables('policySetDefinitions'))]",
                 "mode": "Serial",
-                "batchSize": 10
+                "batchSize": 3
             },
             "name": "[if(not(empty(variables('policySetDefinitions'))), concat('PolicySetDefinitions-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policySetDefinitions')]",
             "dependsOn": [
