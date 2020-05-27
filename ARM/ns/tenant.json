@@ -79,15 +79,27 @@
         /*
             Determining parallelism or serialism for copy iterations
         */
-            "iterationLoops": "[if(greater(length(variables('policyDefinitions')), 3), variables('serialCopy'), variables('parallelCopy'))]",
-            "serialCopy": {
+            "iterationLoopsSub": "[if(greater(length(variables('policyDefinitions')), 3), variables('serialCopySub'), variables('parallelCopySub'))]",
+            "serialCopySub": {
                 "name": "policydefinitionloop-subscription",
                 "count": "[length(variables('policyDefinitions'))]",
                 "mode": "Serial",
-                "batchSize": 3
+                "batchSize": 2
+            },
+            "parallelCopySub": {
+                "name": "policydefinitionloop-subscription",
+                "count": "[length(variables('policyDefinitions'))]",
+                "mode": "Parallel"
+            },
+            "iterationLoops": "[if(greater(length(variables('policyDefinitions')), 3), variables('serialCopy'), variables('parallelCopy'))]",
+            "serialCopy": {
+                "name": "policydefinitionloop",
+                "count": "[length(variables('policyDefinitions'))]",
+                "mode": "Serial",
+                "batchSize": 2
             },
             "parallelCopy": {
-                "name": "policydefinitionloop-subscription",
+                "name": "policydefinitionloop",
                 "count": "[length(variables('policyDefinitions'))]",
                 "mode": "Parallel"
             }
@@ -360,10 +372,7 @@
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
             "copy": {
-                "name": "policydefinitionloop",
-                "count": "[length(variables('policyDefinitions'))]",
-                "mode": "[if(greater(length(variables('policyDefinitions')), 3), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(length(variables('policyDefinitions')), 3), 2, json('na'))]"
+                "[variables('iterationLoops')]"
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policydefinition')]",
             "dependsOn": [
@@ -410,12 +419,9 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
-            "copy": {
-                "name": "policydefinitionloop-subscription",
-                "count": "[length(variables('policyDefinitions'))]",
-                "mode": "[if(greater(length(variables('policyDefinitions')), 3), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(length(variables('policyDefinitions')), 3), 2, json('na'))]"
-            },
+            "copy":
+                "[variables('iterationLoopsSub')]"
+            ,
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-sub-', variables('policyDefinitions')[copyIndex()].Name), 'na-sub-policydefinition')]",
             "dependsOn": [
                 "[parameters('input').Name]"                
