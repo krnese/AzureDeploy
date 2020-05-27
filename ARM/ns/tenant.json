@@ -79,27 +79,15 @@
         /*
             Determining parallelism or serialism for copy iterations
         */
-            "iterationLoopsSub": "[if(greater(length(variables('policyDefinitions')), 3), variables('serialCopySub'), variables('parallelCopySub'))]",
-            "serialCopySub": {
-                "name": "policydefinitionloop-subscription",
-                "count": "[length(variables('policyDefinitions'))]",
-                "mode": "Serial",
-                "batchSize": 2
-            },
-            "parallelCopySub": {
-                "name": "policydefinitionloop-subscription",
-                "count": "[length(variables('policyDefinitions'))]",
-                "mode": "Parallel"
-            },
             "iterationLoops": "[if(greater(length(variables('policyDefinitions')), 3), variables('serialCopy'), variables('parallelCopy'))]",
             "serialCopy": {
-                "name": "policydefinitionloop",
+                "name": "policydefinitionloop-subscription",
                 "count": "[length(variables('policyDefinitions'))]",
                 "mode": "Serial",
-                "batchSize": 2
+                "batchSize": 3
             },
             "parallelCopy": {
-                "name": "policydefinitionloop",
+                "name": "policydefinitionloop-subscription",
                 "count": "[length(variables('policyDefinitions'))]",
                 "mode": "Parallel"
             }
@@ -372,7 +360,8 @@
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
             "copy": {
-                "[variables('iterationLoops')]"
+                "name": "policydefinitionloop",
+                "count": "[length(variables('policyDefinitions'))]"
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policydefinition')]",
             "dependsOn": [
@@ -419,9 +408,10 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
-            "copy":{
-                "[variables('iterationLoopsSub')]"}
-            ,
+            "copy": {
+                "name": "policydefinitionloop-subscription",
+                "count": "[length(variables('policyDefinitions'))]"
+            },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-sub-', variables('policyDefinitions')[copyIndex()].Name), 'na-sub-policydefinition')]",
             "dependsOn": [
                 "[parameters('input').Name]"                
@@ -443,6 +433,33 @@
             }
         },
         {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "[deployment().location]",
+            "name": "[concat('builtInDelay', copyIndex())]",
+            "dependsOn": [
+                "policydefinitionloop",
+                "policydefinitionloop-subscription"
+            ],
+            "copy": {
+                "name": "builtInDelayCopy",
+                "count": 5,
+                "mode": "Serial",
+                "batchSize": 1
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [],
+                    "outputs": {}
+                }
+            }
+        },
+        {   
             /*
 
                 Intent: Upsert 'policySetDefinitions' for the Management Group.
@@ -476,7 +493,8 @@
             "dependsOn": [
                 "[parameters('input').Name]",                
                 "policydefinitionloop",
-                "policydefinitionloop-subscription"
+                "policydefinitionloop-subscription",
+                "builtInDelayCopy"
             ],
             "properties": {
                 "expressionEvaluationOptions": {
