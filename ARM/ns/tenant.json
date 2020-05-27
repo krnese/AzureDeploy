@@ -347,8 +347,8 @@
             "copy": {
                 "name": "policydefinitionloop",
                 "count": "[length(variables('policyDefinitions'))]",
-                "mode": "[if(greater(variables('policyDefinitions'), '1'), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(variables('policyDefinitions'), '1'), 1, json('null'))]"
+                "mode": "[if(greater(length(variables('policyDefinitions')), '1'), 'Serial', 'Parallel')]",
+                "batchSize": "[if(greater(lenght(variables('policyDefinitions')), '1'), 1, json('null'))]"
             },
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policydefinition')]",
             "dependsOn": [
