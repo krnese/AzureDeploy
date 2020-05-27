@@ -419,8 +419,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
-            "copy":
-                "[variables('iterationLoopsSub')]"
+            "copy":{
+                "[variables('iterationLoopsSub')]"}
             ,
             "name": "[if(not(empty(variables('policyDefinitions'))), concat('PolicyDefinition-sub-', variables('policyDefinitions')[copyIndex()].Name), 'na-sub-policydefinition')]",
             "dependsOn": [
