@@ -434,7 +434,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2019-07-01",
             "location": "[deployment().location]",
             "name": "[concat('builtInDelay', copyIndex())]",
             "dependsOn": [
