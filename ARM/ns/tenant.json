@@ -449,9 +449,7 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policySetDefinitions",
-                "count": "[length(variables('policySetDefinitions'))]",
-                "mode": "[if(greater(length(variables('policySetDefinitions')), 3), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(length(variables('policySetDefinitions')), 3), 2, 0)]"
+                "count": "[length(variables('policySetDefinitions'))]"
             },
             "name": "[if(not(empty(variables('policySetDefinitions'))), concat('PolicySetDefinitions-', variables('policyDefinitions')[copyIndex()].Name), 'na-mgmt-policySetDefinitions')]",
             "dependsOn": [
@@ -502,9 +500,7 @@
             "location": "[deployment().location]",
             "copy": {
                 "name": "policySetDefinitions-subscription",
-                "count": "[length(variables('policySetDefinitions'))]",
-                "mode": "[if(greater(length(variables('policySetDefinitions')), 3), 'Serial', 'Parallel')]",
-                "batchSize": "[if(greater(length(variables('policySetDefinitions')), 3), 2, 0)]"
+                "count": "[length(variables('policySetDefinitions'))]"
             },
             "name": "[if(not(empty(variables('policySetDefinitions'))), concat('PolicySetDefinitions-sub-', variables('policySetDefinitions')[copyIndex()].Name), 'na-sub-policySetDefinitions')]",
             "dependsOn": [
