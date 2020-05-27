@@ -545,7 +545,8 @@
             "dependsOn": [
                 "[parameters('input').Name]",                
                 "policydefinitionloop",
-                "policydefinitionloop-subscription"
+                "policydefinitionloop-subscription",
+                "builtInDelayCopy"
             ],
             "properties": {
                 "expressionEvaluationOptions": {
