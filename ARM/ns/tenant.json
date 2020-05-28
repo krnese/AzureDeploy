@@ -443,7 +443,7 @@
             ],
             "copy": {
                 "name": "builtInDelayCopy",
-                "count": 10,
+                "count": 5,
                 "mode": "Serial",
                 "batchSize": 1
             },
@@ -585,8 +585,7 @@
                 "policydefinitionloop",
                 "policydefinitionloop-subscription",
                 "policySetDefinitions",
-                "policySetDefinitions-subscription",
-                "builtInDelayCopy"
+                "policySetDefinitions-subscription"
             ],
             "name": "[if(not(empty(variables('policyAssignments'))), concat('PolicyAssignment-', variables('policyAssignments')[copyIndex()].Name), 'na-mgmt-policyassignment')]",
             "properties": {
@@ -652,8 +651,7 @@
                 "policydefinitionloop",
                 "policydefinitionloop-subscription",
                 "policySetDefinitions",
-                "policySetDefinitions-subscription",
-                "builtInDelayCopy"
+                "policySetDefinitions-subscription"
             ],
             "name": "[if(not(empty(variables('policyAssignments'))), concat('PolicyAssignment-sub-', variables('policyAssignments')[copyIndex()].Name), 'na-sub-policyassignment')]",
             "properties": {
@@ -722,8 +720,7 @@
                 "policySetDefinitions",
                 "policySetDefinitions-subscription",
                 "policyassignmentloop",
-                "policyassignmentloop-subscription",
-                "builtInDelayCopy"
+                "policyassignmentloop-subscription"
             ],
             "name": "[if(not(empty(variables('policyAssignments'))), concat('RoleAssignment-', variables('policyAssignments')[copyIndex()].Name), 'na-mgmt-roleAssignment')]",
             "properties": {
@@ -823,8 +820,7 @@
                 "policySetDefinitions",
                 "policySetDefinitions-subscription",
                 "policyassignmentloop",
-                "policyassignmentloop-subscription",
-                "builtInDelayCopy"
+                "policyassignmentloop-subscription"
             ],
             "name": "[if(not(empty(variables('policyAssignments'))), concat('RoleAssignment-sub-', variables('policyAssignments')[copyIndex()].Name), 'na-sub-roleAssignment')]",
             "properties": {
