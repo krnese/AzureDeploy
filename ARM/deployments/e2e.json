@@ -27,7 +27,7 @@
                 },
                 "parameters": {
                     "topLevelManagementGroupPrefix": {
-                        "value": "[parameters('companyPrefix')]"
+                        "value": "[parameters('enterpriseScaleCompanyPrefix')]"
                     }
                 }
             }
