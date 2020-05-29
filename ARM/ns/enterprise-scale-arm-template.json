@@ -56,14 +56,15 @@
             "tenantTemplate": "[uri(parameters('_artifactsLocation'), concat('tenant.json', parameters('_artifactsLocationSasToken')))]", 
             "tenantTemplateParameters": "[uri(parameters('_artifactsLocation'), concat('e2e-landing-zone-orchestration.parameters.json', parameters('_artifactsLocationSasToken')))]",
             "resourceTemplate": "[uri(parameters('_artifactsLocation'), concat('template.json', parameters('_artifactsLocationSasToken')))]"
-        }
+        },
+        "resolverTemplateName": "[concat('Ent', deployment().location, guid(parameters('topLevelManagementGroupPrefix')))]"
     },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
-            "name": "Enterprise-Scale-Template-Resolver",
+            "name": "[variables('resolverTemplateName')]",
             "properties": {
                 "mode": "Incremental",                
                 "template": {
@@ -111,7 +112,7 @@
                 },                
                 "parameters": {
                     "input": {
-                        "value": "[reference('Enterprise-Scale-Template-Resolver').outputs.deploymentJson.Value]"
+                        "value": "[reference(variables('resolverTemplateName')).outputs.deploymentJson.Value]"
                     }
                 }
             }
@@ -121,7 +122,7 @@
         "deploymentJson": {
             "condition": "[bool('true')]",
             "type": "object",
-            "value": "[reference('Enterprise-Scale-Template-Resolver').outputs.deploymentJson]"
+            "value": "[reference(variables('resolverTemplateName')).outputs.deploymentJson]"
         }
     }
 }
