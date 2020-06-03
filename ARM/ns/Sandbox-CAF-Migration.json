@@ -68,7 +68,6 @@
         }
     },
     "variables": {
-        // The template will create 3 policy definitions with deployIfNotExists effect
         "policyDefinitions": {
             "deployAzureMigrate": "Deploy-AzureMigrate",
             "deployLogAnalytics": "Deploy-LogAnalytics",
@@ -76,7 +75,6 @@
             "deployVnet": "Deploy-Vnet",
             "deploystorageAcount": "Deploy-StorageAccount"
         },
-        // The template will do subsequent assignment of all policy definitions that will be deployed at the subscription scope
         "policyAssignments": {
             "deployAzureMigrate": "Assign-AzureMigrate",
             "deployLogAnalytics": "Assign-LogAnalytics",
@@ -87,7 +85,6 @@
     },
     "resources": [
         {
-            // Creating policy to deploy and govern Azure Migrate on the subscription
             "type": "Microsoft.Authorization/policyDefinitions",
             "apiVersion": "2019-09-01",
             "name": "[variables('policyDefinitions').deployAzureMigrate]",
@@ -323,7 +320,6 @@
             }
         },
         {
-            // Assigning the policy definition to create Azure Migrate project
             "type": "Microsoft.Authorization/policyAssignments",
             "apiVersion": "2019-09-01",
             "name": "[variables('policyAssignments').deployAzureMigrate]",
@@ -349,7 +345,6 @@
                 }
             }
         },
-        // Create role assignment for the policyAssignment for Azure Migrate
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
@@ -397,7 +392,6 @@
             }
         },
         {
-            // Trigger the template deployment in the policyDefiniton to create Azure Migrate once assignment is successful
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "location": "[deployment().location]",
@@ -411,8 +405,7 @@
                 "parameters": "[reference(variables('policyAssignments').deployAzureMigrate, '2019-09-01').parameters]"
             }
         },
-        { // Create policyDefinition using deployIfNotExists to create Key Vault on the subscription           
-            "type": "Microsoft.Authorization/policyDefinitions",
+        {   "type": "Microsoft.Authorization/policyDefinitions",
             "apiVersion": "2019-09-01",
             "name": "[variables('policyDefinitions').deployKeyVault]",
             "properties": {
@@ -959,7 +952,7 @@
                 "parameters": "[reference(variables('policyAssignments').deployLogAnalytics, '2019-09-01').parameters]"
             }
         },
-        { // Create policyDefinition using deployIfNotExists to create Vnet on the subscription
+        {   
             "type": "Microsoft.Authorization/policyDefinitions",
             "apiVersion": "2019-09-01",
             "name": "[variables('policyDefinitions').deployVnet]",
