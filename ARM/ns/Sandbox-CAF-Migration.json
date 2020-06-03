@@ -719,7 +719,7 @@
                 "parameters": "[reference(variables('policyAssignments').deployKeyVault, '2019-09-01').parameters]"
             }
         },
-        { // Create policyDefinition using deployIfNotExists to create Log Analytics on the subscription
+        { 
             "type": "Microsoft.Authorization/policyDefinitions",
             "apiVersion": "2019-09-01",
             "name": "[variables('policyDefinitions').deployLogAnalytics]",
