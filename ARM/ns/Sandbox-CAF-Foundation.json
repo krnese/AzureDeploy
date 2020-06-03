@@ -59,16 +59,6 @@
         },
         "allowedStorageSkus": {
             "type": "array",
-            "allowedValues": [
-                "Pemium_LRS",
-                "Premium_ZRS",
-                "Standard_GRS",
-                "Standard_GZRS",
-                "Standard_LRS",
-                "Standard_RAGRS",
-                "Standard_RAGZRS",
-                "Standard_ZRS"
-            ],
             "defaultValue": [
                 "Pemium_LRS",
                 "Premium_ZRS",
