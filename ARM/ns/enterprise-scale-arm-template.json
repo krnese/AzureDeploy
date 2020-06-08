@@ -44,7 +44,7 @@
         },
         "rootManagementGroupIdToReplaceWith": {
             "type": "string",
-            "defaultValue": "/providers/Microsoft.Management/managementGroups/360d509d-82f2-42d5-9446-fbf417d9139c",
+            "defaultValue": "",
             "metadata": {
                 "description": "Replace value for tenant ID. Leave this to your tenant ID or empty string value (recommended) to ensure top level management group is placed under the root management group. Alternative you can specify any valid management group resource ID."
             }
