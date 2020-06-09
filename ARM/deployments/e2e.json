@@ -24,7 +24,8 @@
             "type": "string",
             "allowedValues": [
                 "Create new using my billing account id provided in the billing account id parameter",
-                "Use existing subscriptions provided in the subscriptionId parameters"
+                "Use existing subscriptions provided in the subscriptionId parameters",
+                "None, I will create and place my subscriptions post deployment"
             ]
         },
         "billingAccountIdForNewSubscriptions": {
