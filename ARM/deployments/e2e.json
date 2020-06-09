@@ -19,6 +19,25 @@
                 "VWan",
                 "HubSpoke"
             ]
+        },
+        "newOrExistingSubscriptions": {
+            "type": "string",
+            "allowedValues": [
+                "Create new using my billing account id provided in the billing account id parameter",
+                "Use existing subscriptions provided in the subscriptionId parameters"
+            ]
+        },
+        "billingAccountIdForNewSubscriptions": {
+            "type": "string"
+        },
+        "subscriptionIdForManagement": {
+            "type": "string"
+        },
+        "subscriptionIdForManagement": {
+            "type": "string"
+        },
+        "subscriptionIdForIdentity": {
+            "type": "string"
         }
     },
     "variables": {
