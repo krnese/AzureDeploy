@@ -35,7 +35,7 @@
             "type": "string",
             "defaultValue": ""
         },
-        "subscriptionIdForManagement": {
+        "subscriptionIdForConnectivity": {
             "type": "string",
             "defaultValue": ""
         },
