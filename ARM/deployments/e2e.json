@@ -43,6 +43,13 @@
         "subscriptionIdForIdentity": {
             "type": "string",
             "defaultValue": ""
+        },
+        "assignFoundationalPoliciesForSecurityAndLogging": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No, I will do it post deployment"
+            ]
         }
     },
     "variables": {
