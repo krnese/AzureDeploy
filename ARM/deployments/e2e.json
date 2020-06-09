@@ -19,37 +19,6 @@
                 "HubSpoke",
                 "VWAN"
             ]
-        },
-        "createNewOrUseExistingSubscriptions": {
-            "type": "string",
-            "allowedValues": [
-                "Create new using my billing account id provided in the billing account id parameter",
-                "Use existing subscriptions provided in the subscriptionId parameters",
-                "None, I will create and place my subscriptions post deployment"
-            ]
-        },
-        "billingAccountIdForNewSubscriptions": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "subscriptionIdForManagement": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "subscriptionIdForConnectivity": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "subscriptionIdForIdentity": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "assignFoundationalPoliciesForSecurityAndLogging": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No, I will do it post deployment"
-            ]
         }
     },
     "variables": {
