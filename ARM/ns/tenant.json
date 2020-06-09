@@ -436,7 +436,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-07-01",
             "location": "[deployment().location]",
-            "name": "[concat('builtInDelay', deployment().name, copyIndex())]",
+            "name": "[concat('delayFor', deployment().location, copyIndex())]",
             "dependsOn": [
                 "policydefinitionloop",
                 "policydefinitionloop-subscription"
