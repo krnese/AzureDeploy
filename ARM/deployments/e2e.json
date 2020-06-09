@@ -60,7 +60,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-10-01",
             "location": "[deployment().location]",
-            "name": "[concat('Enterprise-Scale', deployment().location, guid(parameters('enterpriseScaleCompanyPrefix')))]",
+            "name": "[concat('Enterprise-Scale', '-', parameters('setup'), guid(parameters('enterpriseScaleCompanyPrefix')))]",
             "properties": {
                 "mode": "Incremental",                
                 "templateLink": {
