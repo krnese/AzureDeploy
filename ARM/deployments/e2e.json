@@ -20,7 +20,7 @@
                 "HubSpoke"
             ]
         },
-        "newOrExistingSubscriptions": {
+        "createNewOrUseExistingSubscriptions": {
             "type": "string",
             "allowedValues": [
                 "Create new using my billing account id provided in the billing account id parameter",
@@ -28,16 +28,20 @@
             ]
         },
         "billingAccountIdForNewSubscriptions": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         },
         "subscriptionIdForManagement": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         },
         "subscriptionIdForManagement": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         },
         "subscriptionIdForIdentity": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "variables": {
