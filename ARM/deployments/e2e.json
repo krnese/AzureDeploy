@@ -16,8 +16,8 @@
             },
             "allowedValues": [
                 "Foundation",
-                "VWan",
-                "HubSpoke"
+                "HubSpoke",
+                "VWAN"
             ]
         },
         "createNewOrUseExistingSubscriptions": {
