@@ -2,9 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-08-01/tenantDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "rootGroupParentId": {
+        "rootGroupParentName": {
             "type": "string",
-            "defaultValue": "/providers/Microsoft.Management/managementGroups/ARMMSP",
+            "defaultValue": "ARMMSP",
             "metadata": {
                 "description": "This is the root management group, and all management groups will be child to this one."
             }
@@ -51,7 +51,7 @@
                 "displayName": "[parameters('platformMgs')[copyIndex()]]",
                 "details": {
                     "parent": {
-                        "id": "[parameters('rootGroupParentId')]"
+                        "id": "[tenantResourceId('Microsoft.Management/managementGroups', parameters('rootGroupParentName'))]"
                     }
                 }
             }
@@ -64,7 +64,7 @@
                 "displayName": "[parameters('landingZoneMg')]",
                 "details": {
                     "parent": {
-                        "id": "[parameters('rootGroupParentId')]"
+                        "id": "[tenantResourceId('Microsoft.Management/managementGroups', parameters('rootGroupParentName'))]"
                     }
                 }
             }
@@ -84,7 +84,7 @@
                 "displayName": "[parameters('landingZonePortfolioMgs')[copyIndex()]]",
                 "details": {
                     "parent": {
-                        "id": "[concat('/providers/Microsoft.Management/managementGroups/', parameters('landingZoneMg'))]"
+                        "id": "[tenantResourceId('Microsoft.Management/managementGroups', parameters('landingZoneMg'))]"
                     }
                 }
             }
