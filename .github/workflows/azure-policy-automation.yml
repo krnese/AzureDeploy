@@ -1,0 +1,122 @@
+name: Azure Policy Automation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  az-policy-automation:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup PowerShell
+      uses: actions/setup-powershell@v1
+      with:
+        pwsh: '7.2.x'
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Step 1 - Create Assistant and Generate Policy Assignment Script
+      run: |
+        $Endpoint = "https://assist-swedencentral-azopenai.openai.azure.com/"
+        $DeplomentName = "gpt-4o"
+        $MetaPromptFile = "./utilities/aiPolicyAssignmentInstructions.txt"
+        $PolicyDefinition = Get-AzPolicyDefinition -id "/providers/Microsoft.Authorization/policyDefinitions/36fd7371-8eb7-4321-9c30-a7100022d048" | ConvertTo-Json -Depth 100
+        $ScriptOutputLocation = "./utilities/PolicyAssignmentsScripts/DemoAssignment.ps1"
+
+        $NewAssistant = New-AzOpenAIAssistant -MetaPromptFile $MetaPromptFile `
+                                              -Endpoint $Endpoint `
+                                              -model $DeplomentName `
+                                              -AssistantName "AzPolicyAssigner"
+
+        $EvaluatePolicy = Start-AzOpenAIAssistantThreadWithMessages -Endpoint $Endpoint `
+                                                                    -AssistantId $NewAssistant.id `
+                                                                    -MessageContent $PolicyDefinition
+
+        Write-Output $EvaluatePolicy
+
+        $PolicyAssignmentFile = Get-AzOpenAIAssistantOutputFiles -Endpoint $Endpoint | Where-Object {$_.filename -like "/mnt/data/assignment*"}
+        Get-AzOpenAIAssistantOutputFiles -Endpoint $Endpoint -FileId $PolicyAssignmentFile.id -LocalFilePath $ScriptOutputLocation
+      shell: pwsh
+
+    - name: Step 2 - Execute Policy Assignment Script
+      run: |
+        $ScriptOutputLocation = "./utilities/PolicyAssignmentsScripts/DemoAssignment.ps1"
+        $scriptContent = Get-Content -Path $ScriptOutputLocation -Raw
+        $Execute = Invoke-Expression $scriptContent
+        $Execute.Method
+        $Execute.statuscode
+        $Execute.content | convertfrom-json -Depth 100
+      shell: pwsh
+
+    - name: Step 3 - Generate Policy Tests based on Assignment
+      run: |
+        $Endpoint = "https://assist-swedencentral-azopenai.openai.azure.com/"
+        $DeplomentName = "gpt-4o"
+        $MetaPromptFile = "./utilities/aiPolicyTestInstructions.txt"
+        $PolicyAssignment = Get-Content -Path "./utilities/PolicyAssignmentsScripts/DemoAssignment.ps1" -Raw
+        $ScriptOutputLocation = "./utilities/PolicyTestScripts/"
+
+        $NewAssistant = New-AzOpenAIAssistant -MetaPromptFile $MetaPromptFile `
+                                              -Endpoint $Endpoint `
+                                              -model $DeplomentName `
+                                              -AssistantName "AzPolicyTestAssistant"
+
+        $EvaluatePolicy = Start-AzOpenAIAssistantThreadWithMessages -Endpoint $Endpoint `
+                                                                    -AssistantId $NewAssistant.id `
+                                                                    -MessageContent $PolicyAssignment
+
+        Write-Output $EvaluatePolicy
+
+        Get-AzOpenAIAssistantOutputFiles -Endpoint $Endpoint
+
+        $PolicyTestScripts = Get-AzOpenAIAssistantOutputFiles -Endpoint $Endpoint | Where-Object {$_.filename -like "/mnt/data/policy*"}
+        $LogFilePath = Join-Path -Path $ScriptOutputLocation -ChildPath "DemoExecutionLog.txt"
+
+        $Counter = 1
+
+        foreach ($PolicyTestScript in $PolicyTestScripts) {
+            $UniqueFileName = "DemoPolicyTestScript_$($Counter).ps1"
+            $FullFilePath = Join-Path -Path $ScriptOutputLocation -ChildPath $UniqueFileName
+            Get-AzOpenAIAssistantOutputFiles -Endpoint $Endpoint -FileId $PolicyTestScript.id -LocalFilePath $FullFilePath
+            $scriptContent = Get-Content -Path $FullFilePath -Raw
+
+            try {
+                $executionResult = Invoke-Expression $scriptContent
+                if ($executionResult -is [Microsoft.Azure.Commands.Profile.Models.PSHttpResponse]) {
+                    $statusCode = $executionResult.StatusCode
+                    $headers = $executionResult.Headers
+                    $content = $executionResult.Content
+                    Write-Output "Execution result of $($UniqueFileName):"
+                    Write-Output "Status Code: $statusCode"
+                    Write-Output "Headers: $headers"
+                    Write-Output "Content: $content"
+                    Add-Content -Path $LogFilePath -Value "Execution result of $($UniqueFileName):"
+                    Add-Content -Path $LogFilePath -Value "Status Code: $statusCode"
+                    Add-Content -Path $LogFilePath -Value "Headers: $headers"
+                    Add-Content -Path $LogFilePath -Value "Content: $content"
+                }
+                else {
+                    Write-Output "Execution result of $($UniqueFileName):"
+                    Write-Output $executionResult
+                    Add-Content -Path $LogFilePath -Value "Execution result of $($UniqueFileName):"
+                    Add-Content -Path $LogFilePath -Value $executionResult
+                }
+            }
+            catch {
+                Write-Host "Error executing $($UniqueFileName):" -ForegroundColor Red
+                Write-Host $_.Exception.Message -ForegroundColor Red
+                Add-Content -Path $LogFilePath -Value "Error executing $($UniqueFileName):"
+                Add-Content -Path $LogFilePath -Value $_.Exception.Message
+            }
+
+            $Counter++
+        }
+      shell: pwsh
